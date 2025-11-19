@@ -52,3 +52,9 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Aspire
+/src-docker/WeddingRsvp.Api/Properties/launchSettings.json
+/src-docker/WeddingRsvp.WebApp/Properties/launchSettings.json
+/WeddingRsvp.AppHost/data
+dataSources.xml
