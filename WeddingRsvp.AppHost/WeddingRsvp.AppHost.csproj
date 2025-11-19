@@ -8,6 +8,10 @@
         <UserSecretsId>ddd11f61-ae6e-48df-bf07-a56fc19c9faf</UserSecretsId>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
     <ItemGroup>
       <ProjectReference Include="..\WeddingRsvp.Api\WeddingRsvp.Api.csproj" />
       <ProjectReference Include="..\WeddingRsvp.WebApp\WeddingRsvp.WebApp.csproj" />
