@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding RSVP Wizard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&display=swap');
+
+        :root {
+            --primary-color: #8A4FFF;
+            --secondary-color: #FFB6C1;
+            --accent-color: #F4E1D2;
+            --text-color: #4A4238;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image:
+                    linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)),
+                    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><g fill="%23FFB6C1" fill-opacity="0.1"><path d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7z"/></g></svg>');
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        /* Add extra margin before the Meal Selection section */
+        .form-group:has(.meal-selection) {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(138, 79, 255, 0.2);
+        }
+
+        /* Optional: Add a subtle decorative element */
+        .form-group:has(.meal-selection)::before {
+            content: '♦';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--primary-color);
+            opacity: 0.5;
+            font-size: 24px;
+        }
+
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--primary-color);
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.2em;
+        }
+
+        input[type="radio"],
+        input[type="number"],
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        input[type="radio"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(138, 79, 255, 0.2);
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight
+
+            .radio-container {
+                display: flex;
+                align-items: center;
+                gap: 20px; /* Space between radio buttons */
+            }
+
+            .radio-wrapper {
+                display: flex;
+                align-items: center;
+                margin-right: 15px; /* Space between radio button and label */
+                border-top: 1px solid rgba(138, 79, 255, 0.2);
+            }
+
+            input[type="radio"] {
+                margin-right: 10px;
+                width: 20px;
+                height: 20px;
+                border: 2px solid var(--secondary-color);
+                border-radius: 50%;
+                appearance: none;
+                outline: none;
+                transition: all 0.3s ease;
+            }
+
+            input[type="radio"]:checked {
+                background-color: var(--primary-color);
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 3px white inset;
+            }
+
+            input[type="radio"]:checked::after {
+                content: '✔';
+                color: white;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 12px;
+
+
+    </style>
+
+
+
+</head>
+<body>
+<form id="rsvpWizard">
+    <!-- Step 1: Attendance and Guest Details -->
+    <div class="wizard-step active" data-step="1">
+        <h2>Attendance Details</h2>
+
+        <label>Will you attend?</label>
+        <div class="radio-container">
+            <input
+                    type="radio"
+                    id="attend-yes"
+                    name="attendance"
+                    value="yes"
+                    required
+            >
+            <label for="attend-yes" class="radio-label">
+                <span class="radio-custom"></span>
+                Yes
+            </label>
+
+            <input
+                    type="radio"
+                    id="attend-no"
+                    name="attendance"
+                    value="no"
+                    required
+            >
+            <label for="attend-no" class="radio-label">
+                <span class="radio-custom"></span>
+                No
+            </label>
+        </div>
+
+
+        <div class="form-group">
+            <label for="guests">Total number of guests attending</label>
+            <input type="number" id="guests" name="guests" min="0" max="10" required>
+            <label for="guests">Total number of guests staying over night</label>
+            <input type="number" id="guests" name="guests" min="0" max="10" required>
+
+            <div class="form-group">
+                <label>Meal Selection</label>
+                <div class="meal-selection">
+                    <div class="meal-type">
+                        <label for="default-meals">
+                            Standard Meals
+                            <input
+                                    type="number"
+                                    id="default-meals"
+                                    name="default_meals"
+                                    min="0"
+                                    max="10"
+                                    placeholder="Number of standard meals"
+                                    required
+                            >
+                        </label>
+                    </div>
+                    <div class="meal-type">
+                        <label for="vegetarian-meals">
+                            Vegetarian Meals
+                            <input
+                                    type="number"
+                                    id="vegetarian-meals"
+                                    name="vegetarian_meals"
+                                    min="0"
+                                    max="10"
+                                    placeholder="Number of vegetarian meals"
+                                    required
+                            >
+                        </label>
+                    </div>
+                    <div class="meal-type">
+                        <label for="vegan-meals">
+                            Vegan Meals
+                            <input
+                                    type="number"
+                                    id="vegan-meals"
+                                    name="vegan_meals"
+                                    min="0"
+                                    max="10"
+                                    placeholder="Number of vegan meals"
+                                    required
+                            >
+                        </label>
+                    </div>
+                </div>
+                <div class="meal-counter">
+                    <span>Total Meals: <span id="total-meals">0</span></span>
+                    <span class="warning" id="meal-warning"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="names">Additional information</label>
+                <textarea id="names" name="guest_names" rows="3" placeholder="Is there anything else we need to know?" required></textarea>
+            </div>
+        </div>
+    </div>
+</form>
