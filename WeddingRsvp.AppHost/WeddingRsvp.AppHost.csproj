@@ -13,4 +13,8 @@
       <ProjectReference Include="..\WeddingRsvp.WebApp\WeddingRsvp.WebApp.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Aspire.Hosting.MongoDB" Version="13.0.0" />
+    </ItemGroup>
+
 </Project>
