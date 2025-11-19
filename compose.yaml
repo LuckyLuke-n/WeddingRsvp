@@ -1,0 +1,13 @@
+﻿services:
+  weddingrsvp.webapp:
+    image: weddingrsvp.webapp
+    build:
+      context: .
+      dockerfile: WeddingRsvp.WebApp/Dockerfile
+
+  weddingrsvp.api:
+    image: weddingrsvp.api
+    build:
+      context: .
+      dockerfile: WeddingRsvp.Api/Dockerfile
+
