@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeddingRsvp.WebApp", "WeddingRsvp.WebApp\WeddingRsvp.WebApp.csproj", "{577FCEC9-52CF-4CF7-B348-725EE0CE3D40}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeddingRsvp.WebApp", "src-docker\WeddingRsvp.WebApp\WeddingRsvp.WebApp.csproj", "{577FCEC9-52CF-4CF7-B348-725EE0CE3D40}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A04D4AC1-478B-40D7-BB85-F43B96A40ED1}"
 	ProjectSection(SolutionItems) = preProject
 		compose.yaml = compose.yaml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeddingRsvp.Api", "WeddingRsvp.Api\WeddingRsvp.Api.csproj", "{1ABE2D42-9A46-47C9-BC56-B2E8EB02B0A9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeddingRsvp.Api", "src-docker\WeddingRsvp.Api\WeddingRsvp.Api.csproj", "{1ABE2D42-9A46-47C9-BC56-B2E8EB02B0A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeddingRsvp.AppHost", "WeddingRsvp.AppHost\WeddingRsvp.AppHost.csproj", "{C34ACA73-8356-4032-AAC8-2DED836C58D7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeddingRsvp.AppHost", "src-dotnet\WeddingRsvp.AppHost\WeddingRsvp.AppHost.csproj", "{C34ACA73-8356-4032-AAC8-2DED836C58D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeddingRsvp.ServiceDefaults", "WeddingRsvp.ServiceDefaults\WeddingRsvp.ServiceDefaults.csproj", "{EEC24B40-BF67-4FBD-A988-F46DBE0B91A2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeddingRsvp.ServiceDefaults", "src-dotnet\WeddingRsvp.ServiceDefaults\WeddingRsvp.ServiceDefaults.csproj", "{EEC24B40-BF67-4FBD-A988-F46DBE0B91A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
