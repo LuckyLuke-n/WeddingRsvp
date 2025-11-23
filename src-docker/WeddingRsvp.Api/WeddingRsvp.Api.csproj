@@ -14,6 +14,8 @@
     <ItemGroup>
         <PackageReference Include="Aspire.MongoDB.Driver" Version="13.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0-rc.2.25502.107"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.0.1" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.0.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -23,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src-dotnet\WeddingRsvp.Abstractions\WeddingRsvp.Abstractions.csproj" />
       <ProjectReference Include="..\..\src-dotnet\WeddingRsvp.ServiceDefaults\WeddingRsvp.ServiceDefaults.csproj" />
     </ItemGroup>
 
