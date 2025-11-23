@@ -79,7 +79,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task ReadAsync_ShouldReturnFail_WhenNotExists()
+    public async Task ReadAsync_ShouldReturnNotFound_WhenNotExists()
     {
         // Act
         var result = await _serviceUnderTest.ReadAsync(Guid.NewGuid());
@@ -161,5 +161,38 @@ public class RsvpRepositoryTests : IAsyncLifetime
         var dbRsvpResponse = await _serviceUnderTest.ReadAsync(Guid.Parse(result.ValueSuccess.Id));
         dbRsvpResponse.IsSuccess.Should().BeTrue();
         dbRsvpResponse.ValueSuccess.Should().BeEquivalentTo(updatedRsvp);
+    }
+    
+    [Fact]
+    public async Task UpdateAsync_ShouldReturnNotFound_WhenNotExists()
+    {
+        // Arrange
+        var originalRsvp = new Rsvp 
+        {
+            Name = "Original Name",
+            Type = GuestType.Friends,
+            NumberOfGuests = 5
+        };
+        var createResult = await _serviceUnderTest.CreateAsync(originalRsvp);
+
+        var updatedRsvp = new Rsvp
+        {
+            Id = Guid.NewGuid().ToString(),
+            Name = "Updated Name",
+            Type = GuestType.Family,
+            NumberOfGuests = 6,
+            NumberOfGuestsAttending = 5,
+            NumberOfNormalMeals = 2,
+            NumberOfVegetarianMeals = 2,
+            NumberOfVeganMeals = 1,
+            AdditionalInformation = "Updated info"
+        };
+
+        // Act
+        var result = await _serviceUnderTest.UpdateAsync(updatedRsvp);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.ValueFail.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
     }
 }
