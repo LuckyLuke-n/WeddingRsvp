@@ -1,10 +1,13 @@
 using Microsoft.OpenApi;
 using WeddingRsvp.Api.Configurations;
+using WeddingRsvp.Api.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 builder.Services.Configure<ApiConfiguration>( builder.Configuration.GetSection( ApiConfiguration.Section ) );
+
+builder.AddMongoDbRsvpRepostiroy();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

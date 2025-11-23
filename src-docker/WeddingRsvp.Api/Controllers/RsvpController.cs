@@ -27,9 +27,9 @@ public class RsvpsController : Controller
     }
 
     [HttpGet("")]
-    public async Task<IResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IResult> GetAll([FromHeader(Name = "X-Auth-Admin")] string? value, CancellationToken cancellationToken)
     {
-        if (!IsAuthorized())
+        if (!IsAuthorized(value))
             return Results.Unauthorized();
         
         var response = await Repository.ReadAllAsync(cancellationToken).ConfigureAwait(false);
@@ -68,9 +68,9 @@ public class RsvpsController : Controller
     }
 
     [HttpPost("")]
-    public async Task<IResult> Create(PostRsvpDto dto, CancellationToken cancellationToken)
+    public async Task<IResult> Create([FromHeader(Name = "X-Auth-Admin")] string? value, PostRsvpDto dto, CancellationToken cancellationToken)
     {
-        if (!IsAuthorized())
+        if (!IsAuthorized(value))
             return Results.Unauthorized();
         
         var response = await Repository.CreateAsync(dto.ToEntity(), cancellationToken ).ConfigureAwait(false);
@@ -93,9 +93,9 @@ public class RsvpsController : Controller
     }
 
     [HttpDelete("{id}")]
-    public async Task<IResult> Delete([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<IResult> Delete([FromRoute] Guid id, [FromHeader(Name = "X-Auth-Admin")] string? value, CancellationToken cancellationToken)
     {
-        if (!IsAuthorized())
+        if (!IsAuthorized(value))
             return Results.Unauthorized();
 
         var response = await Repository.DeleteAsync(id, cancellationToken ).ConfigureAwait(false);
@@ -116,7 +116,7 @@ public class RsvpsController : Controller
     }
     
     [HttpPut("{id}")]
-    public async Task<IResult> Update([FromRoute] Guid id, PutRsvpDto dto, CancellationToken cancellationToken)
+    public async Task<IResult> Update([FromRoute] Guid id, [FromHeader(Name = "X-Auth-Admin")] string? value, PutRsvpDto dto, CancellationToken cancellationToken)
     {
         var responseRead = await Repository.ReadAsync(id,cancellationToken).ConfigureAwait(false);
             
@@ -140,7 +140,7 @@ public class RsvpsController : Controller
         
         if (AuthorizationNeeded(existingRsvp, updatedRsvp))
         {
-            if (!IsAuthorized())
+            if (!IsAuthorized(value))
                 return Results.Unauthorized();        
         }
         
@@ -161,14 +161,10 @@ public class RsvpsController : Controller
         return Results.Ok(responseUpdate.ValueSuccess!.ToDto());
     }
 
-    private bool IsAuthorized()
+    private bool IsAuthorized( string? value )
     {
-        if (!Request.Headers.ContainsKey(AdminHeader)
-            || !Request.Headers.TryGetValue(AdminHeader, out var value)
-            || !string.Equals(value, Configurations.AdminIdentifier))
-        {
+        if ( value is null || !string.Equals(value, Configurations.AdminIdentifier) )
             return false;
-        }
         
         return true;
     }

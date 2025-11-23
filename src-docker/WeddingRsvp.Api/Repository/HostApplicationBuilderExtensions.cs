@@ -2,9 +2,10 @@ namespace WeddingRsvp.Api.Repository;
 
 public static class HostApplicationBuilderExtensions
 {
-    public static IHostApplicationBuilder AddMongoDbRepostiroy(this IHostApplicationBuilder builder)
+    public static IHostApplicationBuilder AddMongoDbRsvpRepostiroy(this IHostApplicationBuilder builder)
     {
-        builder.AddMongoDBClient(connectionName: "rsvp-mongo");
+        builder.AddMongoDBClient(connectionName: "weddingrsvp-mongo");
+        builder.Services.AddScoped<IRsvpRepository, RsvpRepository>();
         
         return builder;
     }
