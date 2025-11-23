@@ -134,16 +134,17 @@ public class RsvpRepositoryTests : IAsyncLifetime
         {
             Name = "Original Name",
             Type = GuestType.Friends,
-            NumberOfGuests = 1
+            NumberOfGuests = 5
         };
         var createResult = await _serviceUnderTest.CreateAsync(originalRsvp);
 
         var updatedRsvp = new Rsvp
         {
             Id = createResult.ValueSuccess!.Id,
-            Name = "Original Name",
-            Type = GuestType.Friends,
-            NumberOfGuests = 5,
+            Name = "Updated Name",
+            Type = GuestType.Family,
+            NumberOfGuests = 6,
+            NumberOfGuestsAttending = 5,
             NumberOfNormalMeals = 2,
             NumberOfVegetarianMeals = 2,
             NumberOfVeganMeals = 1,

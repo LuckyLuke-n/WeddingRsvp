@@ -21,7 +21,10 @@ public class RsvpRepository : MongoDbRepository<Rsvp>, IRsvpRepository
             .Eq(r => r.Id, entity.Id);
 
         var update = Builders<Rsvp>.Update
+            .Set(r => r.Name, entity.Name)
+            .Set(r => r.Type, entity.Type)
             .Set(r => r.NumberOfGuests, entity.NumberOfGuests)
+            .Set(r => r.NumberOfGuestsAttending, entity.NumberOfGuestsAttending)
             .Set(r => r.NumberOfNormalMeals, entity.NumberOfNormalMeals)
             .Set(r => r.NumberOfVeganMeals, entity.NumberOfVeganMeals)
             .Set(r => r.NumberOfVegetarianMeals, entity.NumberOfVegetarianMeals)

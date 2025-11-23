@@ -8,6 +8,7 @@ public class Rsvp : IEntity
     public GuestType Type { get; set; }
     public int NumberOfGuests { get; set; }
     
+    public int NumberOfGuestsAttending { get; set; }
     public int NumberOfNormalMeals { get; set; }
     public int NumberOfVegetarianMeals { get; set; }
     public int NumberOfVeganMeals { get; set; }
