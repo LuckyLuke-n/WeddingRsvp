@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeddingRsvp.ServiceDefaults
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeddingRsvp.Integration", "integration\WeddingRsvp.Integration\WeddingRsvp.Integration.csproj", "{70733830-2C21-4EF5-9C6C-FC2638902FAF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeddingRsvp.Abstractions", "src-dotnet\WeddingRsvp.Abstractions\WeddingRsvp.Abstractions.csproj", "{8E234D69-09A4-4097-B194-1D0084FEFE0A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,5 +43,9 @@ Global
 		{70733830-2C21-4EF5-9C6C-FC2638902FAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70733830-2C21-4EF5-9C6C-FC2638902FAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70733830-2C21-4EF5-9C6C-FC2638902FAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E234D69-09A4-4097-B194-1D0084FEFE0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E234D69-09A4-4097-B194-1D0084FEFE0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E234D69-09A4-4097-B194-1D0084FEFE0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E234D69-09A4-4097-B194-1D0084FEFE0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
