@@ -27,9 +27,14 @@ public class RsvpRepository : MongoDbRepository<Rsvp>, IRsvpRepository
             .Set(r => r.NumberOfVegetarianMeals, entity.NumberOfVegetarianMeals)
             .Set(r => r.AdditionalInformation, entity.AdditionalInformation);
 
+        var options = new FindOneAndUpdateOptions<Rsvp>
+        {
+            ReturnDocument = ReturnDocument.After
+        };
+
         try
         {
-            var updated = await Collection.FindOneAndUpdateAsync<Rsvp>(filter, update, null, cancellationToken)
+            var updated = await Collection.FindOneAndUpdateAsync<Rsvp>(filter, update, options, cancellationToken)
                 .ConfigureAwait(false);
 
             if (updated is not null)
@@ -37,6 +42,7 @@ public class RsvpRepository : MongoDbRepository<Rsvp>, IRsvpRepository
 
             RepositoryFailResponse fail = new()
                 { StatusCode = HttpStatusCode.NotFound, Message = "Document cannot be updated. Document not found." };
+            
             return RepositoryResponse<Rsvp, RepositoryFailResponse>.CreateFail(fail);
         }
         catch (Exception ex)

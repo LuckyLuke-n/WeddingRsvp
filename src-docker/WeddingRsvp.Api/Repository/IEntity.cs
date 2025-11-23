@@ -2,6 +2,6 @@ namespace WeddingRsvp.Api.Repository;
 
 public interface IEntity
 {
-    Guid Id { get; set; }
+    string Id { get; set; }
     void SetAsNew();
 }
