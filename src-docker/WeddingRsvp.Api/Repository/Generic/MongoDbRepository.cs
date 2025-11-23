@@ -59,7 +59,7 @@ namespace WeddingRsvp.Api.Repository.Generic;
 				return RepositoryResponse<RepositoryFailResponse>.CreateFail( new() { StatusCode = HttpStatusCode.InternalServerError, Message = "No connection to the mongo collection." } );
 
 			var filter = Builders<T>.Filter
-				.Eq( e => e.Id, id );
+				.Eq( e => e.Id, id.ToString() );
 
 			try
 			{
@@ -93,7 +93,7 @@ namespace WeddingRsvp.Api.Repository.Generic;
 				return RepositoryResponse<T, RepositoryFailResponse>.CreateFail( new() { StatusCode = HttpStatusCode.InternalServerError, Message = "No connection to the mongo collection." } );
 
 			var filter = Builders<T>.Filter
-				.Eq( d => d.Id, id );
+				.Eq( d => d.Id, id.ToString() );
 
 			try
 			{
