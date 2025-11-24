@@ -41,13 +41,3 @@ jobs:
         dotnet test integration/WeddingRsvp.Integration \
           --logger "trx;LogFileName=integration-test-results.trx" \
           --collect:"XPlat Code Coverage"
-
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      with:
-        name: integration-test-results
-        path: |
-          **/TestResults/integration-test-results.trx
-          **/TestResults/**/coverage.cobertura.xml
-        retention-days: 7
-
