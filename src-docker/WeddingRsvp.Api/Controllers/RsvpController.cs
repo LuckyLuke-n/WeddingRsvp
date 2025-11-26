@@ -1,9 +1,9 @@
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using WeddingRsvp.Abstractions.Models;
 using WeddingRsvp.Api.Configurations;
-using WeddingRsvp.Api.Diagnostics.Meters;
 using WeddingRsvp.Api.Repository;
 using WeddingRsvp.Api.Repository.Entities;
 
@@ -11,6 +11,7 @@ namespace WeddingRsvp.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Policy = "ApiKeyPolicy")]
 public class RsvpsController : Controller
 {
     private IRsvpRepository Repository { get; }
@@ -31,7 +32,7 @@ public class RsvpsController : Controller
     public async Task<IResult> GetAll([FromHeader(Name = "X-Auth-Admin")] string? value, CancellationToken cancellationToken)
     {
         if (!IsAuthorized(value))
-            return Results.Unauthorized();
+            return Results.Forbid();
         
         var response = await Repository.ReadAllAsync(cancellationToken).ConfigureAwait(false);
 
@@ -72,7 +73,7 @@ public class RsvpsController : Controller
     public async Task<IResult> Create([FromHeader(Name = "X-Auth-Admin")] string? value, PostRsvpDto dto, CancellationToken cancellationToken)
     {
         if (!IsAuthorized(value))
-            return Results.Unauthorized();
+            return Results.Forbid();
         
         var response = await Repository.CreateAsync(dto.ToEntity(), cancellationToken ).ConfigureAwait(false);
 
@@ -97,7 +98,7 @@ public class RsvpsController : Controller
     public async Task<IResult> Delete([FromRoute] Guid id, [FromHeader(Name = "X-Auth-Admin")] string? value, CancellationToken cancellationToken)
     {
         if (!IsAuthorized(value))
-            return Results.Unauthorized();
+            return Results.Forbid();
 
         var response = await Repository.DeleteAsync(id, cancellationToken ).ConfigureAwait(false);
 
@@ -139,11 +140,10 @@ public class RsvpsController : Controller
         var updatedRsvp = dto.ToEntity();
         updatedRsvp.Id = existingRsvp.Id;
         
-        var authorizationNeeded = AuthorizationNeeded(existingRsvp, updatedRsvp);
-        if (authorizationNeeded)
+        if (AuthorizationNeeded(existingRsvp, updatedRsvp))
         {
             if (!IsAuthorized(value))
-                return Results.Unauthorized();        
+                return Results.Forbid();        
         }
         
         var responseUpdate = await Repository.UpdateAsync(updatedRsvp, cancellationToken).ConfigureAwait(false);
@@ -159,9 +159,6 @@ public class RsvpsController : Controller
                     return Results.InternalServerError();
             }
         }
-
-        if (!authorizationNeeded)
-            ResponseMeter.CountResponse(responseUpdate.ValueSuccess!.Name);
 
         return Results.Ok(responseUpdate.ValueSuccess!.ToDto());
     }

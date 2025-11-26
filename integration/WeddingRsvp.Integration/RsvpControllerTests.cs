@@ -20,7 +20,9 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     private readonly WebApplicationFactory<Program> _factory;
     private readonly Mock<IRsvpRepository> _repositoryMock = new();
     private const string AdminHeaderName = "X-Auth-Admin";
+    private const string ApiKeyHeader = "X-Api-Key";
     private const string AdminSecret = "secret-key";
+    private const string ApiKey = "api-key";
 
     public RsvpControllerTests(WebApplicationFactory<Program> factory)
     {
@@ -36,16 +38,41 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
                 services.Configure<ApiConfiguration>(opts =>
                 {
                     opts.AdminIdentifier = AdminSecret;
+                    opts.ApiKey = ApiKey;
                 });
             });
         });
     }
 
     [Fact]
+    public async Task GetAll_WithInvalidApiKey_ReturnsUnauthorized()
+    {
+        var client = _factory.CreateClient();
+
+        var rsvps = new List<Rsvp>
+        {
+            new() { Id = Guid.NewGuid().ToString(), Name = "Alice", NumberOfGuests = 1 },
+            new() { Id = Guid.NewGuid().ToString(), Name = "Bob", NumberOfGuests = 2 }
+        };
+
+        _repositoryMock.Setup(x => x.ReadAllAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(RepositoryResponse<IEnumerable<Rsvp>, RepositoryFailResponse>.CreateSuccess(rsvps));
+
+        client.DefaultRequestHeaders.Add(AdminHeaderName, AdminSecret);
+
+        // Act
+        var response = await client.GetAsync("/api/rsvps");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+    
+    [Fact]
     public async Task GetAll_WithValidAdminHeader_ReturnsOkAndList()
     {
         // Arrange
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var rsvps = new List<Rsvp>
         {
             new() { Id = Guid.NewGuid().ToString(), Name = "Alice", NumberOfGuests = 1 },
@@ -67,16 +94,17 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
-    public async Task GetAll_WithoutHeader_ReturnsUnauthorized()
+    public async Task GetAll_WithoutHeader_ReturnsForbidden()
     {
         // Arrange
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
 
         // Act
         var response = await client.GetAsync("/api/rsvps");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Fact]
@@ -84,6 +112,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     {
         // Arrange
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var id = Guid.NewGuid();
         var rsvp = new Rsvp { Id = id.ToString(), Name = "Charlie" };
 
@@ -105,6 +134,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     {
         // Arrange
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var id = Guid.NewGuid();
 
         _repositoryMock.Setup(x => x.ReadAsync(id, It.IsAny<CancellationToken>()))
@@ -123,6 +153,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     {
         // Arrange
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var dto = new PostRsvpDto { Name = "Dave", NumberOfGuests = 1, Type = GuestType.Friends };
         var createdRsvp = new Rsvp { Name = "Dave", NumberOfGuests = 1, Type = WeddingRsvp.Api.Repository.Entities.GuestType.Friends };
 
@@ -143,6 +174,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     {
         // Arrange
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var id = Guid.NewGuid();
 
         _repositoryMock.Setup(x => x.DeleteAsync(id, It.IsAny<CancellationToken>()))
@@ -162,6 +194,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     {
         // Arrange
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var id = Guid.NewGuid();
         
         // Existing entity
@@ -215,10 +248,11 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
-    public async Task Update_CriticalData_WithoutAuth_ReturnsUnauthorized()
+    public async Task Update_CriticalData_WithoutAuth_ReturnsForbidden()
     {
         // Arrange
         var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var id = Guid.NewGuid();
         
         var existingRsvp = new Rsvp
@@ -249,7 +283,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         var response = await client.PutAsJsonAsync($"/api/rsvps/{id}", updateDto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Rsvp>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi;
 using WeddingRsvp.Api.Configurations;
 using WeddingRsvp.Api.Repository;
+using WeddingRsvp.Api.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +34,14 @@ builder.Services.AddSwaggerGen( options =>
     } );
 } );
 
+builder.Services.AddAuthentication( ApiKeyAuthenticationHandler.SchemeName )
+    .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>( ApiKeyAuthenticationHandler.SchemeName, null );
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("ApiKeyPolicy", policy =>
+        policy.AddAuthenticationSchemes(ApiKeyAuthenticationHandler.SchemeName)
+            .RequireAuthenticatedUser());
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
@@ -44,6 +54,9 @@ if ( app.Environment.IsDevelopment() )
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 
 #if !DEBUG
