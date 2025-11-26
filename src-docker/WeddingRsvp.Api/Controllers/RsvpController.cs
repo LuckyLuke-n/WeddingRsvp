@@ -1,5 +1,4 @@
 using System.Net;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using WeddingRsvp.Abstractions.Models;
@@ -11,7 +10,6 @@ namespace WeddingRsvp.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Policy = "ApiKeyPolicy")]
 public class RsvpsController : Controller
 {
     private IRsvpRepository Repository { get; }
@@ -29,12 +27,11 @@ public class RsvpsController : Controller
     }
 
     [HttpGet("")]
-    public async Task<IResult> GetAll([FromHeader(Name = "X-Auth-Admin")] string? value,
-        CancellationToken cancellationToken)
+    public async Task<IResult> GetAll([FromHeader(Name = "X-Auth-Admin")] string? value, CancellationToken cancellationToken)
     {
         if (!IsAuthorized(value))
-            return Results.Forbid();
-
+            return Results.Unauthorized();
+        
         var response = await Repository.ReadAllAsync(cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccess)
@@ -51,8 +48,8 @@ public class RsvpsController : Controller
     [HttpGet("{id}")]
     public async Task<IResult> Get([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var response = await Repository.ReadAsync(id, cancellationToken).ConfigureAwait(false);
-
+        var response = await Repository.ReadAsync(id,cancellationToken).ConfigureAwait(false);
+        
         if (!response.IsSuccess)
         {
             var failedResponse = response.ValueFail;
@@ -71,13 +68,12 @@ public class RsvpsController : Controller
     }
 
     [HttpPost("")]
-    public async Task<IResult> Create([FromHeader(Name = "X-Auth-Admin")] string? value, PostRsvpDto dto,
-        CancellationToken cancellationToken)
+    public async Task<IResult> Create([FromHeader(Name = "X-Auth-Admin")] string? value, PostRsvpDto dto, CancellationToken cancellationToken)
     {
         if (!IsAuthorized(value))
-            return Results.Forbid();
-
-        var response = await Repository.CreateAsync(dto.ToEntity(), cancellationToken).ConfigureAwait(false);
+            return Results.Unauthorized();
+        
+        var response = await Repository.CreateAsync(dto.ToEntity(), cancellationToken ).ConfigureAwait(false);
 
         if (response.IsSuccess)
             return Results.Created();
@@ -97,13 +93,12 @@ public class RsvpsController : Controller
     }
 
     [HttpDelete("{id}")]
-    public async Task<IResult> Delete([FromRoute] Guid id, [FromHeader(Name = "X-Auth-Admin")] string? value,
-        CancellationToken cancellationToken)
+    public async Task<IResult> Delete([FromRoute] Guid id, [FromHeader(Name = "X-Auth-Admin")] string? value, CancellationToken cancellationToken)
     {
         if (!IsAuthorized(value))
-            return Results.Forbid();
+            return Results.Unauthorized();
 
-        var response = await Repository.DeleteAsync(id, cancellationToken).ConfigureAwait(false);
+        var response = await Repository.DeleteAsync(id, cancellationToken ).ConfigureAwait(false);
 
         if (response.IsSuccess)
             return Results.NoContent();
@@ -119,17 +114,16 @@ public class RsvpsController : Controller
             }
         }
     }
-
+    
     [HttpPut("{id}")]
-    public async Task<IResult> Update([FromRoute] Guid id, [FromHeader(Name = "X-Auth-Admin")] string? value,
-        PutRsvpDto dto, CancellationToken cancellationToken)
+    public async Task<IResult> Update([FromRoute] Guid id, [FromHeader(Name = "X-Auth-Admin")] string? value, PutRsvpDto dto, CancellationToken cancellationToken)
     {
-        var responseRead = await Repository.ReadAsync(id, cancellationToken).ConfigureAwait(false);
-
+        var responseRead = await Repository.ReadAsync(id,cancellationToken).ConfigureAwait(false);
+            
         if (!responseRead.IsSuccess)
         {
             Logger.LogError("Cannot get rsvp with error: {ErrorMessage}.", responseRead.ValueFail.Message);
-
+                
             var failedResponse = responseRead.ValueFail;
             switch (failedResponse.StatusCode)
             {
@@ -143,13 +137,13 @@ public class RsvpsController : Controller
         var existingRsvp = responseRead.ValueSuccess!;
         var updatedRsvp = dto.ToEntity();
         updatedRsvp.Id = existingRsvp.Id;
-
+        
         if (AuthorizationNeeded(existingRsvp, updatedRsvp))
         {
             if (!IsAuthorized(value))
-                return Results.Forbid();
+                return Results.Unauthorized();        
         }
-
+        
         var responseUpdate = await Repository.UpdateAsync(updatedRsvp, cancellationToken).ConfigureAwait(false);
         if (!responseUpdate.IsSuccess)
         {
@@ -167,15 +161,15 @@ public class RsvpsController : Controller
         return Results.Ok(responseUpdate.ValueSuccess!.ToDto());
     }
 
-    private bool IsAuthorized(string? value)
+    private bool IsAuthorized( string? value )
     {
-        if (value is null || !string.Equals(value, Configurations.AdminIdentifier))
+        if ( value is null || !string.Equals(value, Configurations.AdminIdentifier) )
             return false;
-
+        
         return true;
     }
 
-    private bool AuthorizationNeeded(Rsvp existingEntity, Rsvp incomingEntity)
+    private bool AuthorizationNeeded( Rsvp existingEntity, Rsvp incomingEntity )
     {
         if (!string.Equals(existingEntity.Name, incomingEntity.Name)
             || !string.Equals(existingEntity.Type, incomingEntity.Type)

@@ -29,4 +29,8 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+#if !DEBUG
+app.UseOpenTelemetryPrometheusScrapingEndpoint();
+#endif
+
 app.Run();

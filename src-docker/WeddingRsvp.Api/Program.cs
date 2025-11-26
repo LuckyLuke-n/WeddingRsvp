@@ -59,6 +59,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+#if !DEBUG
+app.UseOpenTelemetryPrometheusScrapingEndpoint();
+#endif
+
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
