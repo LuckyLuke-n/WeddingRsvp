@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using WeddingRsvp.Abstractions.Models;
 using WeddingRsvp.Api.Configurations;
+using WeddingRsvp.Api.Diagnostics.Meters;
 using WeddingRsvp.Api.Repository;
 using WeddingRsvp.Api.Repository.Entities;
 
@@ -138,7 +139,8 @@ public class RsvpsController : Controller
         var updatedRsvp = dto.ToEntity();
         updatedRsvp.Id = existingRsvp.Id;
         
-        if (AuthorizationNeeded(existingRsvp, updatedRsvp))
+        var authorizationNeeded = AuthorizationNeeded(existingRsvp, updatedRsvp);
+        if (authorizationNeeded)
         {
             if (!IsAuthorized(value))
                 return Results.Unauthorized();        
@@ -157,6 +159,9 @@ public class RsvpsController : Controller
                     return Results.InternalServerError();
             }
         }
+
+        if (!authorizationNeeded)
+            ResponseMeter.CountResponse(responseUpdate.ValueSuccess!.Name);
 
         return Results.Ok(responseUpdate.ValueSuccess!.ToDto());
     }
