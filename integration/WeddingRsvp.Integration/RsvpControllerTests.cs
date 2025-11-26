@@ -45,6 +45,29 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
+    public async Task GetAll_WithInvalidApiKey_ReturnsUnauthorized()
+    {
+        var client = _factory.CreateClient();
+
+        var rsvps = new List<Rsvp>
+        {
+            new() { Id = Guid.NewGuid().ToString(), Name = "Alice", NumberOfGuests = 1 },
+            new() { Id = Guid.NewGuid().ToString(), Name = "Bob", NumberOfGuests = 2 }
+        };
+
+        _repositoryMock.Setup(x => x.ReadAllAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(RepositoryResponse<IEnumerable<Rsvp>, RepositoryFailResponse>.CreateSuccess(rsvps));
+
+        client.DefaultRequestHeaders.Add(AdminHeaderName, AdminSecret);
+
+        // Act
+        var response = await client.GetAsync("/api/rsvps");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+    
+    [Fact]
     public async Task GetAll_WithValidAdminHeader_ReturnsOkAndList()
     {
         // Arrange
