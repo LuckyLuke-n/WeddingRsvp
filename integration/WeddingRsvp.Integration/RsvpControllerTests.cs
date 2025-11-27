@@ -28,6 +28,9 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     {
         _factory = factory.WithWebHostBuilder(builder =>
         {
+            // Add a dummy connection string to satisfy startup validation
+            builder.UseSetting("ConnectionStrings:weddingrsvp-mongo", "mongodb://localhost:27017");
+
             builder.ConfigureTestServices(services =>
             {
                 // Replace the real repository with the mock
@@ -155,7 +158,15 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var dto = new PostRsvpDto { Name = "Dave", NumberOfGuests = 1, Type = GuestType.Friends };
-        var createdRsvp = new Rsvp { Name = "Dave", NumberOfGuests = 1, Type = WeddingRsvp.Api.Repository.Entities.GuestType.Friends };
+        
+        // Ensure the return object is fully initialized
+        var createdRsvp = new Rsvp 
+        { 
+            Id = Guid.NewGuid().ToString(), // Ensure ID is set if needed by response handling
+            Name = "Dave", 
+            NumberOfGuests = 1, 
+            Type = WeddingRsvp.Api.Repository.Entities.GuestType.Friends 
+        };
 
         _repositoryMock.Setup(x => x.CreateAsync(It.IsAny<Rsvp>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(RepositoryResponse<Rsvp, RepositoryFailResponse>.CreateSuccess(createdRsvp));
