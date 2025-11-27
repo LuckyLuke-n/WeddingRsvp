@@ -3,6 +3,8 @@
 public class GetRsvpDto
 {
     public string Id { get; set; } = string.Empty;
+    public Language Language { get; set; }
+    public DateTime? LastUpdated { get; set; }
     
     public string Name { get; set; } = string.Empty;
     public GuestType Type { get; set; }

@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Globalization;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Moq;
@@ -14,6 +15,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
     private readonly MongoDbContainer _mongoDbContainer = new MongoDbBuilder().Build();
     private IRsvpRepository _serviceUnderTest = null!;
     private IMongoClient _mongoClient = null!;
+    private TimeProvider TimeProvider { get; set; }
 
     public async Task InitializeAsync()
     {
@@ -23,7 +25,11 @@ public class RsvpRepositoryTests : IAsyncLifetime
         
         var loggerMock = new Mock<ILogger<MongoDbRepository<Rsvp>>>();
         
-        _serviceUnderTest = new RsvpRepository(_mongoClient, loggerMock.Object);
+        var timeProviderMock = new Mock<TimeProvider>();
+        timeProviderMock.Setup(x => x.GetUtcNow()).Returns(new DateTimeOffset(2022, 1, 1, 12, 0, 0, TimeSpan.Zero));
+        TimeProvider = timeProviderMock.Object;
+        
+        _serviceUnderTest = new RsvpRepository(_mongoClient, TimeProvider, loggerMock.Object);
     }
 
     public async Task DisposeAsync()
@@ -37,6 +43,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
         // Arrange
         var rsvp = new Rsvp
         {
+            Language = Language.en,
             Name = "John Doe",
             Type = GuestType.Family,
             NumberOfGuests = 2,
@@ -66,7 +73,8 @@ public class RsvpRepositoryTests : IAsyncLifetime
         {
             Name = "Jane Doe",
             Type = GuestType.Friends,
-            NumberOfGuests = 1
+            NumberOfGuests = 1,
+            Language = Language.en,
         };
         await _serviceUnderTest.CreateAsync(rsvp);
 
@@ -134,7 +142,8 @@ public class RsvpRepositoryTests : IAsyncLifetime
         {
             Name = "Original Name",
             Type = GuestType.Friends,
-            NumberOfGuests = 5
+            NumberOfGuests = 5,
+            Language = Language.de,
         };
         var createResult = await _serviceUnderTest.CreateAsync(originalRsvp);
 
@@ -148,7 +157,44 @@ public class RsvpRepositoryTests : IAsyncLifetime
             NumberOfNormalMeals = 2,
             NumberOfVegetarianMeals = 2,
             NumberOfVeganMeals = 1,
-            AdditionalInformation = "Updated info"
+            AdditionalInformation = "Updated info",
+            Language = Language.de,
+            LastUpdated = TimeProvider.GetUtcNow().DateTime,
+        };
+
+        // Act
+        var result = await _serviceUnderTest.UpdateAsync(updatedRsvp);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.ValueSuccess.Should().BeEquivalentTo(updatedRsvp);
+
+        var dbRsvpResponse = await _serviceUnderTest.ReadAsync(Guid.Parse(result.ValueSuccess.Id));
+        dbRsvpResponse.IsSuccess.Should().BeTrue();
+        dbRsvpResponse.ValueSuccess.Should().BeEquivalentTo(updatedRsvp);
+    }
+    
+    [Fact]
+    public async Task UpdateAsync_WithSameEntity_ShouldUpdateRsvp()
+    {
+        // Arrange
+        var originalRsvp = new Rsvp 
+        {
+            Name = "Original Name",
+            Type = GuestType.Friends,
+            NumberOfGuests = 5,
+            Language = Language.de,
+        };
+        var createResult = await _serviceUnderTest.CreateAsync(originalRsvp);
+
+        var updatedRsvp = new Rsvp
+        {
+            Id = createResult.ValueSuccess!.Id,
+            Name = "Original Name",
+            Type = GuestType.Friends,
+            NumberOfGuests = 5,
+            Language = Language.de,
+            LastUpdated = TimeProvider.GetUtcNow().DateTime,
         };
 
         // Act
@@ -171,7 +217,8 @@ public class RsvpRepositoryTests : IAsyncLifetime
         {
             Name = "Original Name",
             Type = GuestType.Friends,
-            NumberOfGuests = 5
+            NumberOfGuests = 5,
+            Language = Language.en,
         };
         var createResult = await _serviceUnderTest.CreateAsync(originalRsvp);
 
@@ -185,7 +232,9 @@ public class RsvpRepositoryTests : IAsyncLifetime
             NumberOfNormalMeals = 2,
             NumberOfVegetarianMeals = 2,
             NumberOfVeganMeals = 1,
-            AdditionalInformation = "Updated info"
+            AdditionalInformation = "Updated info",
+            Language = Language.en,
+            LastUpdated = TimeProvider.GetUtcNow().DateTime,
         };
 
         // Act

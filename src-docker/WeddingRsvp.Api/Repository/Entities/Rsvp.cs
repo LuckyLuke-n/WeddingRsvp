@@ -3,10 +3,12 @@ namespace WeddingRsvp.Api.Repository.Entities;
 public class Rsvp : IEntity
 {
     public string Id { get; set; } = string.Empty;
+    public DateTime? LastUpdated { get; set; }
     
     public string Name { get; set; } = string.Empty;
     public GuestType Type { get; set; }
     public int NumberOfGuests { get; set; }
+    public Language Language { get; set; }
     
     public int NumberOfGuestsAttending { get; set; }
     public int NumberOfNormalMeals { get; set; }

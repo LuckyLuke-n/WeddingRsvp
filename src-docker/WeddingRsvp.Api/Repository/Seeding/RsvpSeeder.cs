@@ -43,6 +43,7 @@ public class RsvpSeeder
                 Name = "John and Jane",
                 Type = GuestType.Friends,
                 NumberOfGuests = 4,
+                Language = Language.en,
             },
 
             new()
@@ -51,6 +52,7 @@ public class RsvpSeeder
                 Name = "Maria",
                 Type = GuestType.Family,
                 NumberOfGuests = 1,
+                Language = Language.en,
             },
 
             new()
@@ -59,6 +61,7 @@ public class RsvpSeeder
                 Name = "Max",
                 Type = GuestType.Friends,
                 NumberOfGuests = 1,
+                Language = Language.de,
             },
         ];
 

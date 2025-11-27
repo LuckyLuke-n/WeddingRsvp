@@ -17,6 +17,8 @@ public static class MappingExtensions
             NumberOfVeganMeals = entity.NumberOfVeganMeals,
             NumberOfVegetarianMeals = entity.NumberOfVegetarianMeals,
             Type = (Abstractions.Models.GuestType)entity.Type,
+            Language = (Abstractions.Models.Language)entity.Language,
+            LastUpdated = entity.LastUpdated,
         };
         
         return dto;

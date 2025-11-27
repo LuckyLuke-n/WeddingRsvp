@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 builder.Services.Configure<ApiConfiguration>( builder.Configuration.GetSection( ApiConfiguration.Section ) );
-
+builder.Services.AddSingleton(TimeProvider.System);
 builder.AddMongoDbRsvpRepostiroy();
 
 // Add services to the container.
