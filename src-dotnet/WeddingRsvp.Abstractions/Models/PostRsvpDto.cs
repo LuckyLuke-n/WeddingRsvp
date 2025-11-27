@@ -13,6 +13,10 @@ public class PostRsvpDto
     public GuestType Type { get; set; }
     
     [Required]
+    [EnumDataType(typeof(Language))]
+    public Language Language { get; set; }
+    
+    [Required]
     [Range(1, 10)]
     public int NumberOfGuests { get; set; }
 }

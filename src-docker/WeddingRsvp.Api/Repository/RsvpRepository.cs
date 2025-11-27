@@ -7,8 +7,11 @@ namespace WeddingRsvp.Api.Repository;
 
 public class RsvpRepository : MongoDbRepository<Rsvp>, IRsvpRepository
 {
-    public RsvpRepository(IMongoClient mongoClient, ILogger<MongoDbRepository<Rsvp>> logger) : base(mongoClient, logger)
+    private TimeProvider TimeProvider { get; }
+
+    public RsvpRepository(IMongoClient mongoClient, TimeProvider timeProvider, ILogger<MongoDbRepository<Rsvp>> logger) : base(mongoClient, logger)
     {
+        TimeProvider = timeProvider;
     }
 
     public override async Task<RepositoryResponse<Rsvp, RepositoryFailResponse>> UpdateAsync(Rsvp entity,
@@ -21,8 +24,10 @@ public class RsvpRepository : MongoDbRepository<Rsvp>, IRsvpRepository
             .Eq(r => r.Id, entity.Id);
 
         var update = Builders<Rsvp>.Update
+            .Set(r => r.LastUpdated, TimeProvider.GetUtcNow().UtcDateTime)
             .Set(r => r.Name, entity.Name)
             .Set(r => r.Type, entity.Type)
+            .Set(r => r.Language, entity.Language)
             .Set(r => r.NumberOfGuests, entity.NumberOfGuests)
             .Set(r => r.NumberOfGuestsAttending, entity.NumberOfGuestsAttending)
             .Set(r => r.NumberOfNormalMeals, entity.NumberOfNormalMeals)
@@ -45,7 +50,7 @@ public class RsvpRepository : MongoDbRepository<Rsvp>, IRsvpRepository
 
             RepositoryFailResponse fail = new()
                 { StatusCode = HttpStatusCode.NotFound, Message = "Document cannot be updated. Document not found." };
-            
+
             return RepositoryResponse<Rsvp, RepositoryFailResponse>.CreateFail(fail);
         }
         catch (Exception ex)

@@ -11,12 +11,15 @@ using WeddingRsvp.Api.Configurations;
 using WeddingRsvp.Api.Repository;
 using WeddingRsvp.Api.Repository.Entities;
 using WeddingRsvp.Api.Repository.Generic;
+using WeddingRsvp.Integration.Fixtures;
 using GuestType = WeddingRsvp.Abstractions.Models.GuestType;
+using Language = WeddingRsvp.Api.Repository.Entities.Language;
 
 namespace WeddingRsvp.Integration;
 
-public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
+public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>, IClassFixture<TimeProviderFixture>
 {
+    private TimeProvider TimeProvider { get; }
     private readonly WebApplicationFactory<Program> _factory;
     private readonly Mock<IRsvpRepository> _repositoryMock = new();
     private const string AdminHeaderName = "X-Auth-Admin";
@@ -24,8 +27,11 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     private const string AdminSecret = "secret-key";
     private const string ApiKey = "api-key";
 
-    public RsvpControllerTests(WebApplicationFactory<Program> factory)
+    public RsvpControllerTests(WebApplicationFactory<Program> factory, TimeProviderFixture timeFixture )
     {
+        timeFixture.ProviderMock.Setup(x => x.GetUtcNow()).Returns(new DateTimeOffset(2022, 1, 1, 12, 0, 0, TimeSpan.Zero));
+        TimeProvider = timeFixture.ProviderMock.Object;
+
         _factory = factory.WithWebHostBuilder(builder =>
         {
             // Add a dummy connection string to satisfy startup validation
@@ -117,7 +123,15 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var id = Guid.NewGuid();
-        var rsvp = new Rsvp { Id = id.ToString(), Name = "Charlie" };
+        var rsvp = new Rsvp { Id = id.ToString(), Name = "Charlie", Language = Language.en, LastUpdated = TimeProvider.GetUtcNow().UtcDateTime };
+        
+        var dto = new GetRsvpDto
+        {
+             Id = id.ToString(),
+             Name = "Charlie",
+             Language = Abstractions.Models.Language.en,
+             LastUpdated = TimeProvider.GetUtcNow().UtcDateTime,
+        };
 
         _repositoryMock.Setup(x => x.ReadAsync(id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(RepositoryResponse<Rsvp, RepositoryFailResponse>.CreateSuccess(rsvp));
@@ -129,7 +143,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var result = await response.Content.ReadFromJsonAsync<Rsvp>(); // The controller returns DTO, assuming JSON compatibility
         result.Should().NotBeNull();
-        result!.Name.Should().Be("Charlie");
+        result!.ToDto().Should().BeEquivalentTo(dto);
     }
 
     [Fact]
