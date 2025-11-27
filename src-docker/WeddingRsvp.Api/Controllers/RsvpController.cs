@@ -6,6 +6,7 @@ using WeddingRsvp.Abstractions.Models;
 using WeddingRsvp.Api.Configurations;
 using WeddingRsvp.Api.Repository;
 using WeddingRsvp.Api.Repository.Entities;
+using WeddingRsvp.Api.Repository.Seeding;
 
 namespace WeddingRsvp.Api.Controllers;
 
@@ -15,25 +16,30 @@ namespace WeddingRsvp.Api.Controllers;
 public class RsvpsController : Controller
 {
     private IRsvpRepository Repository { get; }
+    private RsvpSeeder Seeder { get; }
     private ApiConfiguration Configurations { get; }
     private ILogger<RsvpsController> Logger { get; }
 
     private static string AdminHeader => "X-Auth-Admin";
 
-    public RsvpsController(IRsvpRepository repository, IOptions<ApiConfiguration> options,
+    public RsvpsController(IRsvpRepository repository,
+        RsvpSeeder seeder,
+        IOptions<ApiConfiguration> options,
         ILogger<RsvpsController> logger)
     {
         Repository = repository;
+        Seeder = seeder;
         Configurations = options.Value;
         Logger = logger;
     }
 
     [HttpGet("")]
-    public async Task<IResult> GetAll([FromHeader(Name = "X-Auth-Admin")] string? value, CancellationToken cancellationToken)
+    public async Task<IResult> GetAll([FromHeader(Name = "X-Auth-Admin")] string? value,
+        CancellationToken cancellationToken)
     {
         if (!IsAuthorized(value))
             return Results.Forbid();
-        
+
         var response = await Repository.ReadAllAsync(cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccess)
@@ -50,8 +56,8 @@ public class RsvpsController : Controller
     [HttpGet("{id}")]
     public async Task<IResult> Get([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var response = await Repository.ReadAsync(id,cancellationToken).ConfigureAwait(false);
-        
+        var response = await Repository.ReadAsync(id, cancellationToken).ConfigureAwait(false);
+
         if (!response.IsSuccess)
         {
             var failedResponse = response.ValueFail;
@@ -70,12 +76,13 @@ public class RsvpsController : Controller
     }
 
     [HttpPost("")]
-    public async Task<IResult> Create([FromHeader(Name = "X-Auth-Admin")] string? value, PostRsvpDto dto, CancellationToken cancellationToken)
+    public async Task<IResult> Create([FromHeader(Name = "X-Auth-Admin")] string? value, PostRsvpDto dto,
+        CancellationToken cancellationToken)
     {
         if (!IsAuthorized(value))
             return Results.Forbid();
-        
-        var response = await Repository.CreateAsync(dto.ToEntity(), cancellationToken ).ConfigureAwait(false);
+
+        var response = await Repository.CreateAsync(dto.ToEntity(), cancellationToken).ConfigureAwait(false);
 
         if (response.IsSuccess)
             return Results.Created();
@@ -95,12 +102,13 @@ public class RsvpsController : Controller
     }
 
     [HttpDelete("{id}")]
-    public async Task<IResult> Delete([FromRoute] Guid id, [FromHeader(Name = "X-Auth-Admin")] string? value, CancellationToken cancellationToken)
+    public async Task<IResult> Delete([FromRoute] Guid id, [FromHeader(Name = "X-Auth-Admin")] string? value,
+        CancellationToken cancellationToken)
     {
         if (!IsAuthorized(value))
             return Results.Forbid();
 
-        var response = await Repository.DeleteAsync(id, cancellationToken ).ConfigureAwait(false);
+        var response = await Repository.DeleteAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (response.IsSuccess)
             return Results.NoContent();
@@ -116,16 +124,17 @@ public class RsvpsController : Controller
             }
         }
     }
-    
+
     [HttpPut("{id}")]
-    public async Task<IResult> Update([FromRoute] Guid id, [FromHeader(Name = "X-Auth-Admin")] string? value, PutRsvpDto dto, CancellationToken cancellationToken)
+    public async Task<IResult> Update([FromRoute] Guid id, [FromHeader(Name = "X-Auth-Admin")] string? value,
+        PutRsvpDto dto, CancellationToken cancellationToken)
     {
-        var responseRead = await Repository.ReadAsync(id,cancellationToken).ConfigureAwait(false);
-            
+        var responseRead = await Repository.ReadAsync(id, cancellationToken).ConfigureAwait(false);
+
         if (!responseRead.IsSuccess)
         {
             Logger.LogError("Cannot get rsvp with error: {ErrorMessage}.", responseRead.ValueFail.Message);
-                
+
             var failedResponse = responseRead.ValueFail;
             switch (failedResponse.StatusCode)
             {
@@ -139,13 +148,13 @@ public class RsvpsController : Controller
         var existingRsvp = responseRead.ValueSuccess!;
         var updatedRsvp = dto.ToEntity();
         updatedRsvp.Id = existingRsvp.Id;
-        
+
         if (AuthorizationNeeded(existingRsvp, updatedRsvp))
         {
             if (!IsAuthorized(value))
-                return Results.Forbid();        
+                return Results.Forbid();
         }
-        
+
         var responseUpdate = await Repository.UpdateAsync(updatedRsvp, cancellationToken).ConfigureAwait(false);
         if (!responseUpdate.IsSuccess)
         {
@@ -163,15 +172,24 @@ public class RsvpsController : Controller
         return Results.Ok(responseUpdate.ValueSuccess!.ToDto());
     }
 
-    private bool IsAuthorized( string? value )
+#if DEBUG
+    [HttpPost("seed")]
+    public async Task<IResult> Seed(CancellationToken cancellationToken)
     {
-        if ( value is null || !string.Equals(value, Configurations.AdminIdentifier) )
+        await Seeder.SeedAsync(cancellationToken).ConfigureAwait(false);
+        return Results.Ok();
+    }
+#endif
+
+    private bool IsAuthorized(string? value)
+    {
+        if (value is null || !string.Equals(value, Configurations.AdminIdentifier))
             return false;
-        
+
         return true;
     }
 
-    private bool AuthorizationNeeded( Rsvp existingEntity, Rsvp incomingEntity )
+    private bool AuthorizationNeeded(Rsvp existingEntity, Rsvp incomingEntity)
     {
         if (!string.Equals(existingEntity.Name, incomingEntity.Name)
             || !string.Equals(existingEntity.Type, incomingEntity.Type)
