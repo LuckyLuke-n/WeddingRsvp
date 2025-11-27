@@ -193,7 +193,8 @@ public class RsvpsController : Controller
     {
         if (!string.Equals(existingEntity.Name, incomingEntity.Name)
             || !string.Equals(existingEntity.Type, incomingEntity.Type)
-            || !string.Equals(existingEntity.NumberOfGuests, incomingEntity.NumberOfGuests))
+            || !string.Equals(existingEntity.NumberOfGuests, incomingEntity.NumberOfGuests)
+            || !string.Equals(existingEntity.Language, incomingEntity.Language))
         {
             return true;
         }

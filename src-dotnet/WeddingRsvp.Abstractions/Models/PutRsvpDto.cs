@@ -13,11 +13,11 @@ public class PutRsvpDto
     public GuestType Type { get; set; }
     
     [Required]
-    [Range(0, 10)]
+    [Range(1, 10)]
     public int NumberOfGuests { get; set; }
     
     [Required]
-    [Range(1, 10)]
+    [Range(0, 10)]
     public int NumberOfGuestsAttending { get; set; }
     
     [Required]
@@ -34,4 +34,8 @@ public class PutRsvpDto
     
     [Required]
     public string AdditionalInformation { get; set; } = string.Empty;
+    
+    [Required]
+    [EnumDataType(typeof(Language))]
+    public Language Language { get; set; }
 }

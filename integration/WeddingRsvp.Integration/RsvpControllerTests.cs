@@ -272,36 +272,49 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         _repositoryMock.Verify(x => x.UpdateAsync(It.Is<Rsvp>(r => r.AdditionalInformation == "New Info"), It.IsAny<CancellationToken>()), Times.Once);
     }
 
-    [Fact]
-    public async Task Update_CriticalData_WithoutAuth_ReturnsForbidden()
+    [Theory]
+    [InlineData("eb34fe42-920b-4b1e-a9c3-ccb2f8f6afbf",GuestType.Family, 2, 2, 1, 1, 0, "New Info", Language.de)]
+    [InlineData("b695dcb1-98a7-495f-a591-83f7ce1cd9a5",GuestType.Family, 4, 4, 2, 2, 0, "All attending", Language.en)]
+    [InlineData("e67b9d97-8213-4463-a2ba-ae813e64e76f",GuestType.Friends, 1, 0, 0, 0, 0, "Not attending", Language.de)]
+    public async Task Update_NonCriticalData_WithoutAuth_ReturnsForbidden(
+        string id,
+        GuestType type, 
+        int guests, 
+        int attending, 
+        int normal, 
+        int vegetarian, 
+        int vegan, 
+        string info,
+        Language language)
     {
         // Arrange
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
-        var id = Guid.NewGuid();
         
         var existingRsvp = new Rsvp
             {
-                Id = id.ToString(),
+                Id = id,
                 Name = "Frank",
                 NumberOfGuests = 2,
-                Type = WeddingRsvp.Api.Repository.Entities.GuestType.Friends
+                Type = WeddingRsvp.Api.Repository.Entities.GuestType.Friends,
+                Language = Language.en,
             };
         
         // Trying to change NumberOfGuests
         var updateDto = new PutRsvpDto 
         { 
             Name = "Frank", 
-            Type = GuestType.Friends, 
-            NumberOfGuests = 9,
-            NumberOfGuestsAttending = 9,
-            NumberOfNormalMeals = 7,
-            NumberOfVegetarianMeals = 1,
-            NumberOfVeganMeals = 1,
-            AdditionalInformation = "New Info"
+            Type = type, 
+            NumberOfGuests = guests,
+            NumberOfGuestsAttending = attending,
+            NumberOfNormalMeals = normal,
+            NumberOfVegetarianMeals = vegetarian,
+            NumberOfVeganMeals = vegan,
+            AdditionalInformation = info,
+            Language = (Abstractions.Models.Language)language,
         };
 
-        _repositoryMock.Setup(x => x.ReadAsync(id, It.IsAny<CancellationToken>()))
+        _repositoryMock.Setup(x => x.ReadAsync(Guid.Parse(id), It.IsAny<CancellationToken>()))
             .ReturnsAsync(RepositoryResponse<Rsvp, RepositoryFailResponse>.CreateSuccess(existingRsvp));
 
         // Act
