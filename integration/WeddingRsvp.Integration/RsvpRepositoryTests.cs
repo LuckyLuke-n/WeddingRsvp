@@ -175,6 +175,41 @@ public class RsvpRepositoryTests : IAsyncLifetime
     }
     
     [Fact]
+    public async Task UpdateAsync_WithSameEntity_ShouldUpdateRsvp()
+    {
+        // Arrange
+        var originalRsvp = new Rsvp 
+        {
+            Name = "Original Name",
+            Type = GuestType.Friends,
+            NumberOfGuests = 5,
+            Language = Language.de,
+        };
+        var createResult = await _serviceUnderTest.CreateAsync(originalRsvp);
+
+        var updatedRsvp = new Rsvp
+        {
+            Id = createResult.ValueSuccess!.Id,
+            Name = "Original Name",
+            Type = GuestType.Friends,
+            NumberOfGuests = 5,
+            Language = Language.de,
+            LastUpdated = TimeProvider.GetUtcNow().DateTime,
+        };
+
+        // Act
+        var result = await _serviceUnderTest.UpdateAsync(updatedRsvp);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.ValueSuccess.Should().BeEquivalentTo(updatedRsvp);
+
+        var dbRsvpResponse = await _serviceUnderTest.ReadAsync(Guid.Parse(result.ValueSuccess.Id));
+        dbRsvpResponse.IsSuccess.Should().BeTrue();
+        dbRsvpResponse.ValueSuccess.Should().BeEquivalentTo(updatedRsvp);
+    }
+    
+    [Fact]
     public async Task UpdateAsync_ShouldReturnNotFound_WhenNotExists()
     {
         // Arrange

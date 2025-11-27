@@ -271,6 +271,69 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         _repositoryMock.Verify(x => x.UpdateAsync(It.Is<Rsvp>(r => r.AdditionalInformation == "New Info"), It.IsAny<CancellationToken>()), Times.Once);
     }
+    
+        [Fact]
+    public async Task Update_NonCriticalData_WithExitingData_DoesNotRequireAuth_ReturnsOk()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
+        var id = Guid.NewGuid();
+        
+        // Existing entity
+        var existingRsvp = new Rsvp 
+        { 
+            Id = id.ToString(), 
+            Name = "Eve", 
+            Type = WeddingRsvp.Api.Repository.Entities.GuestType.Friends, 
+            NumberOfGuests = 2,
+            NumberOfGuestsAttending = 2,
+            NumberOfNormalMeals = 1,
+            NumberOfVegetarianMeals = 1,
+            NumberOfVeganMeals = 0,
+            AdditionalInformation = "Old Info",
+        };
+
+        // Incoming update (changing only AdditionalInformation, which is not sensitive)
+        var updateDto = new PutRsvpDto 
+        {
+            Name = "Eve", 
+            Type = GuestType.Friends, 
+            NumberOfGuests = 2,
+            NumberOfGuestsAttending = 2,
+            NumberOfNormalMeals = 1,
+            NumberOfVegetarianMeals = 1,
+            NumberOfVeganMeals = 0,
+            AdditionalInformation = "Old Info",
+        };
+
+        var updatedRsvp = new Rsvp
+        {
+            Id = id.ToString(), 
+            Name = "Eve", 
+            Type = WeddingRsvp.Api.Repository.Entities.GuestType.Friends, 
+            NumberOfGuests = 2,
+            NumberOfGuestsAttending = 2,
+            NumberOfNormalMeals = 1,
+            NumberOfVegetarianMeals = 1,
+            NumberOfVeganMeals = 0,
+            AdditionalInformation = "Old Info"
+        };
+
+        _repositoryMock.Setup(x => x.ReadAsync(id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(RepositoryResponse<Rsvp, RepositoryFailResponse>.CreateSuccess(existingRsvp));
+
+        _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Rsvp>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(RepositoryResponse<Rsvp, RepositoryFailResponse>.CreateSuccess(updatedRsvp));
+
+        // Act - NO HEADER provided
+        var response = await client.PutAsJsonAsync($"/api/rsvps/{id}", updateDto);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<Rsvp>();
+        result!.ToDto().Should().BeEquivalentTo(updateDto);
+    }
 
     [Theory]
     [InlineData("eb34fe42-920b-4b1e-a9c3-ccb2f8f6afbf",GuestType.Family, 2, 2, 1, 1, 0, "New Info", Language.de)]
