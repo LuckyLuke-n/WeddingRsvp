@@ -1,0 +1,16 @@
+@page "/admin"
+
+@inject NavigationManager Navigation
+
+<h3>Admin</h3>
+
+@code {
+    [SupplyParameterFromQuery(Name = "token")]
+    public string? Token { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrEmpty(Token))
+            Navigation.NavigateTo("/");
+    }
+}
