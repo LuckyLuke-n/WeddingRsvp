@@ -6,27 +6,49 @@
 
 @inject NavigationManager Navigation
 
-<h3>Rsvp</h3>
-
 <style>
     :root {
-        --primary-color: #8A4FFF;
+        --primary-color: #F4E1D2;
         --secondary-color: #FFB6C1;
-        --accent-color: #F4E1D2;
-        --text-color: #4A4238;
+        --accent-color: #4A4238;
+        --text-color: white;
+    }
+
+    /* Wrapper for the form content */
+    .rsvp-container {
+        width: 100%;
+        max-width: 600px; /* 1. Limits the width so it doesn't span the whole screen */
+        margin: 50px auto; /* 2. Centers the container horizontally with spacing on top/bottom */
+    
+        /*padding: 30px;*/
+        /*background: rgba(255, 255, 255, 0.85);*/
+        /*border-radius: 15px;*/
+        /*box-shadow: 0 4px 15px rgba(0,0,0,0.1);*/
+        /*border: 2px solid var(--secondary-color);*/
     }
 
     body {
-        font-family: 'Montserrat', sans-serif;
-        background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%);
-        background-attachment: fixed;
-        margin: 0;
-        color: var(--text-color);
+        font-family: 'WindSong', sans-serif;
+        
+        /*!* Background spans the whole screen *!*/
+        /*background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%);*/
+        /*background-attachment: fixed;*/
+        /*color: #4A4238;*/
+        
+        /* Ensure it takes full height */
         min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
+        margin: 0;
+        
+        /* Removed justify-content/align-items because we center the container directly in Rsvp.razor.css */
+    }
+
+    /* Ensure inputs take full width of the container, not the screen */
+    input[type="text"],
+    input[type="number"],
+    textarea {
+        width: 100%;
+        box-sizing: border-box; /* Ensures padding doesn't overflow the width */
+        color: var(--text-color)
     }
 
     .form-group {
@@ -45,7 +67,7 @@
         margin-bottom: 10px;
         font-weight: 600;
         color: var(--primary-color);
-        font-family: 'Great Vibes', cursive;
+        font-family: 'WindSong', cursive;
         font-size: 1.2em;
     }
 
@@ -59,18 +81,20 @@
         border: 2px solid var(--secondary-color);
         border-radius: 10px;
         transition: all 0.3s ease;
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'WindSong', sans-serif;
+        background-color: rgba(255, 255, 255, 0.2);
+        color: var(--text-color)
     }
 
     input:focus,
     textarea:focus {
         outline: none;
         border-color: var(--primary-color);
-        box-shadow: 0 0 10px rgba(138, 79, 255, 0.2);
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
 
     .btn {
-        background-color: var(--primary-color);
+        background-color: var(--secondary-color);
         color: white;
         border: none;
         padding: 12px 25px;
@@ -79,16 +103,23 @@
         transition: all 0.3s ease;
     }
 
+    .btn:hover {
+        background-color: var(--accent-color);
+        color: white;
+
+        /* Add a slight lift effect */
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
     .radio-container {
         display: flex;
         align-items: center;
         gap: 20px;
     }
-
-    /* Add any additional styles as needed */
 </style>
 
-<EditForm Model="@_rsvp" OnValidSubmit="HandleValidSubmit">
+<EditForm Model="@_rsvp" OnValidSubmit="HandleValidSubmit" class="rsvp-container">
     <DataAnnotationsValidator />
     <ValidationSummary />
 

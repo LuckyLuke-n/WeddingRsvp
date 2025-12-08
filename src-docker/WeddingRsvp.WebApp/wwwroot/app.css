@@ -65,4 +65,17 @@ h1:focus {
     background-position: center;             /* Center the image */
     background-repeat: no-repeat;            /* Do not repeat the image */
     min-height: 100vh;                       /* Ensure it takes at least full viewport height */
+    margin: 0;
+}
+
+.windsong-regular {
+    font-family: "WindSong", cursive;
+    font-weight: 300;
+    font-style: normal;
+}
+
+.grey-qo-regular {
+    font-family: "Grey Qo", cursive;
+    font-weight: 400;
+    font-style: normal;
 }
