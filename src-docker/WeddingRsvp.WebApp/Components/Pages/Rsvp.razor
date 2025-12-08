@@ -1,17 +1,165 @@
 @page "/rsvp"
 @page "/rsvp/{id}"
 
+@using WeddingRsvp.Client
+@using WeddingRsvp.Abstractions.Models
+
 @inject NavigationManager Navigation
 
 <h3>Rsvp</h3>
 
+<style>
+    :root {
+        --primary-color: #8A4FFF;
+        --secondary-color: #FFB6C1;
+        --accent-color: #F4E1D2;
+        --text-color: #4A4238;
+    }
+
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%);
+        background-attachment: fixed;
+        margin: 0;
+        color: var(--text-color);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+        position: relative;
+    }
+
+    .form-group:has(.meal-selection) {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(138, 79, 255, 0.2);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: var(--primary-color);
+        font-family: 'Great Vibes', cursive;
+        font-size: 1.2em;
+    }
+
+    input[type="radio"],
+    input[type="number"],
+    input[type="text"],
+    textarea {
+        width: 100%;
+        padding: 12px;
+        margin-top: 8px;
+        border: 2px solid var(--secondary-color);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    input:focus,
+    textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 10px rgba(138, 79, 255, 0.2);
+    }
+
+    .btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .radio-container {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    /* Add any additional styles as needed */
+</style>
+
+<EditForm Model="@_rsvp" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Will you attend?</label>
+        <div class="radio-container">
+            <InputRadioGroup @bind-Value="@_rsvp.Response">
+                    <InputRadio Value="@ResponseType.Yes" id="attend-yes" />
+                    <label for="attend-yes">Yes</label>
+
+                    <InputRadio Value="@ResponseType.No" id="attend-no" />
+                    <label for="attend-no">No</label>
+                </InputRadioGroup>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="guests">Total number of guests attending</label>
+        <InputNumber @bind-Value="@_rsvp.NumberOfGuestsAttending" id="guests" min="0" max="10" />
+       
+        <label for="overnightGuests">Total number of guests staying overnight</label>
+        <InputNumber @bind-Value="@_rsvp.NumberOfGuestsOvernight" id="overnightGuests" min="0" max="10" />
+
+        <div class="form-group">
+            <label>Meal Selection</label>
+            <div class="meal-selection">
+                <div class="meal-type">
+                    <label for="default-meals">
+                        Standard Meals
+                        <InputNumber @bind-Value="@_rsvp.NumberOfNormalMeals" id="default-meals" min="0" max="10" placeholder="Number of standard meals" />
+                    </label>
+                </div>
+                <div class="meal-type">
+                    <label for="vegetarian-meals">
+                        Vegetarian Meals
+                        <InputNumber @bind-Value="@_rsvp.NumberOfVegetarianMeals" id="vegetarian-meals" min="0" max="10" placeholder="Number of vegetarian meals" />
+                    </label>
+                </div>
+                <div class="meal-type">
+                    <label for="vegan-meals">
+                        Vegan Meals
+                        <InputNumber @bind-Value="@_rsvp.NumberOfVeganMeals" id="vegan-meals" min="0" max="10" placeholder="Number of vegan meals" />
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="names">Additional information</label>
+            <InputTextArea @bind-Value="@_rsvp.AdditionalInformation" id="names" rows="3" placeholder="Is there anything else we need to know?" />
+        </div>
+
+        <button type="submit" class="btn">Submit</button>
+    </div>
+</EditForm>
+
 @code {
     [Parameter]
     public string? Id { get; set; }
+
+    private RsvpGuest _rsvp = new();
     
     protected override void OnInitialized()
     {
         if (string.IsNullOrEmpty(Id))
             Navigation.NavigateTo("/");
+        
+    }
+
+    private void HandleValidSubmit()
+    {
+        //
     }
 }
