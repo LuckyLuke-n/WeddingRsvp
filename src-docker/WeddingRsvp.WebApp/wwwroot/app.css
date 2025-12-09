@@ -64,6 +64,7 @@ h1:focus {
     background-size: cover;                  /* Scale image to cover the entire container */
     background-position: center;             /* Center the image */
     background-repeat: no-repeat;            /* Do not repeat the image */
+    background-attachment: fixed;
     min-height: 100vh;                       /* Ensure it takes at least full viewport height */
     margin: 0;
 }
