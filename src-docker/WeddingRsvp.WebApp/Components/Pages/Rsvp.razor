@@ -12,21 +12,21 @@
         --secondary-color: #FFB6C1;
         --accent-color: #4A4238;
         --text-color: white;
+        --font-family: 'Licorice';
     }
 
     /* Wrapper for the form content */
     .rsvp-container {
         width: 100%;
         max-width: 600px; /* 1. Limits the width so it doesn't span the whole screen */
-        margin: 50px auto; /* 2. Centers the container horizontally with spacing on top/bottom */
+        margin: auto; /* 2. Centers the container horizontally with spacing on top/bottom */
     }
 
     body {
-        font-family: 'Grey Qo', sans-serif;
+        font-family: var(--font-family), sans-serif;
                 
         /* Ensure it takes full height */
         min-height: 100vh;
-        margin: 0;
     }
 
     /* Ensure inputs take full width of the container, not the screen */
@@ -45,6 +45,11 @@
         position: relative;
     }
 
+    /* Add spacing after the submit button */
+    .rsvp-container .btn[type="submit"] {
+        margin-bottom: 50px;
+    }
+
     .form-group:has(.meal-selection) {
         margin-top: 40px;
         padding-top: 20px;
@@ -56,28 +61,32 @@
         margin-bottom: 10px;
         font-weight: 600;
         color: var(--primary-color);
-        font-family: 'Grey Qo', cursive;
+        font-family: var(--font-family), cursive;
         font-size: 42px;
         line-height: 58px;
     }
 
-    input[type="radio"],
+    /*input[type="radio"],*/
     input[type="number"],
     input[type="text"],
-    textarea {
+    textarea,
+    select {
         width: 100%;
         padding: 12px;
         margin-top: 8px;
         border: 2px solid var(--secondary-color);
         border-radius: 10px;
         transition: all 0.3s ease;
-        font-family: 'Grey Qo', sans-serif;
+        font-family: var(--font-family), sans-serif;
+        font-size: 42px;
+        line-height: 58px;
         background-color: rgba(255, 255, 255, 0.2);
         color: var(--text-color)
     }
 
     input:focus,
-    textarea:focus {
+    textarea:focus,
+    select:focus {
         outline: none;
         border-color: var(--primary-color);
         box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
@@ -104,10 +113,10 @@
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
 
-    .radio-container {
-        display: flex;
-        align-items: center;
-        gap: 20px;
+    input::placeholder,
+    textarea::placeholder {
+        color: rgba(255, 255, 255, 0.85);
+        opacity: 1; /* important for Firefox, otherwise it forces lower opacity */
     }
 </style>
 
@@ -117,15 +126,10 @@
 
     <div class="form-group">
         <label>Will you attend?</label>
-        <div class="radio-container">
-            <InputRadioGroup @bind-Value="@_rsvp.Response">
-                    <InputRadio Value="@ResponseType.Yes" id="attend-yes" />
-                    <label for="attend-yes">Yes</label>
-
-                    <InputRadio Value="@ResponseType.No" id="attend-no" />
-                    <label for="attend-no">No</label>
-                </InputRadioGroup>
-        </div>
+        <InputSelect @bind-Value="@_rsvp.Response">
+            <option value="@ResponseType.Yes">Yes</option>
+            <option value="@ResponseType.No">No</option>
+        </InputSelect>
     </div>
 
     <div class="form-group">
@@ -140,19 +144,19 @@
             <div class="meal-selection">
                 <div class="meal-type">
                     <label for="default-meals">
-                        Standard Meals
+                        Meat menu
                         <InputNumber @bind-Value="@_rsvp.NumberOfNormalMeals" id="default-meals" min="0" max="10" placeholder="Number of standard meals" />
                     </label>
                 </div>
                 <div class="meal-type">
                     <label for="vegetarian-meals">
-                        Vegetarian Meals
+                        Fish menu
                         <InputNumber @bind-Value="@_rsvp.NumberOfVegetarianMeals" id="vegetarian-meals" min="0" max="10" placeholder="Number of vegetarian meals" />
                     </label>
                 </div>
                 <div class="meal-type">
                     <label for="vegan-meals">
-                        Vegan Meals
+                        Vegetarian menu
                         <InputNumber @bind-Value="@_rsvp.NumberOfVeganMeals" id="vegan-meals" min="0" max="10" placeholder="Number of vegan meals" />
                     </label>
                 </div>
