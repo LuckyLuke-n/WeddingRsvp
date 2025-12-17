@@ -1,16 +1,194 @@
 @page "/admin"
-
+@using WeddingRsvp.Abstractions.Models
 @inject NavigationManager Navigation
+@rendermode InteractiveServer
 
-<h3>Admin</h3>
+<style>
+    .admin-container {
+        width: 100%;
+        max-width: 1000px;
+        margin: auto;
+        color: var(--text-color);
+        font-family: var(--font-family), sans-serif;
+        padding: 20px;
+    }
+
+    .login-box {
+        max-width: 400px;
+        margin: 100px auto;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 40px;
+        border-radius: 15px;
+        border: 2px solid var(--secondary-color);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    th {
+        background: var(--accent-color);
+        color: var(--primary-color);
+    }
+
+    .admin-input {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid var(--secondary-color);
+        color: white;
+        padding: 5px;
+        border-radius: 5px;
+        width: 100%;
+    }
+
+    .action-btn {
+        padding: 5px 15px;
+        border-radius: 15px;
+        cursor: pointer;
+        border: none;
+        font-size: 14px;
+        margin-right: 5px;
+    }
+
+    .btn-save { background-color: #4CAF50; color: white; }
+    .btn-delete { background-color: #f44336; color: white; }
+    .btn-edit { background-color: var(--secondary-color); color: white; }
+    .btn-add { background-color: var(--primary-color); color: var(--accent-color); font-weight: bold; margin-bottom: 10px; }
+</style>
+
+<div class="admin-container">
+    @if (!_isAuthenticated)
+    {
+        <div class="login-box">
+            <h2 style="color: var(--primary-color)">Admin Login</h2>
+            <input type="password" @bind="_passphrase" class="admin-input" placeholder="Enter Passphrase" @onkeyup="HandleKeyUp" />
+            <button class="btn" style="margin-top: 20px; width: 100%" @onclick="Login">Login</button>
+        </div>
+    }
+    else
+    {
+        <h2 style="color: var(--primary-color); font-family: var(--font-family), cursive;">Manage Invitations</h2>
+        
+        <button class="action-btn btn-add" @onclick="AddRow">Add New Entry</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Guests</th>
+                    <th>Language</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var invite in _invites)
+                {
+                    <tr>
+                        @if (_editingId == invite.Id)
+                        {
+                            <td><input @bind="invite.Name" class="admin-input" /></td>
+                            <td>
+                                <select @bind="invite.Type" class="admin-input">
+                                    @foreach (var type in Enum.GetValues<GuestType>())
+                                    {
+                                        <option value="@type">@type</option>
+                                    }
+                                </select>
+                            </td>
+                            <td><input type="number" @bind="invite.NumberOfGuests" class="admin-input" /></td>
+                            <td>
+                                <select @bind="invite.Language" class="admin-input">
+                                    @foreach (var lang in Enum.GetValues<Language>())
+                                    {
+                                        <option value="@lang">@lang</option>
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <button class="action-btn btn-save" @onclick="() => Save(invite)">Save</button>
+                                <button class="action-btn" @onclick="() => _editingId = null">Cancel</button>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@invite.Name</td>
+                            <td>@invite.Type</td>
+                            <td>@invite.NumberOfGuests</td>
+                            <td>@invite.Language</td>
+                            <td>
+                                <button class="action-btn btn-edit" @onclick="() => _editingId = invite.Id">Edit</button>
+                                <button class="action-btn btn-delete" @onclick="() => Delete(invite.Id)">Delete</button>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
 
 @code {
-    [SupplyParameterFromQuery(Name = "token")]
-    public string? Token { get; set; }
+    private bool _isAuthenticated;
+    private string _passphrase = "";
+    private string? _editingId;
+    
+    // Mock data for demonstration
+    private List<GetRsvpDto> _invites = new();
 
-    protected override void OnInitialized()
+    private void Login()
     {
-        if (string.IsNullOrEmpty(Token))
-            Navigation.NavigateTo("/");
+        // Replace "secret" with your desired passphrase
+        if (_passphrase == "secret")
+        {
+            _isAuthenticated = true;
+            // In a real app, you would fetch data from a service here
+            LoadMockData();
+        }
+    }
+
+    private void HandleKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+            Login();
+    }
+
+    private void LoadMockData()
+    {
+        _invites = new List<GetRsvpDto>
+        {
+            new() { Id = "1", Name = "Hubert", Type = GuestType.Family, NumberOfGuests = 2, Language = Language.de },
+            new() { Id = "2", Name = "Anna", Type = GuestType.Friends, NumberOfGuests = 1, Language = Language.en }
+        };
+    }
+
+    private void AddRow()
+    {
+        var newId = Guid.NewGuid().ToString();
+        var newInvite = new GetRsvpDto { Id = newId, Name = "New Guest" };
+        _invites.Insert(0, newInvite);
+        _editingId = newId;
+    }
+
+    private void Save(GetRsvpDto invite)
+    {
+        // Implement service call to persist changes
+        _editingId = null;
+    }
+
+    private void Delete(string id)
+    {
+        _invites.RemoveAll(x => x.Id == id);
     }
 }
