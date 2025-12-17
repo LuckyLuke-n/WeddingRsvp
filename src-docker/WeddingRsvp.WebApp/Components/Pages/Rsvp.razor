@@ -7,16 +7,6 @@
 @inject NavigationManager Navigation
 
 <style>
-    :root {
-        --primary-color: #F4E1D2;
-        --secondary-color: #FFB6C1;
-        --accent-color: #4A4238;
-        --text-color: white;
-        --font-family: 'Helvetica';
-        --font-size: 24px;
-        --line-height: 36px;
-    }
-
     /* Wrapper for the form content */
     .rsvp-container {
         width: 100%;
@@ -94,6 +84,55 @@
         box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
 
+    /* Custom Radio Button Styling */
+    .radio-group {
+        display: flex;
+        gap: 30px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+    .radio-option {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: var(--font-size);
+        color: var(--text-color);
+    }
+
+    .radio-option input[type="radio"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 24px;
+        height: 24px;
+        border: 2px solid var(--secondary-color);
+        border-radius: 50%;
+        margin-right: 12px;
+        background-color: rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        position: relative;
+        vertical-align: middle;
+        transition: all 0.3s ease;
+    }
+
+    .radio-option input[type="radio"]:checked {
+        background-color: var(--secondary-color);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 8px var(--secondary-color);
+    }
+
+    .radio-option input[type="radio"]:checked::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        background-color: white;
+        border-radius: 50%;
+    }
+
     .btn {
         background-color: var(--secondary-color);
         color: white;
@@ -128,16 +167,28 @@
 
     <div class="form-group">
         <label>Will you attend?</label>
-        <InputSelect @bind-Value="@_rsvp.Response">
-            <option value="@ResponseType.Yes">Yes</option>
-            <option value="@ResponseType.No">No</option>
-        </InputSelect>
+        <InputRadioGroup @bind-Value="@_rsvp.Response">
+            <div class="radio-group">
+                <label class="radio-option">
+                    <InputRadio Value="@ResponseType.Yes" /> Yes
+                </label>
+                <label class="radio-option">
+                    <InputRadio Value="@ResponseType.No" /> No
+                </label>
+            </div>
+        </InputRadioGroup>
         
         <label>Will you bring your partner?</label>
-        <InputSelect @bind-Value="@_rsvp.Response">
-            <option value="@ResponseType.Yes">Yes</option>
-            <option value="@ResponseType.No">No</option>
-        </InputSelect>
+        <InputRadioGroup @bind-Value="@_rsvp.BringPartner">
+            <div class="radio-group">
+                <label class="radio-option">
+                    <InputRadio Value="true" /> Yes
+                </label>
+                <label class="radio-option">
+                    <InputRadio Value="false" /> No
+                </label>
+            </div>
+        </InputRadioGroup>
     </div>
 
     <div class="form-group">

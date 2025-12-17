@@ -7,7 +7,7 @@ public class RsvpGuest
     public string Id { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public ResponseType Response { get; set; }
-    public int NumberOfGuestsAttending { get; set; }
+    public ResponseType BringPartner { get; set; }
     public int NumberOfGuestsOvernight { get; set; }
     public int NumberOfNormalMeals { get; set; }
     public int NumberOfVegetarianMeals { get; set; }
