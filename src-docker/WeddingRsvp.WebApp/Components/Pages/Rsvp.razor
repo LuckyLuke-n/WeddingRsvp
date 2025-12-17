@@ -1,0 +1,248 @@
+@page "/rsvp"
+@page "/rsvp/{id}"
+
+@using WeddingRsvp.Client
+@using WeddingRsvp.Abstractions.Models
+
+@inject NavigationManager Navigation
+
+<style>
+    /* Wrapper for the form content */
+    .rsvp-container {
+        width: 100%;
+        max-width: 600px; /* 1. Limits the width so it doesn't span the whole screen */
+        margin: auto; /* 2. Centers the container horizontally with spacing on top/bottom */
+    }
+
+    body {
+        font-family: var(--font-family), sans-serif;
+                
+        /* Ensure it takes full height */
+        min-height: 100vh;
+    }
+
+    /* Ensure inputs take full width of the container, not the screen */
+    input[type="text"],
+    input[type="number"],
+    textarea {
+        width: 100%;
+        box-sizing: border-box; /* Ensures padding doesn't overflow the width */
+        color: var(--text-color);
+        font-size: var(--font-size);
+        line-height: var(--line-height);
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+        position: relative;
+    }
+
+    /* Add spacing after the submit button */
+    .rsvp-container .btn[type="submit"] {
+        margin-bottom: 50px;
+    }
+
+    .form-group:has(.meal-selection) {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(138, 79, 255, 0.2);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: var(--primary-color);
+        font-family: var(--font-family), cursive;
+        font-size: var(--font-size);
+        line-height: var(--line-height);
+    }
+
+    /*input[type="radio"],*/
+    input[type="number"],
+    input[type="text"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 12px;
+        margin-top: 8px;
+        border: 2px solid var(--secondary-color);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        font-family: var(--font-family), sans-serif;
+        font-size: var(--font-size);
+        line-height: var(--line-height);
+        background-color: rgba(255, 255, 255, 0.2);
+        color: var(--text-color)
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Custom Radio Button Styling */
+    .radio-group {
+        display: flex;
+        gap: 30px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+    .radio-option {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: var(--font-size);
+        color: var(--text-color);
+    }
+
+    .radio-option input[type="radio"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 24px;
+        height: 24px;
+        border: 2px solid var(--secondary-color);
+        border-radius: 50%;
+        margin-right: 12px;
+        background-color: rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        position: relative;
+        vertical-align: middle;
+        transition: all 0.3s ease;
+    }
+
+    .radio-option input[type="radio"]:checked {
+        background-color: var(--secondary-color);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 8px var(--secondary-color);
+    }
+
+    .radio-option input[type="radio"]:checked::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        background-color: white;
+        border-radius: 50%;
+    }
+
+    .btn {
+        background-color: var(--secondary-color);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: var(--font-size);
+        line-height: var(--line-height);
+    }
+
+    .btn:hover {
+        background-color: var(--accent-color);
+        color: white;
+
+        /* Add a slight lift effect */
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+        color: rgba(255, 255, 255, 0.85);
+        opacity: 1; /* important for Firefox, otherwise it forces lower opacity */
+    }
+</style>
+
+<EditForm Model="@_rsvp" OnValidSubmit="HandleValidSubmit" class="rsvp-container">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Will you attend?</label>
+        <InputRadioGroup @bind-Value="@_rsvp.Response">
+            <div class="radio-group">
+                <label class="radio-option">
+                    <InputRadio Value="@ResponseType.Yes" /> Yes
+                </label>
+                <label class="radio-option">
+                    <InputRadio Value="@ResponseType.No" /> No
+                </label>
+            </div>
+        </InputRadioGroup>
+        
+        <label>Will you bring your partner?</label>
+        <InputRadioGroup @bind-Value="@_rsvp.BringPartner">
+            <div class="radio-group">
+                <label class="radio-option">
+                    <InputRadio Value="true" /> Yes
+                </label>
+                <label class="radio-option">
+                    <InputRadio Value="false" /> No
+                </label>
+            </div>
+        </InputRadioGroup>
+    </div>
+
+    <div class="form-group">
+        <label for="overnightGuests">Will you bring children? If yes how many?</label>
+        <InputNumber @bind-Value="@_rsvp.NumberOfGuestsOvernight" id="overnightGuests" min="0" max="10" />
+
+        <div class="form-group">
+            <label>Meal Selection</label>
+            <div class="meal-selection">
+                <div class="meal-type">
+                    <label for="default-meals">
+                        Meat menu
+                        <InputNumber @bind-Value="@_rsvp.NumberOfNormalMeals" id="default-meals" min="0" max="10" placeholder="Number of standard meals" />
+                    </label>
+                </div>
+                <div class="meal-type">
+                    <label for="vegetarian-meals">
+                        Fish menu
+                        <InputNumber @bind-Value="@_rsvp.NumberOfVegetarianMeals" id="vegetarian-meals" min="0" max="10" placeholder="Number of vegetarian meals" />
+                    </label>
+                </div>
+                <div class="meal-type">
+                    <label for="vegan-meals">
+                        Vegetarian menu
+                        <InputNumber @bind-Value="@_rsvp.NumberOfVeganMeals" id="vegan-meals" min="0" max="10" placeholder="Number of vegan meals" />
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="names">Additional information</label>
+            <InputTextArea @bind-Value="@_rsvp.AdditionalInformation" id="names" rows="3" placeholder="Is there anything else we need to know?" />
+        </div>
+
+        <button type="submit" class="btn">Submit</button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+
+    private RsvpGuest _rsvp = new();
+    
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrEmpty(Id))
+            Navigation.NavigateTo("/");
+        
+    }
+
+    private void HandleValidSubmit()
+    {
+        //
+    }
+}

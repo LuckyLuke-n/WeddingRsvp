@@ -58,3 +58,41 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+.page-background-class {
+    background-image:url("background.png");
+    background-size: cover;                  /* Scale image to cover the entire container */
+    background-position: center;             /* Center the image */
+    background-repeat: no-repeat;            /* Do not repeat the image */
+    background-attachment: fixed;
+    min-height: 100vh;                       /* Ensure it takes at least full viewport height */
+    margin: 0;
+}
+
+.windsong-regular {
+    font-family: "WindSong", cursive;
+    font-weight: 300;
+    font-style: normal;
+}
+
+.grey-qo-regular {
+    font-family: "Grey Qo", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.grey-qo-regular {
+    font-family: "Licorice", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+
+:root {
+    --primary-color: #F4E1D2;
+    --secondary-color: #FFB6C1;
+    --accent-color: #4A4238;
+    --text-color: white;
+    --font-family: 'Licorice';
+    --font-size: 36px;
+    --line-height: 36px;
+}

@@ -1,0 +1,192 @@
+@page "/invite"
+@page "/invite/{id}"
+
+@inject NavigationManager Navigation
+
+<style>
+    .invite-container {
+        width: 100%;
+        max-width: 600px;
+        margin: auto;
+        color: var(--text-color);
+        font-family: var(--font-family), sans-serif;
+    }
+
+    h1 {
+        font-family: var(--font-family), cursive;
+        color: var(--text-color);
+        font-size: 60px;
+        margin-bottom: 30px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .text-block {
+        font-size: var(--font-size);
+        line-height: var(--line-height);
+        margin-bottom: 40px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .itinerary {
+        background-color: rgba(255, 255, 255, 0.3);
+        padding: 30px;
+        border-radius: 15px;
+        border: 1px solid var(--secondary-color);
+        margin-bottom: 40px;
+    }
+
+    .itinerary h2 {
+        color: var(--text-color);
+        font-size: var(--font-size);
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .itinerary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        font-size: 28px;
+        line-height: var(--line-height);
+    }
+
+    .btn-container {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .faq-header {
+        font-family: var(--font-family), cursive;
+        color: var(--text-color);
+        font-size: 42px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .faq-description {
+        text-align: center;
+        font-size: var(--font-size);
+        line-height: var(--line-height);
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 30px;
+        padding: 0 20px;
+    }
+
+    .btn {
+        background-color: var(--secondary-color);
+        color: white;
+        border: none;
+        padding: 15px 35px;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: var(--font-size);
+        line-height: var(--line-height);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn:hover {
+        background-color: var(--accent-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* FAQ Collapsible Styling */
+    .faq-section {
+        margin-top: 50px;
+    }
+
+    details {
+        background-color: rgba(255, 255, 255, 0.3);
+        border: 1px solid var(--secondary-color);
+        border-radius: 10px;
+        margin-bottom: 15px;
+        padding: 15px;
+        transition: all 0.3s ease;
+    }
+
+    summary {
+        font-weight: 600;
+        cursor: pointer;
+        list-style: none;
+        color: var(--text-color);
+        font-size: var(--font-size);
+        line-height: var(--line-height);
+    }
+
+    summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .faq-answer {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        font-size: 28px;
+        line-height: var(--line-height);
+    }
+</style>
+
+<div class="invite-container">
+    <h1>Dear Hubert,</h1>
+
+    <div class="text-block">
+        We are overjoyed to invite you to celebrate our special day. 
+        It wouldn't be the same without you there to share in our love and happiness as we start our new life together.
+    </div>
+
+    <div class="itinerary">
+        <h2>Itinerary</h2>
+        <div class="itinerary-item"><span>1 pm</span> <span>Welcome</span></div>
+        <div class="itinerary-item"><span>3 pm</span> <span>Coffee & Cake</span></div>
+        <div class="itinerary-item"><span>6 pm</span> <span>Dinner</span></div>
+        <div class="itinerary-item"><span>8 pm</span> <span>Dance & Party</span></div>
+    </div>
+
+    <div class="btn-container">
+        <a href="/rsvp/@Id" class="btn">Let us know if you are attending</a>
+    </div>
+
+    <div class="faq-section">
+        <h2 class="faq-header">FAQ</h2>
+        <div class="faq-description">
+            If you have any questions reach out to us. Alternatively the FAQ might help you.
+        </div>
+
+        <details>
+            <summary>Is there a dress code?</summary>
+            <div class="faq-answer">No.</div>
+        </details>
+
+        <details>
+            <summary>Are children welcome?</summary>
+            <div class="faq-answer">Of course! We would love to see your little ones there.</div>
+        </details>
+
+        <details>
+            <summary>Where can I park?</summary>
+            <div class="faq-answer">There is ample parking available directly at the venue entrance.</div>
+        </details>
+    </div>
+</div>
+
+
+
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrEmpty(Id))
+            Navigation.NavigateTo("/");
+    }
+}

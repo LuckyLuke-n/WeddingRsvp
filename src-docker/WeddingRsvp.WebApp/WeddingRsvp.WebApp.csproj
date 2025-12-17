@@ -19,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src-dotnet\WeddingRsvp.Client\WeddingRsvp.Client.csproj" />
       <ProjectReference Include="..\..\src-dotnet\WeddingRsvp.ServiceDefaults\WeddingRsvp.ServiceDefaults.csproj" />
     </ItemGroup>
 
