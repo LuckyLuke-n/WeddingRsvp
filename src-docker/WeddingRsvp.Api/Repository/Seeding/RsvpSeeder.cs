@@ -41,8 +41,6 @@ public class RsvpSeeder
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = "John and Jane",
-                Type = GuestType.Friends,
-                NumberOfGuests = 4,
                 Language = Language.en,
             },
 
@@ -50,8 +48,6 @@ public class RsvpSeeder
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = "Maria",
-                Type = GuestType.Family,
-                NumberOfGuests = 1,
                 Language = Language.en,
             },
 
@@ -59,8 +55,6 @@ public class RsvpSeeder
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = "Max",
-                Type = GuestType.Friends,
-                NumberOfGuests = 1,
                 Language = Language.de,
             },
         ];

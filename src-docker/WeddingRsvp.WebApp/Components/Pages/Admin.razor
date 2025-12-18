@@ -99,15 +99,8 @@
                         @if (_editingId == invite.Id)
                         {
                             <td><input @bind="invite.Name" class="admin-input" /></td>
-                            <td>
-                                <select @bind="invite.Type" class="admin-input">
-                                    @foreach (var type in Enum.GetValues<GuestType>())
-                                    {
-                                        <option value="@type">@type</option>
-                                    }
-                                </select>
-                            </td>
-                            <td><input type="number" @bind="invite.NumberOfGuests" class="admin-input" /></td>
+                            <td><input type="number" @bind="invite.Salutation" class="admin-input" /></td>
+                            <td><input type="number" @bind="invite.NumberOfChildren" class="admin-input" /></td>
                             <td>
                                 <select @bind="invite.Language" class="admin-input">
                                     @foreach (var lang in Enum.GetValues<Language>())
@@ -124,8 +117,8 @@
                         else
                         {
                             <td>@invite.Name</td>
-                            <td>@invite.Type</td>
-                            <td>@invite.NumberOfGuests</td>
+                            <td>@invite.Salutation</td>
+                            <td>@invite.NumberOfChildren</td>
                             <td>@invite.Language</td>
                             <td>
                                 <button class="action-btn btn-edit" @onclick="() => _editingId = invite.Id">Edit</button>
@@ -168,8 +161,8 @@
     {
         _invites = new List<GetRsvpDto>
         {
-            new() { Id = "1", Name = "Hubert", Type = GuestType.Family, NumberOfGuests = 2, Language = Language.de },
-            new() { Id = "2", Name = "Anna", Type = GuestType.Friends, NumberOfGuests = 1, Language = Language.en }
+            new() { Id = "1", Name = "Hubert", Salutation = "Lieber Hubert", NumberOfChildren = 2, Language = Language.de },
+            new() { Id = "2", Name = "Anna", Salutation = "Dear Anna", NumberOfChildren = 1, Language = Language.en }
         };
     }
 

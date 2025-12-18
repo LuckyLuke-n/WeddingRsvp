@@ -45,11 +45,10 @@ public class RsvpRepositoryTests : IAsyncLifetime
         {
             Language = Language.en,
             Name = "John Doe",
-            Type = GuestType.Family,
-            NumberOfGuests = 2,
-            NumberOfNormalMeals = 1,
-            NumberOfVegetarianMeals = 1,
-            NumberOfVeganMeals = 0,
+            NumberOfChildren = 2,
+            NumberOfMeatMenus = 1,
+            NumberOfFishMenus = 1,
+            NumberOfVegetarianMenus = 0,
             AdditionalInformation = ""
         };
 
@@ -72,8 +71,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
         var rsvp = new Rsvp
         {
             Name = "Jane Doe",
-            Type = GuestType.Friends,
-            NumberOfGuests = 1,
+            NumberOfChildren = 1,
             Language = Language.en,
         };
         await _serviceUnderTest.CreateAsync(rsvp);
@@ -141,8 +139,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
         var originalRsvp = new Rsvp 
         {
             Name = "Original Name",
-            Type = GuestType.Friends,
-            NumberOfGuests = 5,
+            NumberOfChildren = 5,
             Language = Language.de,
         };
         var createResult = await _serviceUnderTest.CreateAsync(originalRsvp);
@@ -151,12 +148,10 @@ public class RsvpRepositoryTests : IAsyncLifetime
         {
             Id = createResult.ValueSuccess!.Id,
             Name = "Updated Name",
-            Type = GuestType.Family,
-            NumberOfGuests = 6,
-            NumberOfGuestsAttending = 5,
-            NumberOfNormalMeals = 2,
-            NumberOfVegetarianMeals = 2,
-            NumberOfVeganMeals = 1,
+            NumberOfChildren = 6,
+            NumberOfMeatMenus = 2,
+            NumberOfFishMenus = 2,
+            NumberOfVegetarianMenus = 1,
             AdditionalInformation = "Updated info",
             Language = Language.de,
             LastUpdated = TimeProvider.GetUtcNow().DateTime,
@@ -181,8 +176,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
         var originalRsvp = new Rsvp 
         {
             Name = "Original Name",
-            Type = GuestType.Friends,
-            NumberOfGuests = 5,
+            NumberOfChildren = 5,
             Language = Language.de,
         };
         var createResult = await _serviceUnderTest.CreateAsync(originalRsvp);
@@ -191,8 +185,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
         {
             Id = createResult.ValueSuccess!.Id,
             Name = "Original Name",
-            Type = GuestType.Friends,
-            NumberOfGuests = 5,
+            NumberOfChildren = 5,
             Language = Language.de,
             LastUpdated = TimeProvider.GetUtcNow().DateTime,
         };
@@ -216,8 +209,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
         var originalRsvp = new Rsvp 
         {
             Name = "Original Name",
-            Type = GuestType.Friends,
-            NumberOfGuests = 5,
+            NumberOfChildren = 5,
             Language = Language.en,
         };
         var createResult = await _serviceUnderTest.CreateAsync(originalRsvp);
@@ -226,12 +218,10 @@ public class RsvpRepositoryTests : IAsyncLifetime
         {
             Id = Guid.NewGuid().ToString(),
             Name = "Updated Name",
-            Type = GuestType.Family,
-            NumberOfGuests = 6,
-            NumberOfGuestsAttending = 5,
-            NumberOfNormalMeals = 2,
-            NumberOfVegetarianMeals = 2,
-            NumberOfVeganMeals = 1,
+            NumberOfChildren = 6,
+            NumberOfMeatMenus = 2,
+            NumberOfFishMenus = 2,
+            NumberOfVegetarianMenus = 1,
             AdditionalInformation = "Updated info",
             Language = Language.en,
             LastUpdated = TimeProvider.GetUtcNow().DateTime,

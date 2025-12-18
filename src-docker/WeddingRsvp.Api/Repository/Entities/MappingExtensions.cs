@@ -11,14 +11,16 @@ public static class MappingExtensions
             AdditionalInformation = entity.AdditionalInformation,
             Id = entity.Id,
             Name = entity.Name,
-            NumberOfGuests = entity.NumberOfGuests,
-            NumberOfGuestsAttending = entity.NumberOfGuestsAttending,
-            NumberOfNormalMeals = entity.NumberOfNormalMeals,
-            NumberOfVeganMeals = entity.NumberOfVeganMeals,
-            NumberOfVegetarianMeals = entity.NumberOfVegetarianMeals,
-            Type = (Abstractions.Models.GuestType)entity.Type,
+            NumberOfChildren = entity.NumberOfChildren,
+            NumberOfMeatMenus = entity.NumberOfMeatMenus,
+            NumberOfVegetarianMenus = entity.NumberOfVegetarianMenus,
+            NumberOfFishMenus = entity.NumberOfFishMenus,
             Language = (Abstractions.Models.Language)entity.Language,
             LastUpdated = entity.LastUpdated,
+            Salutation = entity.Salutation,
+            Attending =  (Abstractions.Models.Reply)entity.Attending,
+            BringPartner = (Abstractions.Models.Reply)entity.BringPartner,
+            IsPlural = entity.IsPlural,
         };
         
         return dto;
@@ -29,8 +31,9 @@ public static class MappingExtensions
         Rsvp rsvp = new()
         {
             Name = dto.Name,
-            Type = (GuestType)dto.Type,
-            NumberOfGuests = dto.NumberOfGuests,
+            Salutation = dto.Salutation,
+            Language = (Language)dto.Language,
+            IsPlural = dto.IsPlural,
         };
         
         return rsvp;
@@ -40,14 +43,18 @@ public static class MappingExtensions
     {
         Rsvp entity = new()
         {
-            AdditionalInformation = dto.AdditionalInformation,
             Name = dto.Name,
-            NumberOfGuests = dto.NumberOfGuests,
-            NumberOfGuestsAttending = dto.NumberOfGuestsAttending,
-            NumberOfNormalMeals = dto.NumberOfNormalMeals,
-            NumberOfVeganMeals = dto.NumberOfVeganMeals,
-            NumberOfVegetarianMeals = dto.NumberOfVegetarianMeals,
-            Type = (GuestType)dto.Type,
+            Salutation = dto.Salutation,
+            Attending = (Reply)dto.Attending,
+            BringPartner = (Reply)dto.BringPartner,
+            Language = (Language)dto.Language,
+            NumberOfMeatMenus = dto.NumberOfMeatMenus,
+            NumberOfVegetarianMenus = dto.NumberOfVegetarianMenus,
+            NumberOfFishMenus = dto.NumberOfFishMenus,
+            NumberOfChildren = dto.NumberOfChildren,
+            AdditionalInformation = dto.AdditionalInformation,
+            LastUpdated = DateTime.UtcNow,
+            IsPlural = dto.IsPlural,
         };
         
         return entity;

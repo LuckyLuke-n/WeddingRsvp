@@ -1,7 +1,8 @@
 namespace WeddingRsvp.Api.Repository.Entities;
 
-public enum GuestType
+public enum Reply
 {
-    Family,
-    Friends
+    None,
+    Yes,
+    No,
 }

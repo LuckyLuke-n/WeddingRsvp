@@ -9,14 +9,13 @@ public class PostRsvpDto
     public string Name { get; set; } = string.Empty;
     
     [Required]
-    [EnumDataType(typeof(GuestType))]
-    public GuestType Type { get; set; }
+    [Length(1, 255)]
+    public string Salutation { get; set; } = string.Empty;
     
     [Required]
     [EnumDataType(typeof(Language))]
     public Language Language { get; set; }
     
     [Required]
-    [Range(1, 10)]
-    public int NumberOfGuests { get; set; }
+    public bool IsPlural { get; set; }
 }

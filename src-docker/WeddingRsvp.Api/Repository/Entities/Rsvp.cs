@@ -6,14 +6,17 @@ public class Rsvp : IEntity
     public DateTime? LastUpdated { get; set; }
     
     public string Name { get; set; } = string.Empty;
-    public GuestType Type { get; set; }
-    public int NumberOfGuests { get; set; }
+    public string Salutation { get; set; } = string.Empty;
     public Language Language { get; set; }
+    public bool IsPlural { get; set; }
     
-    public int NumberOfGuestsAttending { get; set; }
-    public int NumberOfNormalMeals { get; set; }
-    public int NumberOfVegetarianMeals { get; set; }
-    public int NumberOfVeganMeals { get; set; }
+    public Reply Attending { get; set; }
+    public Reply BringPartner { get; set; }
+    public int NumberOfChildren { get; set; }
+    
+    public int NumberOfMeatMenus { get; set; }
+    public int NumberOfFishMenus { get; set; }
+    public int NumberOfVegetarianMenus { get; set; }
     
     public string AdditionalInformation { get; set; } = string.Empty;
     
