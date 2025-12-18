@@ -278,7 +278,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         _repositoryMock.Verify(x => x.UpdateAsync(It.Is<Rsvp>(r => r.AdditionalInformation == "New Info"), It.IsAny<CancellationToken>()), Times.Once);
     }
     
-        [Fact]
+    [Fact]
     public async Task Update_NonCriticalData_WithExistingData_DoesNotRequireAuth_ReturnsOk()
     {
         // Arrange
@@ -395,7 +395,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Rsvp>(), It.IsAny<CancellationToken>()), Times.Never);
     }
     
-            [Fact]
+    [Fact]
     public async Task Update_CriticalData_WithValidAdminHeader_ReturnsOk()
     {
         // Arrange
