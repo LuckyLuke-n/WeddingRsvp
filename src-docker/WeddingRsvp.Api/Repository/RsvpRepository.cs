@@ -26,14 +26,15 @@ public class RsvpRepository : MongoDbRepository<Rsvp>, IRsvpRepository
         var update = Builders<Rsvp>.Update
             .Set(r => r.LastUpdated, TimeProvider.GetUtcNow().UtcDateTime)
             .Set(r => r.Name, entity.Name)
-            .Set(r => r.Type, entity.Type)
             .Set(r => r.Language, entity.Language)
-            .Set(r => r.NumberOfGuests, entity.NumberOfGuests)
-            .Set(r => r.NumberOfGuestsAttending, entity.NumberOfGuestsAttending)
-            .Set(r => r.NumberOfNormalMeals, entity.NumberOfNormalMeals)
-            .Set(r => r.NumberOfVeganMeals, entity.NumberOfVeganMeals)
-            .Set(r => r.NumberOfVegetarianMeals, entity.NumberOfVegetarianMeals)
-            .Set(r => r.AdditionalInformation, entity.AdditionalInformation);
+            .Set(r => r.NumberOfChildren, entity.NumberOfChildren)
+            .Set(r => r.NumberOfMeatMenus, entity.NumberOfMeatMenus)
+            .Set(r => r.NumberOfVegetarianMenus, entity.NumberOfVegetarianMenus)
+            .Set(r => r.NumberOfFishMenus, entity.NumberOfFishMenus)
+            .Set(r => r.AdditionalInformation, entity.AdditionalInformation)
+            .Set(r => r.Attending, entity.Attending)
+            .Set(r => r.BringPartner, entity.BringPartner)
+            .Set(r => r.Salutation, entity.Salutation);
 
         var options = new FindOneAndUpdateOptions<Rsvp>
         {

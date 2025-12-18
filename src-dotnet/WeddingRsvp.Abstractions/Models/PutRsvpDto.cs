@@ -9,28 +9,32 @@ public class PutRsvpDto
     public string Name { get; set; } = string.Empty;
     
     [Required]
-    [EnumDataType(typeof(GuestType))]
-    public GuestType Type { get; set; }
+    [Length(1, 255)]
+    public string Salutation { get; set; } = string.Empty;
+    
+    [Required]
+    [EnumDataType(typeof(Reply))]
+    public Reply Attending { get; set; }
+    
+    [Required]
+    [EnumDataType(typeof(Reply))]
+    public Reply BringPartner { get; set; }
     
     [Required]
     [Range(1, 10)]
-    public int NumberOfGuests { get; set; }
+    public int NumberOfChildren{ get; set; }
     
     [Required]
     [Range(0, 10)]
-    public int NumberOfGuestsAttending { get; set; }
+    public int NumberOfMeatMenus { get; set; }
     
     [Required]
     [Range(0, 10)]
-    public int NumberOfNormalMeals { get; set; }
+    public int NumberOfFishMenus { get; set; }
     
     [Required]
     [Range(0, 10)]
-    public int NumberOfVegetarianMeals { get; set; }
-    
-    [Required]
-    [Range(0, 10)]
-    public int NumberOfVeganMeals { get; set; }
+    public int NumberOfVegetarianMenus { get; set; }
     
     [Required]
     public string AdditionalInformation { get; set; } = string.Empty;
@@ -38,4 +42,7 @@ public class PutRsvpDto
     [Required]
     [EnumDataType(typeof(Language))]
     public Language Language { get; set; }
+    
+    [Required]
+    public bool IsPlural { get; set; }
 }

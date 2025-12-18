@@ -12,8 +12,9 @@ using WeddingRsvp.Api.Repository;
 using WeddingRsvp.Api.Repository.Entities;
 using WeddingRsvp.Api.Repository.Generic;
 using WeddingRsvp.Integration.Fixtures;
-using GuestType = WeddingRsvp.Abstractions.Models.GuestType;
+using WeddingRsvp.Api.Repository.Entities;
 using Language = WeddingRsvp.Api.Repository.Entities.Language;
+using Reply = WeddingRsvp.Abstractions.Models.Reply;
 
 namespace WeddingRsvp.Integration;
 
@@ -60,8 +61,8 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
 
         var rsvps = new List<Rsvp>
         {
-            new() { Id = Guid.NewGuid().ToString(), Name = "Alice", NumberOfGuests = 1 },
-            new() { Id = Guid.NewGuid().ToString(), Name = "Bob", NumberOfGuests = 2 }
+            new() { Id = Guid.NewGuid().ToString(), Name = "Alice", NumberOfChildren = 1 },
+            new() { Id = Guid.NewGuid().ToString(), Name = "Bob", NumberOfChildren = 2 }
         };
 
         _repositoryMock.Setup(x => x.ReadAllAsync(It.IsAny<CancellationToken>()))
@@ -84,8 +85,8 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var rsvps = new List<Rsvp>
         {
-            new() { Id = Guid.NewGuid().ToString(), Name = "Alice", NumberOfGuests = 1 },
-            new() { Id = Guid.NewGuid().ToString(), Name = "Bob", NumberOfGuests = 2 }
+            new() { Id = Guid.NewGuid().ToString(), Name = "Alice", NumberOfChildren = 1 },
+            new() { Id = Guid.NewGuid().ToString(), Name = "Bob", NumberOfChildren = 2 }
         };
 
         _repositoryMock.Setup(x => x.ReadAllAsync(It.IsAny<CancellationToken>()))
@@ -171,15 +172,15 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         // Arrange
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
-        var dto = new PostRsvpDto { Name = "Dave", NumberOfGuests = 1, Type = GuestType.Friends };
+        var dto = new PostRsvpDto { Name = "Dave", Salutation = "Dear Dave", Language = Abstractions.Models.Language.en} ;
         
         // Ensure the return object is fully initialized
         var createdRsvp = new Rsvp 
         { 
             Id = Guid.NewGuid().ToString(), // Ensure ID is set if needed by response handling
             Name = "Dave", 
-            NumberOfGuests = 1, 
-            Type = WeddingRsvp.Api.Repository.Entities.GuestType.Friends 
+            Salutation = "Dear Dave",
+            Language = Language.en
         };
 
         _repositoryMock.Setup(x => x.CreateAsync(It.IsAny<Rsvp>(), It.IsAny<CancellationToken>()))
@@ -226,22 +227,25 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         var existingRsvp = new Rsvp 
         { 
             Id = id.ToString(), 
-            Name = "Eve", 
-            Type = WeddingRsvp.Api.Repository.Entities.GuestType.Friends, 
-            NumberOfGuests = 2,
-            AdditionalInformation = "Old Info"
+            Name = "Eve",
+            Salutation = "Dear Eve",
+            Language = Language.en,
+            IsPlural = false,
         };
 
         // Incoming update (changing only AdditionalInformation, which is not sensitive)
         var updateDto = new PutRsvpDto 
         {
             Name = "Eve", 
-            Type = GuestType.Friends, 
-            NumberOfGuests = 2,
-            NumberOfGuestsAttending = 2,
-            NumberOfNormalMeals = 1,
-            NumberOfVegetarianMeals = 1,
-            NumberOfVeganMeals = 0,
+            Salutation = "Dear Eve",
+            IsPlural = false,
+            Attending = Reply.Yes,
+            BringPartner = Reply.No,
+            Language = Abstractions.Models.Language.en,
+            NumberOfChildren = 2,
+            NumberOfMeatMenus = 1,
+            NumberOfVegetarianMenus = 1,
+            NumberOfFishMenus = 0,
             AdditionalInformation = "New Info"
         };
 
@@ -249,13 +253,15 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         {
             Id = id.ToString(), 
             Name = "Eve", 
-            Type = WeddingRsvp.Api.Repository.Entities.GuestType.Friends, 
-            NumberOfGuests = 2,
-            NumberOfGuestsAttending = 2,
-            NumberOfNormalMeals = 1,
-            NumberOfVegetarianMeals = 1,
-            NumberOfVeganMeals = 0,
-            AdditionalInformation = "New Info"
+            Salutation = "Dear Eve",
+            Attending = (Api.Repository.Entities.Reply)Reply.Yes,
+            BringPartner = (Api.Repository.Entities.Reply)Reply.No,
+            NumberOfChildren = 2,
+            NumberOfMeatMenus = 1,
+            NumberOfFishMenus = 0,
+            NumberOfVegetarianMenus = 1,
+            AdditionalInformation = "New Info",
+            Language = Language.en,
         };
 
         _repositoryMock.Setup(x => x.ReadAsync(id, It.IsAny<CancellationToken>()))
@@ -273,7 +279,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     }
     
         [Fact]
-    public async Task Update_NonCriticalData_WithExitingData_DoesNotRequireAuth_ReturnsOk()
+    public async Task Update_NonCriticalData_WithExistingData_DoesNotRequireAuth_ReturnsOk()
     {
         // Arrange
         var client = _factory.CreateClient();
@@ -284,26 +290,28 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         var existingRsvp = new Rsvp 
         { 
             Id = id.ToString(), 
-            Name = "Eve", 
-            Type = WeddingRsvp.Api.Repository.Entities.GuestType.Friends, 
-            NumberOfGuests = 2,
-            NumberOfGuestsAttending = 2,
-            NumberOfNormalMeals = 1,
-            NumberOfVegetarianMeals = 1,
-            NumberOfVeganMeals = 0,
+            Name = "Eve",
+            Salutation = "Dear Eve",
+            Language = Language.en,
+            IsPlural = false,
+            NumberOfChildren = 2,
+            NumberOfMeatMenus = 1,
+            NumberOfFishMenus = 1,
+            NumberOfVegetarianMenus = 0,
             AdditionalInformation = "Old Info",
         };
 
         // Incoming update (changing only AdditionalInformation, which is not sensitive)
         var updateDto = new PutRsvpDto 
         {
-            Name = "Eve", 
-            Type = GuestType.Friends, 
-            NumberOfGuests = 2,
-            NumberOfGuestsAttending = 2,
-            NumberOfNormalMeals = 1,
-            NumberOfVegetarianMeals = 1,
-            NumberOfVeganMeals = 0,
+            Name = "Eve",
+            Salutation = "Dear Eve",
+            Language = (Abstractions.Models.Language)Language.en,
+            IsPlural = false,
+            NumberOfChildren = 2,
+            NumberOfMeatMenus = 1,
+            NumberOfFishMenus = 1,
+            NumberOfVegetarianMenus = 0,
             AdditionalInformation = "Old Info",
         };
 
@@ -311,12 +319,13 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         {
             Id = id.ToString(), 
             Name = "Eve", 
-            Type = WeddingRsvp.Api.Repository.Entities.GuestType.Friends, 
-            NumberOfGuests = 2,
-            NumberOfGuestsAttending = 2,
-            NumberOfNormalMeals = 1,
-            NumberOfVegetarianMeals = 1,
-            NumberOfVeganMeals = 0,
+            Salutation = "Dear Eve",
+            Language = Language.en,
+            IsPlural = false,
+            NumberOfChildren = 2,
+            NumberOfMeatMenus = 1,
+            NumberOfFishMenus = 1,
+            NumberOfVegetarianMenus = 0,
             AdditionalInformation = "Old Info"
         };
 
@@ -336,17 +345,15 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Theory]
-    [InlineData("eb34fe42-920b-4b1e-a9c3-ccb2f8f6afbf",GuestType.Family, 2, 2, 1, 1, 0, "New Info", Language.de)]
-    [InlineData("b695dcb1-98a7-495f-a591-83f7ce1cd9a5",GuestType.Family, 4, 4, 2, 2, 0, "All attending", Language.en)]
-    [InlineData("e67b9d97-8213-4463-a2ba-ae813e64e76f",GuestType.Friends, 1, 0, 0, 0, 0, "Not attending", Language.de)]
+    [InlineData("eb34fe42-920b-4b1e-a9c3-ccb2f8f6afbf", 2, 1, 1, 0, "New Info", Language.de)]
+    [InlineData("b695dcb1-98a7-495f-a591-83f7ce1cd9a5", 4, 2, 2, 0, "All attending", Language.en)]
+    [InlineData("e67b9d97-8213-4463-a2ba-ae813e64e76f", 1, 0, 0, 0, "Not attending", Language.de)]
     public async Task Update_NonCriticalData_WithoutAuth_ReturnsForbidden(
         string id,
-        GuestType type, 
-        int guests, 
-        int attending, 
-        int normal, 
+        int children, 
+        int meat, 
         int vegetarian, 
-        int vegan, 
+        int fish, 
         string info,
         Language language)
     {
@@ -358,21 +365,21 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             {
                 Id = id,
                 Name = "Frank",
-                NumberOfGuests = 2,
-                Type = WeddingRsvp.Api.Repository.Entities.GuestType.Friends,
+                Salutation = "Dear Frank",
+                IsPlural = true,
                 Language = Language.en,
             };
         
-        // Trying to change NumberOfGuests
+        // Trying to change Name (Critical) or Language (Critical)
         var updateDto = new PutRsvpDto 
         { 
-            Name = "Frank", 
-            Type = type, 
-            NumberOfGuests = guests,
-            NumberOfGuestsAttending = attending,
-            NumberOfNormalMeals = normal,
-            NumberOfVegetarianMeals = vegetarian,
-            NumberOfVeganMeals = vegan,
+            Name = "Frank Updated", 
+            Salutation = "Dear Frank",
+            IsPlural = true,
+            NumberOfChildren = children,
+            NumberOfMeatMenus = meat,
+            NumberOfVegetarianMenus = vegetarian,
+            NumberOfFishMenus = fish,
             AdditionalInformation = info,
             Language = (Abstractions.Models.Language)language,
         };
@@ -386,5 +393,63 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Rsvp>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+    
+            [Fact]
+    public async Task Update_CriticalData_WithValidAdminHeader_ReturnsOk()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
+        client.DefaultRequestHeaders.Add(AdminHeaderName, AdminSecret);
+        var id = Guid.NewGuid();
+
+        var existingRsvp = new Rsvp
+        {
+            Id = id.ToString(),
+            Name = "Frank",
+            Salutation = "Dear Frank",
+            IsPlural = false,
+            Language = Language.en,
+        };
+
+        var updateDto = new PutRsvpDto
+        {
+            Name = "Frank Updated",
+            Salutation = "Dear Frank",
+            IsPlural = true,
+            Language = Abstractions.Models.Language.de,
+            NumberOfChildren = 2,
+            NumberOfMeatMenus = 2,
+            AdditionalInformation = "Updating critical fields"
+        };
+
+        var updatedRsvp = new Rsvp
+        {
+            Id = id.ToString(),
+            Name = "Frank Updated",
+            Salutation = "Dear Frank",
+            IsPlural = true,
+            Language = Language.de,
+            NumberOfChildren = 2,
+            NumberOfMeatMenus = 2,
+            AdditionalInformation = "Updating critical fields"
+        };
+
+        _repositoryMock.Setup(x => x.ReadAsync(id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(RepositoryResponse<Rsvp, RepositoryFailResponse>.CreateSuccess(existingRsvp));
+
+        _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Rsvp>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(RepositoryResponse<Rsvp, RepositoryFailResponse>.CreateSuccess(updatedRsvp));
+
+        // Act
+        var response = await client.PutAsJsonAsync($"/api/rsvps/{id}", updateDto);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<GetRsvpDto>();
+        result.Should().NotBeNull();
+        result!.Name.Should().Be("Frank Updated");
+        _repositoryMock.Verify(x => x.UpdateAsync(It.Is<Rsvp>(r => r.Name == "Frank Updated"), It.IsAny<CancellationToken>()), Times.Once);
     }
 }

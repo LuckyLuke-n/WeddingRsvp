@@ -1,7 +1,8 @@
 namespace WeddingRsvp.Abstractions.Models;
 
-public enum GuestType
+public enum Reply
 {
-    Family,
-    Friends
+    None,
+    Yes,
+    No,
 }
