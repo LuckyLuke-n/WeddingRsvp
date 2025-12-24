@@ -1,33 +1,31 @@
+/* 1. Root container selector should NOT have ::deep */
 /* Wrapper for the form content */
-/* Use ::deep to target child components like EditForm or InputNumber */
-::deep .rsvp-container {
+.rsvp-container {
     width: 100%;
     max-width: 600px;
-    margin: auto;
-
-    :root {
-        --primary-color: #F4E1D2;
-        --secondary-color: #FFB6C1;
-        --accent-color: #4A4238;
-        --text-color: white;
-        --font-family: 'Helvetica';
-        --font-size: 24px;
-        --line-height: 36px;
-    }
-
-    body {
-        font-family: var(--font-family), sans-serif;
-
-        /* Ensure it takes full height */
-        min-height: 100vh;
-    }
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px; /* Adds a bit of "breathing room" on small screens */
+    box-sizing: border-box;
 }
 
-/* Ensure inputs take full width of the container, not the screen */
-input[type="text"],
-input[type="number"],
-textarea,
-::deep select {
+/* Ensure the form inside takes full width of the container */
+.rsvp-container form {
+    width: 100%;
+}
+
+/* 2. Global body styles (usually better in App.css, but if here, no ::deep) */
+body {
+    font-family: var(--font-family), sans-serif;
+
+    /* Ensure it takes full height */
+    min-height: 100vh;
+}
+
+/* 3. Use ::deep for everything INSIDE the EditForm (the child components) */
+::deep input[type="text"],
+::deep input[type="number"],
+::deep textarea {
     width: 100%;
     box-sizing: border-box; /* Ensures padding doesn't overflow the width */
     color: var(--text-color);
@@ -35,23 +33,24 @@ textarea,
     line-height: var(--line-height);
 }
 
-.form-group {
+::deep .form-group {
     margin-bottom: 25px;
     position: relative;
+    text-align: center; /* Optional: Centers labels and inputs if desired */
 }
 
-/* Add spacing after the submit button */
-.rsvp-container .btn[type="submit"] {
+/* Ensure the button is reached if it's rendered inside a component or the form */
+::deep .btn[type="submit"] {
     margin-bottom: 50px;
 }
 
-.form-group:has(.meal-selection) {
+::deep .form-group:has(.meal-selection) {
     margin-top: 40px;
     padding-top: 20px;
     border-top: 1px solid rgba(138, 79, 255, 0.2);
 }
 
-label {
+::deep label {
     display: block;
     margin-bottom: 10px;
     font-weight: 600;
@@ -59,13 +58,13 @@ label {
     font-family: var(--font-family), cursive;
     font-size: var(--font-size);
     line-height: var(--line-height);
+    text-align: center; /* Centers the text labels */
 }
 
-/*input[type="radio"],*/
-input[type="number"],
-input[type="text"],
-textarea,
-select {
+::deep input[type="number"],
+::deep input[type="text"],
+::deep textarea,
+::deep select {
     width: 100%;
     padding: 12px;
     margin-top: 8px;
@@ -79,15 +78,65 @@ select {
     color: var(--text-color)
 }
 
-input:focus,
-textarea:focus,
-select:focus {
+::deep input:focus,
+::deep textarea:focus,
+::deep select:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
-.btn {
+/* Custom Radio Button Styling */
+::deep .radio-group {
+    display: flex;
+    justify-content: center; /* Centers the radio options */
+    gap: 30px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: var(--font-size);
+    color: var(--text-color);
+}
+
+::deep .radio-option input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--secondary-color);
+    border-radius: 50%;
+    margin-right: 12px;
+    background-color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    position: relative;
+    vertical-align: middle;
+    transition: all 0.3s ease;
+}
+
+::deep .radio-option input[type="radio"]:checked {
+    background-color: var(--secondary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px var(--secondary-color);
+}
+
+::deep .radio-option input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+::deep .btn {
     background-color: var(--secondary-color);
     color: white;
     border: none;
@@ -105,11 +154,11 @@ select:focus {
 
     /* Add a slight lift effect */
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-input::placeholder,
-textarea::placeholder {
+::deep input::placeholder,
+::deep textarea::placeholder {
     color: rgba(255, 255, 255, 0.85);
     opacity: 1; /* important for Firefox, otherwise it forces lower opacity */
 }
