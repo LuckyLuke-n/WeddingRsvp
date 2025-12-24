@@ -27,7 +27,7 @@ public class RsvpRepository : MongoDbRepository<Rsvp>, IRsvpRepository
             .Set(r => r.LastUpdated, TimeProvider.GetUtcNow().UtcDateTime)
             .Set(r => r.Name, entity.Name)
             .Set(r => r.Language, entity.Language)
-            .Set(r => r.NumberOfChildren, entity.NumberOfChildren)
+            .Set(r => r.NumberOfGuestOvernight, entity.NumberOfGuestOvernight)
             .Set(r => r.NumberOfMeatMenus, entity.NumberOfMeatMenus)
             .Set(r => r.NumberOfVegetarianMenus, entity.NumberOfVegetarianMenus)
             .Set(r => r.NumberOfFishMenus, entity.NumberOfFishMenus)

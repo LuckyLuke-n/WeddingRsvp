@@ -1,8 +1,11 @@
+using WeddingRsvp.Client;
 using WeddingRsvp.WebApp.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+builder.AddRsvpClient();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

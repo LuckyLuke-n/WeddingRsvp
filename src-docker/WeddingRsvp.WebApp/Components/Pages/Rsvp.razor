@@ -2,8 +2,6 @@
 @page "/rsvp/{id}"
 @using WeddingRsvp.Abstractions.Models
 
-@inject NavigationManager Navigation
-
 <div class="rsvp-container">
 <EditForm Model="@_rsvp" OnValidSubmit="HandleValidSubmit" class="rsvp-container">
     <DataAnnotationsValidator />
@@ -26,38 +24,38 @@
         <InputRadioGroup @bind-Value="@_rsvp.BringPartner">
             <div class="radio-group">
                 <label class="radio-option">
-                    <InputRadio Value="true" /> Yes
+                    <InputRadio Value="@ResponseType.Yes" /> Yes
                 </label>
                 <label class="radio-option">
-                    <InputRadio Value="false" /> No
+                    <InputRadio Value="@ResponseType.No" /> No
                 </label>
             </div>
         </InputRadioGroup>
     </div>
 
     <div class="form-group">
-        <label for="overnightGuests">Will you bring children? If yes how many?</label>
+        <label for="overnightGuests">How many of you will stay overnight?</label>
         <InputNumber @bind-Value="@_rsvp.NumberOfGuestsOvernight" id="overnightGuests" min="0" max="10" />
 
         <div class="form-group">
             <label>Meal Selection</label>
             <div class="meal-selection">
                 <div class="meal-type">
-                    <label for="default-meals">
+                    <label for="meat-menus">
                         Meat menu
-                        <InputNumber @bind-Value="@_rsvp.NumberOfNormalMeals" id="default-meals" min="0" max="10" placeholder="Number of standard meals" />
+                        <InputNumber @bind-Value="@_rsvp.NumberOfMeatMenus" id="meat-menus" min="0" max="10" placeholder="Number of standard meals" />
                     </label>
                 </div>
                 <div class="meal-type">
-                    <label for="vegetarian-meals">
+                    <label for="fish-menus">
                         Fish menu
-                        <InputNumber @bind-Value="@_rsvp.NumberOfVegetarianMeals" id="vegetarian-meals" min="0" max="10" placeholder="Number of vegetarian meals" />
+                        <InputNumber @bind-Value="@_rsvp.NumberOfFishMenus" id="fish-menus" min="0" max="10" placeholder="Number of vegetarian meals" />
                     </label>
                 </div>
                 <div class="meal-type">
-                    <label for="vegan-meals">
+                    <label for="vegetarian-menus">
                         Vegetarian menu
-                        <InputNumber @bind-Value="@_rsvp.NumberOfVeganMeals" id="vegan-meals" min="0" max="10" placeholder="Number of vegan meals" />
+                        <InputNumber @bind-Value="@_rsvp.NumberOfVegetarianMenus" id="vegetarian-menus" min="0" max="10" placeholder="Number of vegan meals" />
                     </label>
                 </div>
             </div>
