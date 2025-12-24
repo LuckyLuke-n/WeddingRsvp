@@ -227,22 +227,3 @@
         <button type="submit" class="btn">Submit</button>
     </div>
 </EditForm>
-
-@code {
-    [Parameter]
-    public string? Id { get; set; }
-
-    private RsvpGuest _rsvp = new();
-    
-    protected override void OnInitialized()
-    {
-        if (string.IsNullOrEmpty(Id))
-            Navigation.NavigateTo("/");
-        
-    }
-
-    private void HandleValidSubmit()
-    {
-        //
-    }
-}
