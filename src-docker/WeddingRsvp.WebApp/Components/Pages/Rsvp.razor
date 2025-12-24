@@ -1,72 +1,80 @@
 @page "/rsvp"
 @page "/rsvp/{id}"
+@rendermode InteractiveServer
 @using WeddingRsvp.Abstractions.Models
 
 <div class="rsvp-container">
-<EditForm Model="@_rsvp" OnValidSubmit="HandleValidSubmit" class="rsvp-container">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <div class="form-group">
-        <label>Will you attend?</label>
-        <InputRadioGroup @bind-Value="@_rsvp.Response">
-            <div class="radio-group">
-                <label class="radio-option">
-                    <InputRadio Value="@ResponseType.Yes" /> Yes
-                </label>
-                <label class="radio-option">
-                    <InputRadio Value="@ResponseType.No" /> No
-                </label>
-            </div>
-        </InputRadioGroup>
-        
-        <label>Will you bring your partner?</label>
-        <InputRadioGroup @bind-Value="@_rsvp.BringPartner">
-            <div class="radio-group">
-                <label class="radio-option">
-                    <InputRadio Value="@ResponseType.Yes" /> Yes
-                </label>
-                <label class="radio-option">
-                    <InputRadio Value="@ResponseType.No" /> No
-                </label>
-            </div>
-        </InputRadioGroup>
-    </div>
-
-    <div class="form-group">
-        <label for="overnightGuests">How many of you will stay overnight?</label>
-        <InputNumber @bind-Value="@_rsvp.NumberOfGuestsOvernight" id="overnightGuests" min="0" max="10" />
-
+    <EditForm Model="@RsvpGuest" OnValidSubmit="HandleValidSubmitAsync" FormName="RsvpForm" class="rsvp-container">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
         <div class="form-group">
-            <label>Meal Selection</label>
-            <div class="meal-selection">
-                <div class="meal-type">
-                    <label for="meat-menus">
-                        Meat menu
-                        <InputNumber @bind-Value="@_rsvp.NumberOfMeatMenus" id="meat-menus" min="0" max="10" placeholder="Number of standard meals" />
+            <label>Will you attend?</label>
+            <InputRadioGroup @bind-Value="@RsvpGuest.Response">
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <InputRadio Value="@ResponseType.Yes"/>
+                        Yes
+                    </label>
+                    <label class="radio-option">
+                        <InputRadio Value="@ResponseType.No"/>
+                        No
                     </label>
                 </div>
-                <div class="meal-type">
-                    <label for="fish-menus">
-                        Fish menu
-                        <InputNumber @bind-Value="@_rsvp.NumberOfFishMenus" id="fish-menus" min="0" max="10" placeholder="Number of vegetarian meals" />
+            </InputRadioGroup>
+
+            <label>Will you bring your partner?</label>
+            <InputRadioGroup @bind-Value="@RsvpGuest.BringPartner">
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <InputRadio Value="@ResponseType.Yes"/>
+                        Yes
+                    </label>
+                    <label class="radio-option">
+                        <InputRadio Value="@ResponseType.No"/>
+                        No
                     </label>
                 </div>
-                <div class="meal-type">
-                    <label for="vegetarian-menus">
-                        Vegetarian menu
-                        <InputNumber @bind-Value="@_rsvp.NumberOfVegetarianMenus" id="vegetarian-menus" min="0" max="10" placeholder="Number of vegan meals" />
-                    </label>
-                </div>
-            </div>
+            </InputRadioGroup>
         </div>
 
         <div class="form-group">
-            <label for="names">Additional information</label>
-            <InputTextArea @bind-Value="@_rsvp.AdditionalInformation" id="names" rows="3" placeholder="Is there anything else we need to know?" />
-        </div>
+            <label for="overnightGuests">How many of you will stay overnight?</label>
+            <InputNumber @bind-Value="@RsvpGuest.NumberOfGuestsOvernight" id="overnightGuests" min="0" max="10"/>
 
-        <button type="submit" class="btn">Submit</button>
-    </div>
-</EditForm>
+            <div class="form-group">
+                <label>Meal Selection</label>
+                <div class="meal-selection">
+                    <div class="meal-type">
+                        <label for="meat-menus">
+                            Meat menu
+                            <InputNumber @bind-Value="@RsvpGuest.NumberOfMeatMenus" id="meat-menus" min="0" max="10"
+                                         placeholder="Number of standard meals"/>
+                        </label>
+                    </div>
+                    <div class="meal-type">
+                        <label for="fish-menus">
+                            Fish menu
+                            <InputNumber @bind-Value="@RsvpGuest.NumberOfFishMenus" id="fish-menus" min="0" max="10"
+                                         placeholder="Number of vegetarian meals"/>
+                        </label>
+                    </div>
+                    <div class="meal-type">
+                        <label for="vegetarian-menus">
+                            Vegetarian menu
+                            <InputNumber @bind-Value="@RsvpGuest.NumberOfVegetarianMenus" id="vegetarian-menus" min="0"
+                                         max="10" placeholder="Number of vegan meals"/>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="names">Additional information</label>
+                <InputTextArea @bind-Value="@RsvpGuest.AdditionalInformation" id="names" rows="3"
+                               placeholder="Is there anything else we need to know?"/>
+            </div>
+
+            <button type="submit" class="btn">Submit</button>
+        </div>
+    </EditForm>
 </div>

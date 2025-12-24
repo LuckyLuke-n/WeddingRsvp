@@ -13,10 +13,12 @@ public partial class Rsvp : ComponentBase
 
     [Parameter] public string? Id { get; set; }
 
-    private RsvpGuest _rsvp = new();
+    [SupplyParameterFromForm] private RsvpGuest RsvpGuest { get; set; } = null!;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        RsvpGuest ??= new();
+        
         if (string.IsNullOrEmpty(Id))
         {
             Navigation.NavigateTo(NavigationMaster.Home);
@@ -32,7 +34,7 @@ public partial class Rsvp : ComponentBase
 
         try
         {
-            var response = RsvpClient.GetRsvpAsync(id).Result;
+            var response = await RsvpClient.GetRsvpAsync(id).ConfigureAwait(false);
             if (!response.IsSuccess)
             {
                 Navigation.NavigateTo(NavigationMaster.Home);
@@ -40,7 +42,7 @@ public partial class Rsvp : ComponentBase
                 return;
             }
         
-            _rsvp = response.ValueSuccess!;
+            RsvpGuest = response.ValueSuccess!;
         }
         catch (Exception e)
         {
@@ -48,8 +50,13 @@ public partial class Rsvp : ComponentBase
         }
     }
 
-    private void HandleValidSubmit()
+    private async Task HandleValidSubmitAsync()
     {
-        //
+       
+        var response = await RsvpClient.UpdateRsvpAsync(RsvpGuest).ConfigureAwait(false);
+        
+        if (response.IsSuccess)
+            Navigation.NavigateTo(NavigationMaster.Invite(RsvpGuest.Id));
+
     }
 }

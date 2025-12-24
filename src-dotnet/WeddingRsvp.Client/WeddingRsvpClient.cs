@@ -39,4 +39,9 @@ public class WeddingRsvpClient : IRsvpClient
         var rsvp = dto.ToDomainObject();
         return ClientResponse<RsvpGuest, ClientFailResponse>.CreateSuccess(rsvp);
     }
+
+    public Task<ClientResponse<RsvpGuest, ClientFailResponse>> UpdateRsvpAsync(RsvpGuest rsvp, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 }
