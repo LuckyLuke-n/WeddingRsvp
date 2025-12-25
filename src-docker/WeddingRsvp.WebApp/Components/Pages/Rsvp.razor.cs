@@ -53,9 +53,13 @@ public partial class Rsvp : ComponentBase
     private async Task HandleValidSubmitAsync()
     {
         var response = await RsvpClient.UpdateRsvpAsync(RsvpGuest).ConfigureAwait(false);
-        
-        if (response.IsSuccess)
-            Navigation.NavigateTo(NavigationMaster.Invite(RsvpGuest.Id));
 
+        if (response.IsSuccess)
+        {
+            Navigation.NavigateTo(NavigationMaster.Invite(RsvpGuest.Id));
+            return;
+        }
+        
+        Logger.LogError("Cannot update rsvp {Id}.", RsvpGuest.Id);
     }
 }
