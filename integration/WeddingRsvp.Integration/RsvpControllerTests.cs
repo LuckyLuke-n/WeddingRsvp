@@ -61,8 +61,8 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
 
         var rsvps = new List<Rsvp>
         {
-            new() { Id = Guid.NewGuid().ToString(), Name = "Alice", NumberOfChildren = 1 },
-            new() { Id = Guid.NewGuid().ToString(), Name = "Bob", NumberOfChildren = 2 }
+            new() { Id = Guid.NewGuid().ToString(), Name = "Alice", NumberOfGuestsOvernight = 1 },
+            new() { Id = Guid.NewGuid().ToString(), Name = "Bob", NumberOfGuestsOvernight = 2 }
         };
 
         _repositoryMock.Setup(x => x.ReadAllAsync(It.IsAny<CancellationToken>()))
@@ -85,8 +85,8 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var rsvps = new List<Rsvp>
         {
-            new() { Id = Guid.NewGuid().ToString(), Name = "Alice", NumberOfChildren = 1 },
-            new() { Id = Guid.NewGuid().ToString(), Name = "Bob", NumberOfChildren = 2 }
+            new() { Id = Guid.NewGuid().ToString(), Name = "Alice", NumberOfGuestsOvernight = 1 },
+            new() { Id = Guid.NewGuid().ToString(), Name = "Bob", NumberOfGuestsOvernight = 2 }
         };
 
         _repositoryMock.Setup(x => x.ReadAllAsync(It.IsAny<CancellationToken>()))
@@ -242,7 +242,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Attending = Reply.Yes,
             BringPartner = Reply.No,
             Language = Abstractions.Models.Language.en,
-            NumberOfChildren = 2,
+            NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
             NumberOfVegetarianMenus = 1,
             NumberOfFishMenus = 0,
@@ -256,7 +256,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Salutation = "Dear Eve",
             Attending = (Api.Repository.Entities.Reply)Reply.Yes,
             BringPartner = (Api.Repository.Entities.Reply)Reply.No,
-            NumberOfChildren = 2,
+            NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
             NumberOfFishMenus = 0,
             NumberOfVegetarianMenus = 1,
@@ -294,7 +294,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Salutation = "Dear Eve",
             Language = Language.en,
             IsPlural = false,
-            NumberOfChildren = 2,
+            NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
             NumberOfFishMenus = 1,
             NumberOfVegetarianMenus = 0,
@@ -308,7 +308,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Salutation = "Dear Eve",
             Language = (Abstractions.Models.Language)Language.en,
             IsPlural = false,
-            NumberOfChildren = 2,
+            NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
             NumberOfFishMenus = 1,
             NumberOfVegetarianMenus = 0,
@@ -322,7 +322,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Salutation = "Dear Eve",
             Language = Language.en,
             IsPlural = false,
-            NumberOfChildren = 2,
+            NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
             NumberOfFishMenus = 1,
             NumberOfVegetarianMenus = 0,
@@ -350,7 +350,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     [InlineData("e67b9d97-8213-4463-a2ba-ae813e64e76f", 1, 0, 0, 0, "Not attending", Language.de)]
     public async Task Update_NonCriticalData_WithoutAuth_ReturnsForbidden(
         string id,
-        int children, 
+        int overnight, 
         int meat, 
         int vegetarian, 
         int fish, 
@@ -376,7 +376,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Name = "Frank Updated", 
             Salutation = "Dear Frank",
             IsPlural = true,
-            NumberOfChildren = children,
+            NumberOfGuestsOvernight = overnight,
             NumberOfMeatMenus = meat,
             NumberOfVegetarianMenus = vegetarian,
             NumberOfFishMenus = fish,
@@ -419,7 +419,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Salutation = "Dear Frank",
             IsPlural = true,
             Language = Abstractions.Models.Language.de,
-            NumberOfChildren = 2,
+            NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 2,
             AdditionalInformation = "Updating critical fields"
         };
@@ -431,7 +431,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Salutation = "Dear Frank",
             IsPlural = true,
             Language = Language.de,
-            NumberOfChildren = 2,
+            NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 2,
             AdditionalInformation = "Updating critical fields"
         };

@@ -12,7 +12,7 @@ public class GetRsvpDto
     
     public Reply Attending { get; set; }
     public Reply BringPartner { get; set; }
-    public int NumberOfChildren { get; set; }
+    public int NumberOfGuestsOvernight { get; set; }
     
     public int NumberOfMeatMenus { get; set; }
     public int NumberOfFishMenus { get; set; }
