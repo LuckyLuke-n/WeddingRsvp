@@ -15,7 +15,29 @@ internal static class MappingExtensions
             NumberOfMeatMenus = dto.NumberOfMeatMenus,
             NumberOfFishMenus = dto.NumberOfFishMenus,
             NumberOfVegetarianMenus = dto.NumberOfVegetarianMenus,
-            AdditionalInformation = dto.AdditionalInformation
+            AdditionalInformation = dto.AdditionalInformation,
+            Name = dto.Name,
+            Salutation = dto.Salutation,
+            IsPlural = dto.IsPlural,
+            Language = dto.Language,
+        };
+    }
+
+    internal static PutRsvpDto ToDto(this RsvpGuest rsvp)
+    {
+        return new PutRsvpDto()
+        {
+            Attending = (Reply)rsvp.Response, 
+            BringPartner = (Reply)rsvp.BringPartner,
+            NumberOfGuestsOvernight = rsvp.NumberOfGuestsOvernight,
+            NumberOfMeatMenus = rsvp.NumberOfMeatMenus,
+            NumberOfFishMenus = rsvp.NumberOfFishMenus,
+            NumberOfVegetarianMenus = rsvp.NumberOfVegetarianMenus,
+            AdditionalInformation = rsvp.AdditionalInformation,
+            Name = rsvp.Name,
+            Salutation = rsvp.Salutation,
+            IsPlural = rsvp.IsPlural,
+            Language = rsvp.Language,
         };
     }
 }

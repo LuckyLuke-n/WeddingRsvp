@@ -52,7 +52,6 @@ public partial class Rsvp : ComponentBase
 
     private async Task HandleValidSubmitAsync()
     {
-       
         var response = await RsvpClient.UpdateRsvpAsync(RsvpGuest).ConfigureAwait(false);
         
         if (response.IsSuccess)

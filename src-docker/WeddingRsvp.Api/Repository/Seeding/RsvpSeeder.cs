@@ -62,7 +62,8 @@ public class RsvpSeeder
                 NumberOfMeatMenus = 1,
                 NumberOfFishMenus = 1,
                 NumberOfVegetarianMenus = 0,
-                AdditionalInformation = "Let's do this."
+                AdditionalInformation = "Let's do this.",
+                Salutation = "Lieber Max,",
             },
         ];
 

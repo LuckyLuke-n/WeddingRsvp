@@ -12,4 +12,9 @@ public class RsvpGuest
     public int NumberOfFishMenus { get; set; }
     public int NumberOfVegetarianMenus { get; set; }
     public string AdditionalInformation { get; set; } = string.Empty;
+    
+    public string Name { get; set; } = string.Empty;
+    public bool IsPlural { get; set; }
+    public Language Language { get; set; }
+    public string Salutation { get; set; } = string.Empty;
 }

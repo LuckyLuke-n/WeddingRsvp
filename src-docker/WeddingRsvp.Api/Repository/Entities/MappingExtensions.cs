@@ -51,7 +51,7 @@ public static class MappingExtensions
             NumberOfMeatMenus = dto.NumberOfMeatMenus,
             NumberOfVegetarianMenus = dto.NumberOfVegetarianMenus,
             NumberOfFishMenus = dto.NumberOfFishMenus,
-            NumberOfGuestOvernight = dto.NumberOfGuestOvernight,
+            NumberOfGuestOvernight = dto.NumberOfGuestsOvernight,
             AdditionalInformation = dto.AdditionalInformation,
             LastUpdated = DateTime.UtcNow,
             IsPlural = dto.IsPlural,
