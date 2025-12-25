@@ -22,7 +22,7 @@ public class PutRsvpDto
     
     [Required]
     [Range(1, 10)]
-    public int NumberOfGuestsOvernight{ get; set; }
+    public int NumberOfGuestsOvernight { get; set; }
     
     [Required]
     [Range(0, 10)]

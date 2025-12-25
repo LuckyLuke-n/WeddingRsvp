@@ -61,8 +61,8 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
 
         var rsvps = new List<Rsvp>
         {
-            new() { Id = Guid.NewGuid().ToString(), Name = "Alice", NumberOfGuestOvernight = 1 },
-            new() { Id = Guid.NewGuid().ToString(), Name = "Bob", NumberOfGuestOvernight = 2 }
+            new() { Id = Guid.NewGuid().ToString(), Name = "Alice", NumberOfGuestsOvernight = 1 },
+            new() { Id = Guid.NewGuid().ToString(), Name = "Bob", NumberOfGuestsOvernight = 2 }
         };
 
         _repositoryMock.Setup(x => x.ReadAllAsync(It.IsAny<CancellationToken>()))
@@ -85,8 +85,8 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var rsvps = new List<Rsvp>
         {
-            new() { Id = Guid.NewGuid().ToString(), Name = "Alice", NumberOfGuestOvernight = 1 },
-            new() { Id = Guid.NewGuid().ToString(), Name = "Bob", NumberOfGuestOvernight = 2 }
+            new() { Id = Guid.NewGuid().ToString(), Name = "Alice", NumberOfGuestsOvernight = 1 },
+            new() { Id = Guid.NewGuid().ToString(), Name = "Bob", NumberOfGuestsOvernight = 2 }
         };
 
         _repositoryMock.Setup(x => x.ReadAllAsync(It.IsAny<CancellationToken>()))
@@ -256,7 +256,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Salutation = "Dear Eve",
             Attending = (Api.Repository.Entities.Reply)Reply.Yes,
             BringPartner = (Api.Repository.Entities.Reply)Reply.No,
-            NumberOfGuestOvernight = 2,
+            NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
             NumberOfFishMenus = 0,
             NumberOfVegetarianMenus = 1,
@@ -294,7 +294,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Salutation = "Dear Eve",
             Language = Language.en,
             IsPlural = false,
-            NumberOfGuestOvernight = 2,
+            NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
             NumberOfFishMenus = 1,
             NumberOfVegetarianMenus = 0,
@@ -322,7 +322,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Salutation = "Dear Eve",
             Language = Language.en,
             IsPlural = false,
-            NumberOfGuestOvernight = 2,
+            NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
             NumberOfFishMenus = 1,
             NumberOfVegetarianMenus = 0,
@@ -431,7 +431,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Salutation = "Dear Frank",
             IsPlural = true,
             Language = Language.de,
-            NumberOfGuestOvernight = 2,
+            NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 2,
             AdditionalInformation = "Updating critical fields"
         };

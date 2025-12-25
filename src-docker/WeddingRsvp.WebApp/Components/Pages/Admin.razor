@@ -100,7 +100,7 @@
                         {
                             <td><input @bind="invite.Name" class="admin-input" /></td>
                             <td><input type="number" @bind="invite.Salutation" class="admin-input" /></td>
-                            <td><input type="number" @bind="invite.NumberOfGuestOvernight" class="admin-input" /></td>
+                            <td><input type="number" @bind="invite.NumberOfGuestsOvernight" class="admin-input" /></td>
                             <td>
                                 <select @bind="invite.Language" class="admin-input">
                                     @foreach (var lang in Enum.GetValues<Language>())
@@ -118,7 +118,7 @@
                         {
                             <td>@invite.Name</td>
                             <td>@invite.Salutation</td>
-                            <td>@invite.NumberOfGuestOvernight</td>
+                            <td>@invite.NumberOfGuestsOvernight</td>
                             <td>@invite.Language</td>
                             <td>
                                 <button class="action-btn btn-edit" @onclick="() => _editingId = invite.Id">Edit</button>
@@ -161,8 +161,8 @@
     {
         _invites = new List<GetRsvpDto>
         {
-            new() { Id = "1", Name = "Hubert", Salutation = "Lieber Hubert", NumberOfGuestOvernight = 2, Language = Language.de },
-            new() { Id = "2", Name = "Anna", Salutation = "Dear Anna", NumberOfGuestOvernight = 1, Language = Language.en }
+            new() { Id = "1", Name = "Hubert", Salutation = "Lieber Hubert", NumberOfGuestsOvernight = 2, Language = Language.de },
+            new() { Id = "2", Name = "Anna", Salutation = "Dear Anna", NumberOfGuestsOvernight = 1, Language = Language.en }
         };
     }
 

@@ -58,7 +58,7 @@ public class RsvpSeeder
                 Language = Language.de,
                 Attending = Reply.Yes,
                 BringPartner = Reply.Yes,
-                NumberOfGuestOvernight = 2,
+                NumberOfGuestsOvernight = 2,
                 NumberOfMeatMenus = 1,
                 NumberOfFishMenus = 1,
                 NumberOfVegetarianMenus = 0,

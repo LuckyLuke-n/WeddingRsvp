@@ -11,7 +11,7 @@ internal static class MappingExtensions
             Id = dto.Id,
             Response = (ResponseType)dto.Attending,
             BringPartner = (ResponseType)dto.BringPartner,
-            NumberOfGuestsOvernight = dto.NumberOfGuestOvernight,
+            NumberOfGuestsOvernight = dto.NumberOfGuestsOvernight,
             NumberOfMeatMenus = dto.NumberOfMeatMenus,
             NumberOfFishMenus = dto.NumberOfFishMenus,
             NumberOfVegetarianMenus = dto.NumberOfVegetarianMenus,
