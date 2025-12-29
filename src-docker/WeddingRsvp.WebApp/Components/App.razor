@@ -1,7 +1,29 @@
 ﻿@using System.Globalization
+@using Microsoft.AspNetCore.Localization
+@using WeddingRsvp.WebApp.Components.Helpers
+
+@code {
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
+}
 @{
-    // Grab the culture set by the middleware in Program.cs
     var currentCulture = CultureInfo.CurrentCulture.Name;
+    CultureLinker.SetCulture(currentCulture);
+
+    if (HttpContext is not null)
+    {
+        var cookieValue = CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(currentCulture));
+        var existingCookie = HttpContext.Request.Cookies[CookieRequestCultureProvider.DefaultCookieName];
+
+        if (existingCookie != cookieValue)
+        {
+            HttpContext.Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                cookieValue,
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1), Path = "/" }
+            );
+        }
+    }
 }
 
 <!DOCTYPE html>

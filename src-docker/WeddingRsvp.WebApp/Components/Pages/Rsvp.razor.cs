@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using WeddingRsvp.Client;
 using WeddingRsvp.WebApp.Components.Helpers;
@@ -27,6 +28,10 @@ public partial class Rsvp : ComponentBase
             Navigation.NavigateTo(NavigationMaster.Home);
             return;
         }
+        
+        var culture = new CultureInfo(Culture);
+        CultureInfo.CurrentCulture = culture;
+        CultureInfo.CurrentUICulture = culture;
 
         if (string.IsNullOrEmpty(Id))
         {

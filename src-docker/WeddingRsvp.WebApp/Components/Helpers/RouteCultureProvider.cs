@@ -9,6 +9,9 @@ public class RouteCultureProvider : RequestCultureProvider
         var path = httpContext.Request.Path.Value;
         if (string.IsNullOrWhiteSpace(path))
             return Task.FromResult<ProviderCultureResult?>(new ProviderCultureResult("en"));
+        
+        if (path.Contains("/_blazor") || path.Contains("/_framework"))
+            return Task.FromResult<ProviderCultureResult?>(null); // Let the CookieProvider handle it!
 
         var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
         if (segments.Length >= 1)
