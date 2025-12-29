@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.Services.Configure<ApiConfiguration>( builder.Configuration.GetSection( ApiConfiguration.Section ) );
 builder.Services.AddSingleton(TimeProvider.System);
-builder.AddMongoDbRsvpRepostiroy();
+builder.AddMongoDbRsvpRepository();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

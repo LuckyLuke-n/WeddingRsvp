@@ -5,7 +5,8 @@ namespace WeddingRsvp.Api.Repository.Seeding;
 
 public class RsvpSeeder
 {
-    public IMongoCollection<Rsvp>? Collection { get; }
+    private IMongoCollection<Rsvp>? RsvpCollection { get; }
+    private IMongoCollection<Information>? InformationCollection { get; }
     private readonly ILogger<RsvpSeeder> _logger;
 
     public RsvpSeeder(IMongoClient mongoClient, ILogger<RsvpSeeder> logger)
@@ -14,8 +15,9 @@ public class RsvpSeeder
 
         try
         {
-            var database = mongoClient.GetDatabase("Rsvp");
-            Collection = database.GetCollection<Rsvp>(nameof(Rsvp));
+            var database = mongoClient.GetDatabase("WeddingRsvp");
+            RsvpCollection = database.GetCollection<Rsvp>(nameof(Rsvp));
+            InformationCollection = database.GetCollection<Information>(nameof(Information));
         }
         catch (MongoException ex)
         {
@@ -26,13 +28,15 @@ public class RsvpSeeder
 
     public async Task SeedAsync(CancellationToken cancellationToken)
     {
-        if (Collection is null)
+        if (RsvpCollection is null || InformationCollection is null)
         {
             _logger.LogError("Mongo db not initialized.");
             return;
         }
 
-        await Collection.DeleteManyAsync(FilterDefinition<Rsvp>.Empty, cancellationToken).ConfigureAwait(false);
+        await RsvpCollection.DeleteManyAsync(FilterDefinition<Rsvp>.Empty, cancellationToken).ConfigureAwait(false);
+        await InformationCollection.DeleteManyAsync(FilterDefinition<Information>.Empty, cancellationToken)
+            .ConfigureAwait(false);
         _logger.LogWarning("Cleaning mongo db completed.");
 
         Rsvp[] rsvps =
@@ -67,7 +71,65 @@ public class RsvpSeeder
             },
         ];
 
-        await Collection.InsertManyAsync(rsvps, null, cancellationToken).ConfigureAwait(false);
+        Information[] information =
+        [
+            new()
+            {
+                Id = "cebf0267-8379-440d-a66b-b0ecdc1c0898",
+                Language = "en",
+                InvitationText = """
+                                 We are overjoyed to invite you to celebrate our special day. 
+                                 It wouldn't be the same without you there to share in our love and happiness as we start our new life together.
+                                 """,
+                Faqs = new List<Faq>
+                {
+                    new Faq { Question = "Is there a dress code?", Answer = "No." },
+                    new Faq { Question = "Are children welcome?", Answer = "Yes, of course." },
+                    new Faq
+                    {
+                        Question = "Where can I park?",
+                        Answer = "There is ample parking available directly at the venue entrance."
+                    }
+                },
+                Itinerary = new List<ItineraryItem>
+                {
+                    new ItineraryItem { Time = "14:00", Activity = "Welcome" },
+                    new ItineraryItem { Time = "18:00", Activity = "Dinner" },
+                    new ItineraryItem { Time = "15:00", Activity = "Coffee and cake" },
+                    new ItineraryItem { Time = "20:00", Activity = "Dance" }
+                }
+            },
+            new()
+            {
+                Id = "6d7c5bfa-e8bb-410e-b33b-87caedc95897",
+                Language = "de",
+                InvitationText = """
+                                 Wir freuen uns riesig, euch zur Feier unseres besonderen Tages einzuladen.
+                                 Es wäre nicht dasselbe ohne euch, um unsere Liebe und unser Glück zu teilen, 
+                                 während wir unser gemeinsames Leben beginnen.
+                                 """,
+                Faqs = new List<Faq>
+                {
+                    new Faq { Question = "Gibt es einen Dresscode?", Answer = "Nein." },
+                    new Faq { Question = "Sind Kinder willkommen?", Answer = "Ja, natürlich." },
+                    new Faq
+                    {
+                        Question = "Wo kann ich parken?",
+                        Answer = "Es gibt ausreichend Parkplätze direkt am Eingang des Veranstaltungsortes."
+                    }
+                },
+                Itinerary = new List<ItineraryItem>
+                {
+                    new ItineraryItem { Time = "14:00", Activity = "Empfang" },
+                    new ItineraryItem { Time = "15:00", Activity = "Kaffee und Kuchen" },
+                    new ItineraryItem { Time = "18:00", Activity = "Abendessen" },
+                    new ItineraryItem { Time = "20:00", Activity = "Tanz" }
+                }
+            }
+        ];
+
+        await RsvpCollection.InsertManyAsync(rsvps, null, cancellationToken).ConfigureAwait(false);
+        await InformationCollection.InsertManyAsync(information, null, cancellationToken).ConfigureAwait(false);
         _logger.LogWarning("Seeding completed.");
     }
 }
