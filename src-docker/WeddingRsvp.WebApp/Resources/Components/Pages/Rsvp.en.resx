@@ -13,40 +13,40 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WillYouAttend" xml:space="preserve">
-    <value>Wirst du kommen?</value>
+    <value>Will you attend?</value>
   </data>
   <data name="BringPartner" xml:space="preserve">
-    <value>Bringst du deinen Partnerin oder deinen Partner mit?</value>
+    <value>Will you bring a partner?</value>
   </data>
   <data name="OvernightStay" xml:space="preserve">
-    <value>Wie viele von euch übernachten?</value>
+    <value>How many guests will stay overnight?</value>
   </data>
   <data name="MealSelection" xml:space="preserve">
-    <value>Speisenauswahl</value>
+    <value>Meal Selection</value>
   </data>
   <data name="MeatMenu" xml:space="preserve">
-    <value>Fleisch Menü</value>
+    <value>Meat Menu</value>
   </data>
   <data name="FishMenu" xml:space="preserve">
-    <value>Fisch Menü</value>
+    <value>Fish Menu</value>
   </data>
   <data name="VegetarianMenu" xml:space="preserve">
-    <value>Vegetarisches Menü</value>
+    <value>Vegetarian Menu</value>
   </data>
   <data name="AdditionalInfo" xml:space="preserve">
-    <value>Zusätzliche Informationen</value>
+    <value>Additional Information</value>
   </data>
   <data name="AdditionalInfoPlaceholder" xml:space="preserve">
-    <value>Gibt es sonst noch etwas, das wir wissen sollten?</value>
+    <value>Is there anything else we should know?</value>
   </data>
   <data name="Submit" xml:space="preserve">
-    <value>Absenden</value>
+    <value>Submit</value>
   </data>
   <data name="Yes" xml:space="preserve">
-    <value>Ja</value>
+    <value>Yes</value>
   </data>
   <data name="No" xml:space="preserve">
-    <value>Nein</value>
+    <value>No</value>
   </data>
   <data name="test" xml:space="preserve">
     <value />
