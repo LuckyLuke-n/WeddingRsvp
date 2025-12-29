@@ -13,19 +13,27 @@ public partial class Rsvp : ComponentBase
 
     [Parameter] public string? Id { get; set; }
 
+    [Parameter] public string? Culture { get; set; }
+
     [SupplyParameterFromForm] private RsvpGuest RsvpGuest { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
         RsvpGuest ??= new();
-        
+
+        if (string.IsNullOrEmpty(Culture) || !SupportedCultures.Cultures.Contains(Culture))
+        {
+            Navigation.NavigateTo(NavigationMaster.Home);
+            return;
+        }
+
         if (string.IsNullOrEmpty(Id))
         {
             Navigation.NavigateTo(NavigationMaster.Home);
             return;
         }
 
-        if ( !Guid.TryParse(Id, out var id ) )
+        if (!Guid.TryParse(Id, out var id))
         {
             Logger.LogWarning("Cannot parse rsvp id {Id}.", Id);
             Navigation.NavigateTo(NavigationMaster.NotFound);
@@ -41,7 +49,7 @@ public partial class Rsvp : ComponentBase
                 Logger.LogWarning("Cannot get rsvp {Id} with status code {StatusCode}.", id, response.ValueFail.StatusCode);
                 return;
             }
-        
+
             RsvpGuest = response.ValueSuccess!;
         }
         catch (Exception e)
@@ -59,7 +67,7 @@ public partial class Rsvp : ComponentBase
             Navigation.NavigateTo(NavigationMaster.Invite(RsvpGuest.Id));
             return;
         }
-        
+
         Logger.LogError("Cannot update rsvp {Id}.", RsvpGuest.Id);
     }
 }

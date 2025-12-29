@@ -1,80 +1,84 @@
-@page "/rsvp"
-@page "/rsvp/{id}"
+@page "/{culture}/rsvp"
+@page "/{culture}/rsvp/{id}"
 @rendermode InteractiveServer
+
 @using WeddingRsvp.Abstractions.Models
+@using Microsoft.Extensions.Localization
+
+@inject IStringLocalizer<Rsvp> Localizer
 
 <div class="rsvp-container">
     <EditForm Model="@RsvpGuest" OnValidSubmit="HandleValidSubmitAsync" FormName="RsvpForm" class="rsvp-container">
         <DataAnnotationsValidator/>
         <ValidationSummary/>
         <div class="form-group">
-            <label>Will you attend?</label>
+            <label>@Localizer["WillYouAttend"]</label>
             <InputRadioGroup @bind-Value="@RsvpGuest.Response">
                 <div class="radio-group">
                     <label class="radio-option">
                         <InputRadio Value="@ResponseType.Yes"/>
-                        Yes
+                        @Localizer["Yes"]
                     </label>
                     <label class="radio-option">
                         <InputRadio Value="@ResponseType.No"/>
-                        No
+                        @Localizer["No"]
                     </label>
                 </div>
             </InputRadioGroup>
 
-            <label>Will you bring your partner?</label>
+            <label>@Localizer["BringPartner"]</label>
             <InputRadioGroup @bind-Value="@RsvpGuest.BringPartner">
                 <div class="radio-group">
                     <label class="radio-option">
                         <InputRadio Value="@ResponseType.Yes"/>
-                        Yes
+                        @Localizer["Yes"]
                     </label>
                     <label class="radio-option">
                         <InputRadio Value="@ResponseType.No"/>
-                        No
+                        @Localizer["No"]
                     </label>
                 </div>
             </InputRadioGroup>
         </div>
 
         <div class="form-group">
-            <label for="overnightGuests">How many of you will stay overnight?</label>
+            <label for="overnightGuests">@Localizer["OvernightStay"]</label>
             <InputNumber @bind-Value="@RsvpGuest.NumberOfGuestsOvernight" id="overnightGuests" min="0" max="10"/>
 
             <div class="form-group">
-                <label>Meal Selection</label>
+                <label>@Localizer["MealSelection"]</label>
                 <div class="meal-selection">
                     <div class="meal-type">
                         <label for="meat-menus">
-                            Meat menu
+                            @Localizer["MeatMenu"]
                             <InputNumber @bind-Value="@RsvpGuest.NumberOfMeatMenus" id="meat-menus" min="0" max="10"
-                                         placeholder="Number of standard meals"/>
+                                         placeholder="0"/>
                         </label>
                     </div>
                     <div class="meal-type">
                         <label for="fish-menus">
-                            Fish menu
+                            @Localizer["FishMenu"]
                             <InputNumber @bind-Value="@RsvpGuest.NumberOfFishMenus" id="fish-menus" min="0" max="10"
-                                         placeholder="Number of vegetarian meals"/>
+                                         placeholder="0"/>
                         </label>
                     </div>
                     <div class="meal-type">
                         <label for="vegetarian-menus">
-                            Vegetarian menu
+                            @Localizer["VegetarianMenu"]
                             <InputNumber @bind-Value="@RsvpGuest.NumberOfVegetarianMenus" id="vegetarian-menus" min="0"
-                                         max="10" placeholder="Number of vegan meals"/>
+                                         max="10" placeholder="0"/>
                         </label>
                     </div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="names">Additional information</label>
+                <label for="names">@Localizer["AdditionalInfo"]</label>
                 <InputTextArea @bind-Value="@RsvpGuest.AdditionalInformation" id="names" rows="3"
-                               placeholder="Is there anything else we need to know?"/>
+                               placeholder="@Localizer["AdditionalInfoPlaceholder"]"/>
             </div>
 
-            <button type="submit" class="btn">Submit</button>
+            <button type="submit" class="btn">@Localizer["Submit"]</button>
         </div>
     </EditForm>
 </div>

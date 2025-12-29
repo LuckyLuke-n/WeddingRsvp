@@ -1,5 +1,6 @@
 using WeddingRsvp.Client;
 using WeddingRsvp.WebApp.Components;
+using WeddingRsvp.WebApp.Components.Pages;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,10 +9,21 @@ builder.AddServiceDefaults();
 builder.AddRsvpClient();
 
 // Add services to the container.
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+// Define supported cultures
+var supportedCultures = SupportedCultures.Cultures;
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture(supportedCultures[0])
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 var app = builder.Build();
+
+app.UseRequestLocalization(localizationOptions);
 
 app.MapDefaultEndpoints();
 
