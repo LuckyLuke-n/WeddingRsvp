@@ -1,5 +1,6 @@
 using WeddingRsvp.Client;
 using WeddingRsvp.WebApp.Components;
+using WeddingRsvp.WebApp.Components.Helpers;
 using WeddingRsvp.WebApp.Components.Pages;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,7 @@ var localizationOptions = new RequestLocalizationOptions()
     .SetDefaultCulture(supportedCultures[0])
     .AddSupportedCultures(supportedCultures)
     .AddSupportedUICultures(supportedCultures);
+localizationOptions.RequestCultureProviders.Insert(0, new RouteCultureProvider());
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

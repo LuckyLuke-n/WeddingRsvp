@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using WeddingRsvp.Client;
+using WeddingRsvp.WebApp.Components.Helpers;
 
 namespace WeddingRsvp.WebApp.Components.Pages;
 
@@ -21,7 +22,7 @@ public partial class Rsvp : ComponentBase
     {
         RsvpGuest ??= new();
 
-        if (string.IsNullOrEmpty(Culture) || !SupportedCultures.Cultures.Contains(Culture))
+        if (string.IsNullOrEmpty(Culture))
         {
             Navigation.NavigateTo(NavigationMaster.Home);
             return;

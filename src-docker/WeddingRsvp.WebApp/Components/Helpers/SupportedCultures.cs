@@ -1,4 +1,4 @@
-namespace WeddingRsvp.WebApp.Components.Pages;
+namespace WeddingRsvp.WebApp.Components.Helpers;
 
 public static class SupportedCultures
 {
