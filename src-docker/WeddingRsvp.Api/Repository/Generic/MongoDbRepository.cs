@@ -14,7 +14,7 @@ namespace WeddingRsvp.Api.Repository.Generic;
 
 			try
 			{
-				var database = mongoClient.GetDatabase( "Rsvp" );
+				var database = mongoClient.GetDatabase( "WeddingRsvp" );
 				Collection = database.GetCollection<T>( typeof(T).Name );
 			}
 			catch ( MongoException ex )
