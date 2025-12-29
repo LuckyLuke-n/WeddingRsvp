@@ -1,14 +1,11 @@
 ﻿@using System.Globalization
 @using Microsoft.AspNetCore.Localization
-@using WeddingRsvp.WebApp.Components.Helpers
-
 @code {
     [CascadingParameter]
     public HttpContext? HttpContext { get; set; }
 }
 @{
     var currentCulture = CultureInfo.CurrentCulture.Name;
-    // CultureLinker.SetCulture(currentCulture);
 
     if (HttpContext is not null)
     {

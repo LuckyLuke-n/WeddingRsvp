@@ -1,9 +1,8 @@
-using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using WeddingRsvp.Client;
 using WeddingRsvp.WebApp.Components;
 using WeddingRsvp.WebApp.Components.Helpers;
-using WeddingRsvp.WebApp.Components.Pages;
+using WeddingRsvp.WebApp.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,17 +43,7 @@ if (!app.Environment.IsDevelopment())
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
-app.Use((context, next) =>
-{
-    var requestCultureFeature = context.Features.Get<IRequestCultureFeature>();
-    if (requestCultureFeature is not null)
-    {
-        var culture = requestCultureFeature.RequestCulture.Culture;
-        CultureInfo.CurrentCulture = culture;
-        CultureInfo.CurrentUICulture = culture;
-    }
-    return next();
-});
+app.UseMiddleware<LocalizationMiddleware>();
 
 app.UseAntiforgery();
 

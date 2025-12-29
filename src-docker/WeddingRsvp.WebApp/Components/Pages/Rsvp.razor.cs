@@ -29,10 +29,6 @@ public partial class Rsvp : ComponentBase
             return;
         }
         
-        var culture = new CultureInfo(Culture);
-        CultureInfo.CurrentCulture = culture;
-        CultureInfo.CurrentUICulture = culture;
-
         if (string.IsNullOrEmpty(Id))
         {
             Navigation.NavigateTo(NavigationMaster.Home);
