@@ -1,5 +1,11 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@using System.Globalization
+@{
+    // Grab the culture set by the middleware in Program.cs
+    var currentCulture = CultureInfo.CurrentCulture.Name;
+}
+
+<!DOCTYPE html>
+<html lang="@currentCulture">
 
 <head>
     <meta charset="utf-8"/>

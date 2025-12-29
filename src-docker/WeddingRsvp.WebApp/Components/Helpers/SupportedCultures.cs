@@ -2,5 +2,5 @@ namespace WeddingRsvp.WebApp.Components.Helpers;
 
 public static class SupportedCultures
 {
-    public static string[] Cultures => ["en", "de"];
+    public static string[] Cultures => ["de", "en"];
 }

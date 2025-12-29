@@ -18,7 +18,8 @@ var localizationOptions = new RequestLocalizationOptions()
     .SetDefaultCulture(supportedCultures[0])
     .AddSupportedCultures(supportedCultures)
     .AddSupportedUICultures(supportedCultures);
-localizationOptions.RequestCultureProviders.Insert(0, new RouteCultureProvider());
+localizationOptions.RequestCultureProviders.Clear();
+localizationOptions.RequestCultureProviders.Insert(0,new RouteCultureProvider());
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

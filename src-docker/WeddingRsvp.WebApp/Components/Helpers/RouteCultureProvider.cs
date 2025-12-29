@@ -8,7 +8,7 @@ public class RouteCultureProvider : RequestCultureProvider
     {
         var path = httpContext.Request.Path.Value;
         if (string.IsNullOrWhiteSpace(path))
-            return NullRack;
+            return Task.FromResult<ProviderCultureResult?>(new ProviderCultureResult("en"));
 
         var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
         if (segments.Length >= 1)
@@ -19,8 +19,6 @@ public class RouteCultureProvider : RequestCultureProvider
                 return Task.FromResult<ProviderCultureResult?>(new ProviderCultureResult(culture));
         }
 
-        return NullRack;
+        return Task.FromResult<ProviderCultureResult?>(new ProviderCultureResult("en"));
     }
-
-    private static readonly Task<ProviderCultureResult?> NullRack = Task.FromResult<ProviderCultureResult?>(null);
 }
