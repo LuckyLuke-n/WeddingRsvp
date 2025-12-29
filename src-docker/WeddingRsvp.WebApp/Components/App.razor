@@ -1,30 +1,6 @@
 ﻿@using System.Globalization
-@using Microsoft.AspNetCore.Localization
-@code {
-    [CascadingParameter]
-    public HttpContext? HttpContext { get; set; }
-}
-@{
-    var currentCulture = CultureInfo.CurrentCulture.Name;
-
-    if (HttpContext is not null)
-    {
-        var cookieValue = CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(currentCulture));
-        var existingCookie = HttpContext.Request.Cookies[CookieRequestCultureProvider.DefaultCookieName];
-
-        if (existingCookie != cookieValue)
-        {
-            HttpContext.Response.Cookies.Append(
-                CookieRequestCultureProvider.DefaultCookieName,
-                cookieValue,
-                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1), Path = "/" }
-            );
-        }
-    }
-}
-
 <!DOCTYPE html>
-<html lang="@currentCulture">
+<html lang="@CultureInfo.CurrentCulture.Name">
 
 <head>
     <meta charset="utf-8"/>
