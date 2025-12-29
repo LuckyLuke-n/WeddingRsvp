@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="WillYouAttend" xml:space="preserve">
+    <value>Wirst du kommen?</value>
+  </data>
+    <data name="BringPartner" xml:space="preserve">
+    <value>Bringst du deinen Partner oder deine Partnerin mit?</value>
+  </data>
+    <data name="OvernightStay" xml:space="preserve">
+    <value>Wie viele Personen übernachten?</value>
+  </data>
+    <data name="MealSelection" xml:space="preserve">
+    <value>Speisenauswahl</value>
+  </data>
+    <data name="MeatMenu" xml:space="preserve">
+    <value>Fleisch Menü</value>
+  </data>
+    <data name="FishMenu" xml:space="preserve">
+    <value>Fisch Menü</value>
+  </data>
+    <data name="VegetarianMenu" xml:space="preserve">
+    <value>Vegetarisches Menü</value>
+  </data>
+    <data name="AdditionalInfo" xml:space="preserve">
+    <value>Zusätzliche Informationen</value>
+  </data>
+    <data name="AdditionalInfoPlaceholder" xml:space="preserve">
+    <value>Gibt es sonst noch etwas, das wir wissen sollten?</value>
+  </data>
+    <data name="Submit" xml:space="preserve">
+    <value>Absenden</value>
+  </data>
+    <data name="Yes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+    <data name="No" xml:space="preserve">
+    <value>Nein</value>
+  </data>
+</root>

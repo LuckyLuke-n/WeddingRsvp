@@ -23,4 +23,13 @@
       <ProjectReference Include="..\..\src-dotnet\WeddingRsvp.ServiceDefaults\WeddingRsvp.ServiceDefaults.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\Components\Pages\Rsvp.de.resx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Components\Pages\Rsvp.en.resx.bak">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+
 </Project>
