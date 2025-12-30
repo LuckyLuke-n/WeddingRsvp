@@ -11,4 +11,9 @@ public class Information : IEntity
     public List<Faq> Faqs { get; set; } = [];
     
     public void SetAsNew() => Id = Guid.NewGuid().ToString();
+    
+    public void SortItinerary()
+    {
+        Itinerary = Itinerary.OrderBy(i => i.Time).ToList();
+    }
 }

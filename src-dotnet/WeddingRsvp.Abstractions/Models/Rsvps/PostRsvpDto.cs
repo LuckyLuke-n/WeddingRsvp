@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace WeddingRsvp.Abstractions.Models;
+namespace WeddingRsvp.Abstractions.Models.Rsvps;
 
 public class PostRsvpDto
 {

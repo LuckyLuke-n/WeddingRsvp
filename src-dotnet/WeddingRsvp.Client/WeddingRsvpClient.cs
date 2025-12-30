@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using WeddingRsvp.Abstractions.Models;
+using WeddingRsvp.Abstractions.Models.Rsvps;
 using WeddingRsvp.Client.Extensions;
 using WeddingRsvp.Client.Generics;
 
