@@ -6,14 +6,12 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
-using WeddingRsvp.Abstractions.Models;
 using WeddingRsvp.Abstractions.Models.Rsvps;
 using WeddingRsvp.Api.Configurations;
 using WeddingRsvp.Api.Repository;
 using WeddingRsvp.Api.Repository.Entities;
 using WeddingRsvp.Api.Repository.Generic;
 using WeddingRsvp.Integration.Fixtures;
-using WeddingRsvp.Api.Repository.Entities;
 using Language = WeddingRsvp.Api.Repository.Entities.Language;
 using Reply = WeddingRsvp.Abstractions.Models.Rsvps.Reply;
 
