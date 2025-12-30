@@ -1,4 +1,5 @@
 using WeddingRsvp.Abstractions.Models;
+using WeddingRsvp.Abstractions.Models.Rsvps;
 
 namespace WeddingRsvp.Client.Extensions;
 

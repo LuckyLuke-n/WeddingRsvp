@@ -1,4 +1,4 @@
-namespace WeddingRsvp.Abstractions.Models;
+namespace WeddingRsvp.Abstractions.Models.Rsvps;
 
 public enum ResponseType
 {
