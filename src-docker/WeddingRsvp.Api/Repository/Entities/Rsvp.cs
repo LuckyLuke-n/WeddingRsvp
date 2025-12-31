@@ -7,7 +7,6 @@ public class Rsvp : IEntity
     
     public string Name { get; set; } = string.Empty;
     public string Salutation { get; set; } = string.Empty;
-    public Language Language { get; set; }
     public bool IsPlural { get; set; }
     
     public Reply Attending { get; set; }

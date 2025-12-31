@@ -16,6 +16,5 @@ public class RsvpGuest
     
     public string Name { get; set; } = string.Empty;
     public bool IsPlural { get; set; }
-    public Language Language { get; set; }
     public string Salutation { get; set; } = string.Empty;
 }

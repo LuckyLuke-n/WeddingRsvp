@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+﻿using System.Net;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
@@ -15,7 +15,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
     private readonly MongoDbContainer _mongoDbContainer = new MongoDbBuilder().Build();
     private IRsvpRepository _serviceUnderTest = null!;
     private IMongoClient _mongoClient = null!;
-    private TimeProvider TimeProvider { get; set; }
+    private TimeProvider? TimeProvider { get; set; }
 
     public async Task InitializeAsync()
     {
@@ -43,7 +43,6 @@ public class RsvpRepositoryTests : IAsyncLifetime
         // Arrange
         var rsvp = new Rsvp
         {
-            Language = Language.en,
             Name = "John Doe",
             NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
@@ -72,7 +71,6 @@ public class RsvpRepositoryTests : IAsyncLifetime
         {
             Name = "Jane Doe",
             NumberOfGuestsOvernight = 1,
-            Language = Language.en,
         };
         await _serviceUnderTest.CreateAsync(rsvp);
 
@@ -92,7 +90,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.ValueFail.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        result.ValueFail.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -129,7 +127,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
 
         var readResult = await _serviceUnderTest.ReadAsync(Guid.Parse(rsvp.Id));
         readResult.IsSuccess.Should().BeFalse();
-        readResult.ValueFail.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        readResult.ValueFail.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
     
     [Fact]
@@ -140,7 +138,6 @@ public class RsvpRepositoryTests : IAsyncLifetime
         {
             Name = "Original Name",
             NumberOfGuestsOvernight = 5,
-            Language = Language.de,
         };
         var createResult = await _serviceUnderTest.CreateAsync(originalRsvp);
 
@@ -153,8 +150,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
             NumberOfFishMenus = 2,
             NumberOfVegetarianMenus = 1,
             AdditionalInformation = "Updated info",
-            Language = Language.de,
-            LastUpdated = TimeProvider.GetUtcNow().DateTime,
+            LastUpdated = TimeProvider!.GetUtcNow().DateTime,
         };
 
         // Act
@@ -177,7 +173,6 @@ public class RsvpRepositoryTests : IAsyncLifetime
         {
             Name = "Original Name",
             NumberOfGuestsOvernight = 5,
-            Language = Language.de,
         };
         var createResult = await _serviceUnderTest.CreateAsync(originalRsvp);
 
@@ -186,8 +181,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
             Id = createResult.ValueSuccess!.Id,
             Name = "Original Name",
             NumberOfGuestsOvernight = 5,
-            Language = Language.de,
-            LastUpdated = TimeProvider.GetUtcNow().DateTime,
+            LastUpdated = TimeProvider!.GetUtcNow().DateTime,
         };
 
         // Act
@@ -210,9 +204,8 @@ public class RsvpRepositoryTests : IAsyncLifetime
         {
             Name = "Original Name",
             NumberOfGuestsOvernight = 5,
-            Language = Language.en,
         };
-        var createResult = await _serviceUnderTest.CreateAsync(originalRsvp);
+        await _serviceUnderTest.CreateAsync(originalRsvp);
 
         var updatedRsvp = new Rsvp
         {
@@ -223,8 +216,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
             NumberOfFishMenus = 2,
             NumberOfVegetarianMenus = 1,
             AdditionalInformation = "Updated info",
-            Language = Language.en,
-            LastUpdated = TimeProvider.GetUtcNow().DateTime,
+            LastUpdated = TimeProvider!.GetUtcNow().DateTime,
         };
 
         // Act
@@ -232,6 +224,6 @@ public class RsvpRepositoryTests : IAsyncLifetime
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.ValueFail.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        result.ValueFail.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

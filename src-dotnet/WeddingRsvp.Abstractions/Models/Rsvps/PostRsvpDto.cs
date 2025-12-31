@@ -13,9 +13,5 @@ public class PostRsvpDto
     public string Salutation { get; set; } = string.Empty;
     
     [Required]
-    [EnumDataType(typeof(Language))]
-    public Language Language { get; set; }
-    
-    [Required]
     public bool IsPlural { get; set; }
 }

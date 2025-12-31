@@ -40,9 +40,5 @@ public class PutRsvpDto
     public string AdditionalInformation { get; set; } = string.Empty;
     
     [Required]
-    [EnumDataType(typeof(Language))]
-    public Language Language { get; set; }
-    
-    [Required]
     public bool IsPlural { get; set; }
 }

@@ -14,9 +14,9 @@ CommandOptions options = new()
 {
     IconName = "Database",
     IconVariant = IconVariant.Filled,
-    ConfirmationMessage = "Are you sure you want to clean the database?"
+    ConfirmationMessage = "Are you sure you want to clean and seed the database?"
 };
-api.WithCommand("clean-db", "Clean Database",
+api.WithCommand("clean-db", "Clean and seed Database",
     async _ =>
     {
         try

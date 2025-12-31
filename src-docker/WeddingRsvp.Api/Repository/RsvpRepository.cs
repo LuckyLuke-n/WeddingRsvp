@@ -26,7 +26,6 @@ public class RsvpRepository : MongoDbRepository<Rsvp>, IRsvpRepository
         var update = Builders<Rsvp>.Update
             .Set(r => r.LastUpdated, TimeProvider.GetUtcNow().UtcDateTime)
             .Set(r => r.Name, entity.Name)
-            .Set(r => r.Language, entity.Language)
             .Set(r => r.NumberOfGuestsOvernight, entity.NumberOfGuestsOvernight)
             .Set(r => r.NumberOfMeatMenus, entity.NumberOfMeatMenus)
             .Set(r => r.NumberOfVegetarianMenus, entity.NumberOfVegetarianMenus)
