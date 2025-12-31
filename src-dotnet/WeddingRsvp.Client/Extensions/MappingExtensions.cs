@@ -1,4 +1,5 @@
 using WeddingRsvp.Abstractions.Models;
+using WeddingRsvp.Abstractions.Models.Information;
 using WeddingRsvp.Abstractions.Models.Rsvps;
 
 namespace WeddingRsvp.Client.Extensions;
@@ -37,6 +38,18 @@ internal static class MappingExtensions
             Name = rsvp.Name,
             Salutation = rsvp.Salutation,
             IsPlural = rsvp.IsPlural,
+        };
+    }
+
+    internal static DynamicInformation ToDomainObject(this GetInformationDto dto)
+    {
+        return new DynamicInformation()
+        {
+            Id = dto.Id,
+            Language = dto.Language,
+            InvitationText = dto.InvitationText,
+            Itinerary = dto.Itinerary,
+            Faqs = dto.Faqs,
         };
     }
 }

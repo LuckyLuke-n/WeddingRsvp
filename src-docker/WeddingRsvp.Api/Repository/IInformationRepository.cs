@@ -10,4 +10,5 @@ public interface IInformationRepository
     Task<RepositoryResponse<Information, RepositoryFailResponse>> ReadAsync( Guid id, CancellationToken cancellationToken = default );
     Task<RepositoryResponse<Information, RepositoryFailResponse>> UpdateAsync( Information rsvp, CancellationToken cancellationToken = default );
     Task<RepositoryResponse<RepositoryFailResponse>> DeleteAsync( Guid id, CancellationToken cancellationToken = default );
+    Task<RepositoryResponse<Information, RepositoryFailResponse>> ReadByLanguageAsync(string language, CancellationToken cancellationToken = default);
 }

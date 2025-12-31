@@ -60,7 +60,30 @@ public class InformationController : Controller
                 case HttpStatusCode.NotFound:
                     return Results.NotFound();
                 default:
-                    Logger.LogError("Cannot get rsvp with error: {ErrorMessage}.", response.ValueFail.Message);
+                    Logger.LogError("Cannot get information with error: {ErrorMessage}.", response.ValueFail.Message);
+                    return Results.InternalServerError();
+            }
+        }
+
+        var information = response.ValueSuccess!;
+        information.SortItinerary();
+        return Results.Ok(information.ToDto());
+    }
+    
+    [HttpGet("language/{language}")]
+    public async Task<IResult> Get([FromRoute] string language, CancellationToken cancellationToken)
+    {
+        var response = await Repository.ReadByLanguageAsync(language, cancellationToken).ConfigureAwait(false);
+
+        if (!response.IsSuccess)
+        {
+            var failedResponse = response.ValueFail;
+            switch (failedResponse.StatusCode)
+            {
+                case HttpStatusCode.NotFound:
+                    return Results.NotFound();
+                default:
+                    Logger.LogError("Cannot get information with error: {ErrorMessage}.", response.ValueFail.Message);
                     return Results.InternalServerError();
             }
         }

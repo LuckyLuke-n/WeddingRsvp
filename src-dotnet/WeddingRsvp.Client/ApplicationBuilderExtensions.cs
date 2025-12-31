@@ -10,6 +10,7 @@ public static class ApplicationBuilderExtensions
     public static IHostApplicationBuilder AddRsvpClient(this IHostApplicationBuilder builder)
     {
         builder.Services.AddScoped<IRsvpClient, WeddingRsvpClient>();
+        builder.Services.AddScoped<IInformationClient, WeddingRsvpClient>();
         var config = builder.Configuration.GetSection(WeddingRsvpClientConfiguration.Section).Get<WeddingRsvpClientConfiguration>();
         
         builder.Services.AddHttpClient( WeddingRsvpClient.RsvpClientName, client =>
@@ -17,6 +18,12 @@ public static class ApplicationBuilderExtensions
             client.BaseAddress = new Uri("http://api/api/rsvps/"); 
             client.DefaultRequestHeaders.Add("x-api-key", config?.ApiKey ?? "");
         });
+        builder.Services.AddHttpClient( WeddingRsvpClient.InformationClientName, client =>
+        {
+            client.BaseAddress = new Uri("http://api/api/information/"); 
+            client.DefaultRequestHeaders.Add("x-api-key", config?.ApiKey ?? "");
+        });
+        
         return builder;
     }
 }

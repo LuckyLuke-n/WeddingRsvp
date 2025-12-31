@@ -62,6 +62,55 @@ public class InformationControllerTests : IClassFixture<WebApplicationFactory<Pr
     }
 
     [Fact]
+    public async Task GetByLanguage_WhenLanguageExists_ReturnsOk()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
+        var language = "es";
+
+        var info = new Information
+        {
+            Id = Guid.NewGuid().ToString(),
+            Language = language,
+            InvitationText = "¡Hola!"
+        };
+
+        _repositoryMock.Setup(x => x.ReadByLanguageAsync(language, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(RepositoryResponse<Information, RepositoryFailResponse>.CreateSuccess(info));
+
+        // Act
+        var response = await client.GetAsync($"/api/information/language/{language}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var resultDto = await response.Content.ReadFromJsonAsync<GetInformationDto>();
+        resultDto.Should().NotBeNull();
+        resultDto!.Language.Should().Be(language);
+    }
+
+    [Fact]
+    public async Task GetByLanguage_WhenLanguageDoesNotExist_ReturnsNotFound()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
+        var language = "it";
+
+        _repositoryMock.Setup(x => x.ReadByLanguageAsync(language, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(RepositoryResponse<Information, RepositoryFailResponse>.CreateFail(new RepositoryFailResponse
+            {
+                StatusCode = HttpStatusCode.NotFound
+            }));
+
+        // Act
+        var response = await client.GetAsync($"/api/information/language/{language}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
     public async Task GetAll_WithoutApiKeyHeader_ReturnsUnauthorized()
     {
         // Arrange
