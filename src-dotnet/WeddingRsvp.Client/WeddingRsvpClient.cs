@@ -99,7 +99,7 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient
         return ClientResponse<RsvpGuest, ClientFailResponse>.CreateFail(new(HttpStatusCode.InternalServerError));
     }
 
-    public async Task<ClientResponse<IEnumerable<DynamicInformation>, ClientFailResponse>> GetInvitationInAllLanguagesAsync(CancellationToken cancellationToken = default)
+    public async Task<ClientResponse<IEnumerable<DynamicInformation>, ClientFailResponse>> GetInAllLanguagesAsync(CancellationToken cancellationToken = default)
     {
         using var client = HttpClientFactory.CreateClient(InformationClientName);
         
@@ -136,5 +136,43 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient
         }
         
         return ClientResponse<IEnumerable<DynamicInformation>, ClientFailResponse>.CreateFail(new(HttpStatusCode.InternalServerError));
+    }
+
+    public async Task<ClientResponse<DynamicInformation, ClientFailResponse>> GetAsync(string language, CancellationToken cancellationToken = default)
+    {
+        using var client = HttpClientFactory.CreateClient(InformationClientName);
+        
+        try
+        {
+            var responseMessage = await client.GetAsync($"language/{language}", cancellationToken).ConfigureAwait(false);
+
+            if (!responseMessage.IsSuccessStatusCode)
+                return ClientResponse<DynamicInformation, ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
+
+            var dto = await responseMessage.Content.ReadFromJsonAsync<GetInformationDto>(cancellationToken);
+
+            if (dto is null)
+            {
+                Logger.LogError("Cannot deserialize response from {ClientName} to {DtoType}.", InformationClientName,
+                    typeof(DynamicInformation));
+                return ClientResponse<DynamicInformation, ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
+            }
+
+            return ClientResponse<DynamicInformation, ClientFailResponse>.CreateSuccess(dto.ToDomainObject());
+        }
+        catch (HttpRequestException e)
+        {
+            Logger.LogError(e, "Network error or server is unreachable while getting information in all languages.");
+        }
+        catch (OperationCanceledException e)
+        {
+            Logger.LogInformation(e, "The request getting information in all languages timed out or was cancelled.");
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "An unexpected error occurred while getting information in all languages.");
+        }
+        
+        return ClientResponse<DynamicInformation, ClientFailResponse>.CreateFail(new(HttpStatusCode.InternalServerError));
     }
 }

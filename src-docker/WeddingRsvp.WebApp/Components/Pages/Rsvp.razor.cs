@@ -1,7 +1,5 @@
-using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using WeddingRsvp.Client;
-using WeddingRsvp.WebApp.Components.Helpers;
 
 namespace WeddingRsvp.WebApp.Components.Pages;
 
@@ -66,7 +64,7 @@ public partial class Rsvp : ComponentBase
 
         if (response.IsSuccess)
         {
-            Navigation.NavigateTo(NavigationMaster.Invite(RsvpGuest.Id));
+            Navigation.NavigateTo(NavigationMaster.Invite(Culture!, RsvpGuest.Id));
             return;
         }
 

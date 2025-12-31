@@ -1,47 +1,38 @@
-@page "/invite"
-@page "/invite/{id}"
+@page "/{culture}/invite"
+@page "/{culture}/invite/{id}"
+@using Microsoft.Extensions.Localization
 
-@inject NavigationManager Navigation
+@inject IStringLocalizer<Invite> Localizer
 
 <div class="invite-container">
     <h1>Dear Hubert,</h1>
 
-    <div class="text-block">
-        We are overjoyed to invite you to celebrate our special day. 
-        It wouldn't be the same without you there to share in our love and happiness as we start our new life together.
-    </div>
+    <div class="text-block">@Information.InvitationText</div>
 
     <div class="itinerary">
-        <h2>Itinerary</h2>
-        <div class="itinerary-item"><span>1 pm</span> <span>Welcome</span></div>
-        <div class="itinerary-item"><span>3 pm</span> <span>Coffee & Cake</span></div>
-        <div class="itinerary-item"><span>6 pm</span> <span>Dinner</span></div>
-        <div class="itinerary-item"><span>8 pm</span> <span>Dance & Party</span></div>
+        <h2>@Localizer["ItineraryHeader"]</h2>
+        @foreach (var item in Information.Itinerary)
+        {
+            <div class="itinerary-item"><span>@item.Key</span> <span>@item.Value</span></div>
+        }
     </div>
 
     <div class="btn-container">
-        <a href="/rsvp/@Id" class="btn">Let us know if you are attending</a>
+        <a href=@NavigationMaster.Rsvp(@Culture,@Id) class="btn">@Localizer["RsvpButton"]</a>
     </div>
 
     <div class="faq-section">
         <h2 class="faq-header">FAQ</h2>
         <div class="faq-description">
-            If you have any questions reach out to us. Alternatively the FAQ might help you.
+            @Localizer["FaqHeader"]
         </div>
 
-        <details>
-            <summary>Is there a dress code?</summary>
-            <div class="faq-answer">No.</div>
-        </details>
-
-        <details>
-            <summary>Are children welcome?</summary>
-            <div class="faq-answer">Of course! We would love to see your little ones there.</div>
-        </details>
-
-        <details>
-            <summary>Where can I park?</summary>
-            <div class="faq-answer">There is ample parking available directly at the venue entrance.</div>
-        </details>
+        @foreach (var item in Information.Faqs)
+        {
+            <details>
+                <summary>@item.Key</summary>
+                <div class="faq-answer">@item.Value</div>
+            </details>          
+        }
     </div>
 </div>
