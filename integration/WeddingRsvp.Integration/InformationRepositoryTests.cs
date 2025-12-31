@@ -86,6 +86,46 @@ public class InformationRepositoryTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ReadByLanguageAsync_ShouldReturnInformation_WhenLanguageExists()
+    {
+        // Arrange
+        var language = "es";
+        var info = new Information
+        {
+            Language = language,
+            InvitationText = "¡Bienvenidos a nuestra boda!"
+        };
+        await _serviceUnderTest.CreateAsync(info);
+
+        // Act
+        var result = await _serviceUnderTest.ReadByLanguageAsync(language);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.ValueSuccess.Should().BeEquivalentTo(info);
+    }
+
+    [Fact]
+    public async Task ReadByLanguageAsync_ShouldReturnNotFound_WhenLanguageDoesNotExist()
+    {
+        // Arrange
+        var language = "es";
+        var info = new Information
+        {
+            Language = language,
+            InvitationText = "¡Bienvenidos a nuestra boda!"
+        };
+        await _serviceUnderTest.CreateAsync(info);
+        
+        // Act
+        var result = await _serviceUnderTest.ReadByLanguageAsync("it");
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.ValueFail.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+    }
+
+    [Fact]
     public async Task ReadAllAsync_ShouldReturnAllInformation()
     {
         // Arrange

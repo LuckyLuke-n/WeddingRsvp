@@ -57,4 +57,34 @@ public class InformationRepository : MongoDbRepository<Information>, IInformatio
             return RepositoryResponse<Information, RepositoryFailResponse>.CreateFail(fail);
         }
     }
+    
+    public async Task<RepositoryResponse<Information, RepositoryFailResponse>> ReadByLanguageAsync(string language, CancellationToken cancellationToken = default)
+    {
+        if (Collection is null)
+            return NotConnectedFailedResponse();
+
+        try
+        {
+            var filter = Builders<Information>.Filter.Eq(r => r.Language, language);
+            var result = await Collection.Find(filter).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+
+            if (result is not null)
+                return RepositoryResponse<Information, RepositoryFailResponse>.CreateSuccess(result);
+
+            return RepositoryResponse<Information, RepositoryFailResponse>.CreateFail(new RepositoryFailResponse
+            {
+                StatusCode = HttpStatusCode.NotFound,
+                Message = $"Information for language '{language}' not found."
+            });
+        }
+        catch (Exception ex)
+        {
+            Logger.LogCritical(ex, "Error getting information by language from mongo.");
+            return RepositoryResponse<Information, RepositoryFailResponse>.CreateFail(new RepositoryFailResponse
+            {
+                StatusCode = HttpStatusCode.InternalServerError,
+                Message = ex.Message
+            });
+        }
+    }
 }
