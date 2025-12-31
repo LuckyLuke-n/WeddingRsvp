@@ -20,7 +20,6 @@ internal static class MappingExtensions
             Name = dto.Name,
             Salutation = dto.Salutation,
             IsPlural = dto.IsPlural,
-            Language = dto.Language,
         };
     }
 
@@ -38,7 +37,6 @@ internal static class MappingExtensions
             Name = rsvp.Name,
             Salutation = rsvp.Salutation,
             IsPlural = rsvp.IsPlural,
-            Language = rsvp.Language,
         };
     }
 }

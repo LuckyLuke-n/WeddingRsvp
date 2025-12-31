@@ -17,7 +17,6 @@ public static class MappingExtensions
             NumberOfMeatMenus = entity.NumberOfMeatMenus,
             NumberOfVegetarianMenus = entity.NumberOfVegetarianMenus,
             NumberOfFishMenus = entity.NumberOfFishMenus,
-            Language = (Abstractions.Models.Rsvps.Language)entity.Language,
             LastUpdated = entity.LastUpdated,
             Salutation = entity.Salutation,
             Attending =  (Abstractions.Models.Rsvps.Reply)entity.Attending,
@@ -48,7 +47,6 @@ public static class MappingExtensions
         {
             Name = dto.Name,
             Salutation = dto.Salutation,
-            Language = (Language)dto.Language,
             IsPlural = dto.IsPlural,
         };
         
@@ -63,7 +61,6 @@ public static class MappingExtensions
             Salutation = dto.Salutation,
             Attending = (Reply)dto.Attending,
             BringPartner = (Reply)dto.BringPartner,
-            Language = (Language)dto.Language,
             NumberOfMeatMenus = dto.NumberOfMeatMenus,
             NumberOfVegetarianMenus = dto.NumberOfVegetarianMenus,
             NumberOfFishMenus = dto.NumberOfFishMenus,

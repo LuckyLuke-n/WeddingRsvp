@@ -12,7 +12,6 @@ using WeddingRsvp.Api.Repository;
 using WeddingRsvp.Api.Repository.Entities;
 using WeddingRsvp.Api.Repository.Generic;
 using WeddingRsvp.Integration.Fixtures;
-using Language = WeddingRsvp.Api.Repository.Entities.Language;
 using Reply = WeddingRsvp.Abstractions.Models.Rsvps.Reply;
 
 namespace WeddingRsvp.Integration;
@@ -123,13 +122,12 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var id = Guid.NewGuid();
-        var rsvp = new Rsvp { Id = id.ToString(), Name = "Charlie", Language = Language.en, LastUpdated = TimeProvider.GetUtcNow().UtcDateTime };
+        var rsvp = new Rsvp { Id = id.ToString(), Name = "Charlie", LastUpdated = TimeProvider.GetUtcNow().UtcDateTime };
         
         var dto = new GetRsvpDto
         {
              Id = id.ToString(),
              Name = "Charlie",
-             Language = Abstractions.Models.Rsvps.Language.en,
              LastUpdated = TimeProvider.GetUtcNow().UtcDateTime,
         };
 
@@ -171,7 +169,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         // Arrange
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
-        var dto = new PostRsvpDto { Name = "Dave", Salutation = "Dear Dave", Language = Abstractions.Models.Rsvps.Language.en} ;
+        var dto = new PostRsvpDto { Name = "Dave", Salutation = "Dear Dave"} ;
         
         // Ensure the return object is fully initialized
         var createdRsvp = new Rsvp 
@@ -179,7 +177,6 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Id = Guid.NewGuid().ToString(), // Ensure ID is set if needed by response handling
             Name = "Dave", 
             Salutation = "Dear Dave",
-            Language = Language.en
         };
 
         _repositoryMock.Setup(x => x.CreateAsync(It.IsAny<Rsvp>(), It.IsAny<CancellationToken>()))
@@ -228,7 +225,6 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Id = id.ToString(), 
             Name = "Eve",
             Salutation = "Dear Eve",
-            Language = Language.en,
             IsPlural = false,
         };
 
@@ -240,7 +236,6 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             IsPlural = false,
             Attending = Reply.Yes,
             BringPartner = Reply.No,
-            Language = Abstractions.Models.Rsvps.Language.en,
             NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
             NumberOfVegetarianMenus = 1,
@@ -260,7 +255,6 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             NumberOfFishMenus = 0,
             NumberOfVegetarianMenus = 1,
             AdditionalInformation = "New Info",
-            Language = Language.en,
         };
 
         _repositoryMock.Setup(x => x.ReadAsync(id, It.IsAny<CancellationToken>()))
@@ -291,7 +285,6 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Id = id.ToString(), 
             Name = "Eve",
             Salutation = "Dear Eve",
-            Language = Language.en,
             IsPlural = false,
             NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
@@ -305,7 +298,6 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
         {
             Name = "Eve",
             Salutation = "Dear Eve",
-            Language = (Abstractions.Models.Rsvps.Language)Language.en,
             IsPlural = false,
             NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
@@ -319,7 +311,6 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Id = id.ToString(), 
             Name = "Eve", 
             Salutation = "Dear Eve",
-            Language = Language.en,
             IsPlural = false,
             NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
@@ -344,17 +335,16 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Theory]
-    [InlineData("eb34fe42-920b-4b1e-a9c3-ccb2f8f6afbf", 2, 1, 1, 0, "New Info", Language.de)]
-    [InlineData("b695dcb1-98a7-495f-a591-83f7ce1cd9a5", 4, 2, 2, 0, "All attending", Language.en)]
-    [InlineData("e67b9d97-8213-4463-a2ba-ae813e64e76f", 1, 0, 0, 0, "Not attending", Language.de)]
+    [InlineData("eb34fe42-920b-4b1e-a9c3-ccb2f8f6afbf", 2, 1, 1, 0, "New Info")]
+    [InlineData("b695dcb1-98a7-495f-a591-83f7ce1cd9a5", 4, 2, 2, 0, "All attending")]
+    [InlineData("e67b9d97-8213-4463-a2ba-ae813e64e76f", 1, 0, 0, 0, "Not attending")]
     public async Task Update_NonCriticalData_WithoutAuth_ReturnsForbidden(
         string id,
         int overnight, 
         int meat, 
         int vegetarian, 
         int fish, 
-        string info,
-        Language language)
+        string info)
     {
         // Arrange
         var client = _factory.CreateClient();
@@ -366,7 +356,6 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
                 Name = "Frank",
                 Salutation = "Dear Frank",
                 IsPlural = true,
-                Language = Language.en,
             };
         
         // Trying to change Name (Critical) or Language (Critical)
@@ -380,7 +369,6 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             NumberOfVegetarianMenus = vegetarian,
             NumberOfFishMenus = fish,
             AdditionalInformation = info,
-            Language = (Abstractions.Models.Rsvps.Language)language,
         };
 
         _repositoryMock.Setup(x => x.ReadAsync(Guid.Parse(id), It.IsAny<CancellationToken>()))
@@ -409,7 +397,6 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Name = "Frank",
             Salutation = "Dear Frank",
             IsPlural = false,
-            Language = Language.en,
         };
 
         var updateDto = new PutRsvpDto
@@ -417,7 +404,6 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Name = "Frank Updated",
             Salutation = "Dear Frank",
             IsPlural = true,
-            Language = Abstractions.Models.Rsvps.Language.de,
             NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 2,
             AdditionalInformation = "Updating critical fields"
@@ -429,7 +415,6 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
             Name = "Frank Updated",
             Salutation = "Dear Frank",
             IsPlural = true,
-            Language = Language.de,
             NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 2,
             AdditionalInformation = "Updating critical fields"

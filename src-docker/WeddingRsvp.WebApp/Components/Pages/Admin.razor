@@ -103,10 +103,10 @@
                             <td><input type="number" @bind="invite.Salutation" class="admin-input" /></td>
                             <td><input type="number" @bind="invite.NumberOfGuestsOvernight" class="admin-input" /></td>
                             <td>
-                                <select @bind="invite.Language" class="admin-input">
-                                    @foreach (var lang in Enum.GetValues<Language>())
+                                <select @bind="invite.Attending" class="admin-input">
+                                    @foreach (var reply in Enum.GetValues<Reply>())
                                     {
-                                        <option value="@lang">@lang</option>
+                                        <option value="@reply">@reply</option>
                                     }
                                 </select>
                             </td>
@@ -120,7 +120,7 @@
                             <td>@invite.Name</td>
                             <td>@invite.Salutation</td>
                             <td>@invite.NumberOfGuestsOvernight</td>
-                            <td>@invite.Language</td>
+                            <td>@invite.Attending</td>
                             <td>
                                 <button class="action-btn btn-edit" @onclick="() => _editingId = invite.Id">Edit</button>
                                 <button class="action-btn btn-delete" @onclick="() => Delete(invite.Id)">Delete</button>
@@ -162,8 +162,8 @@
     {
         _invites = new List<GetRsvpDto>
         {
-            new() { Id = "1", Name = "Hubert", Salutation = "Lieber Hubert", NumberOfGuestsOvernight = 2, Language = Language.de },
-            new() { Id = "2", Name = "Anna", Salutation = "Dear Anna", NumberOfGuestsOvernight = 1, Language = Language.en }
+            new() { Id = "1", Name = "Hubert", Salutation = "Lieber Hubert", NumberOfGuestsOvernight = 2 },
+            new() { Id = "2", Name = "Anna", Salutation = "Dear Anna", NumberOfGuestsOvernight = 1 }
         };
     }
 
