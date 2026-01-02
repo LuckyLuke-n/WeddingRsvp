@@ -7,11 +7,11 @@
 <div class="invite-container">
     <h1>Dear Hubert,</h1>
 
-    <div class="text-block">@Information.InvitationText</div>
+    <div class="text-block">@_information.InvitationText</div>
 
     <div class="itinerary">
         <h2>@Localizer["ItineraryHeader"]</h2>
-        @foreach (var item in Information.Itinerary)
+        @foreach (var item in _information.Itinerary)
         {
             <div class="itinerary-item"><span>@item.Key</span> <span>@item.Value</span></div>
         }
@@ -27,7 +27,7 @@
             @Localizer["FaqHeader"]
         </div>
 
-        @foreach (var item in Information.Faqs)
+        @foreach (var item in _information.Faqs)
         {
             <details>
                 <summary>@item.Key</summary>

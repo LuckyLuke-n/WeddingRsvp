@@ -17,14 +17,11 @@ public partial class Invite : ComponentBase
 
     [Parameter] public string? Culture { get; set; }
     
-    [Parameter] public RsvpGuest RsvpGuest { get; set; } = null!;
-    [Parameter] public DynamicInformation Information { get; set; } = null!;
+    private RsvpGuest _rsvpGuest = new();
+    private DynamicInformation _information = new();
     
     protected override async Task OnInitializedAsync()
     {
-        RsvpGuest ??= new();
-        Information ??= new();
-        
         if (string.IsNullOrEmpty(Culture))
         {
             Navigation.NavigateTo(NavigationMaster.Home);
@@ -60,7 +57,7 @@ public partial class Invite : ComponentBase
                 return;
             }
 
-            RsvpGuest = response.ValueSuccess!;
+            _rsvpGuest = response.ValueSuccess!;
         }
         catch (Exception e)
         {
@@ -80,7 +77,7 @@ public partial class Invite : ComponentBase
                 return;
             }
 
-            Information = response.ValueSuccess!;
+            _information = response.ValueSuccess!;
         }
         catch (Exception e)
         {
