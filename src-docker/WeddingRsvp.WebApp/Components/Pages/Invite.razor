@@ -5,7 +5,15 @@
 @inject IStringLocalizer<Invite> Localizer
 
 <div class="invite-container">
-    <h1>Dear Hubert,</h1>
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div style="background-color: rgba(244, 67, 54, 0.2); border: 1px solid #f44336; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <span><strong>Error:</strong> @_errorMessage</span>
+            <button style="background: none; border: none; color: white; cursor: pointer; font-size: 20px;" @onclick='() => _errorMessage = ""'>&times;</button>
+        </div>
+    }
+    
+    <h1>@_rsvpGuest.Salutation</h1>
 
     <div class="text-block">@_information.InvitationText</div>
 
@@ -18,7 +26,7 @@
     </div>
 
     <div class="btn-container">
-        <a href=@NavigationMaster.Rsvp(@Culture,@Id) class="btn">@Localizer["RsvpButton"]</a>
+        <a href=@NavigationMaster.Rsvp(@Culture, @Id) class="btn">@Localizer["RsvpButton"]</a>
     </div>
 
     <div class="faq-section">
@@ -32,7 +40,7 @@
             <details>
                 <summary>@item.Key</summary>
                 <div class="faq-answer">@item.Value</div>
-            </details>          
+            </details>
         }
     </div>
 </div>

@@ -15,6 +15,7 @@ public partial class Invite : ComponentBase
     
     private RsvpGuest _rsvpGuest = new();
     private DynamicInformation _information = new();
+    private string _errorMessage = string.Empty;
     
     protected override async Task OnInitializedAsync()
     {
@@ -58,6 +59,7 @@ public partial class Invite : ComponentBase
         catch (Exception e)
         {
             Logger.LogError(e, "Cannot get rsvp {Id}.", id);
+            _errorMessage = "Cannot load the invite.";
         }
     }
 
@@ -78,6 +80,7 @@ public partial class Invite : ComponentBase
         catch (Exception e)
         {
             Logger.LogError(e, "Cannot get invitation for {Language}.", language);
+            _errorMessage = "Cannot load the invite.";
         }
     }
 }
