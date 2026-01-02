@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Localization;
 using WeddingRsvp.Client;
+using WeddingRsvp.Client.Configurations;
 using WeddingRsvp.WebApp.Components;
 using WeddingRsvp.WebApp.Components.Helpers;
 using WeddingRsvp.WebApp.Middlewares;
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 builder.AddRsvpClient();
+builder.Services.Configure<WeddingRsvpClientConfiguration>(builder.Configuration.GetSection("WeddingRsvp"));
 
 // Add services to the container.
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");

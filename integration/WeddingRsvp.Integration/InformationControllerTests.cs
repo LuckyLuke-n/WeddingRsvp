@@ -49,6 +49,7 @@ public class InformationControllerTests : IClassFixture<WebApplicationFactory<Pr
         // Arrange
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
+        client.DefaultRequestHeaders.Add(AdminHeaderName, AdminSecret);
 
         var infoList = new List<Information> { new() { Id = Guid.NewGuid().ToString(), Language = "en" } };
         _repositoryMock.Setup(x => x.ReadAllAsync(It.IsAny<CancellationToken>()))
@@ -59,6 +60,24 @@ public class InformationControllerTests : IClassFixture<WebApplicationFactory<Pr
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+    
+    [Fact]
+    public async Task GetAll_WitAdminHeader_ReturnsOk()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
+
+        var infoList = new List<Information> { new() { Id = Guid.NewGuid().ToString(), Language = "en" } };
+        _repositoryMock.Setup(x => x.ReadAllAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(RepositoryResponse<IEnumerable<Information>, RepositoryFailResponse>.CreateSuccess(infoList));
+
+        // Act
+        var response = await client.GetAsync("/api/information");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Fact]

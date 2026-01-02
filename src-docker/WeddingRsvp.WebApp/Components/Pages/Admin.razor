@@ -1,188 +1,213 @@
 @page "/admin"
-@using WeddingRsvp.Abstractions.Models
 @using WeddingRsvp.Abstractions.Models.Rsvps
-@inject NavigationManager Navigation
 @rendermode InteractiveServer
 
-<style>
-    .admin-container {
-        width: 100%;
-        max-width: 1000px;
-        margin: auto;
-        color: var(--text-color);
-        font-family: 'Helvetica', sans-serif;
-        padding: 20px;
-    }
-
-    .login-box {
-        max-width: 400px;
-        margin: 100px auto;
-        text-align: center;
-        background: rgba(255, 255, 255, 0.1);
-        padding: 40px;
-        border-radius: 15px;
-        border: 2px solid var(--secondary-color);
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    th, td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    th {
-        background: var(--accent-color);
-        color: var(--primary-color);
-    }
-
-    .admin-input {
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid var(--secondary-color);
-        color: white;
-        padding: 5px;
-        border-radius: 5px;
-        width: 100%;
-    }
-
-    .action-btn {
-        padding: 5px 15px;
-        border-radius: 15px;
-        cursor: pointer;
-        border: none;
-        font-size: 14px;
-        margin-right: 5px;
-    }
-
-    .btn-save { background-color: #4CAF50; color: white; }
-    .btn-delete { background-color: #f44336; color: white; }
-    .btn-edit { background-color: var(--secondary-color); color: white; }
-    .btn-add { background-color: var(--primary-color); color: var(--accent-color); font-weight: bold; margin-bottom: 10px; }
-</style>
-
 <div class="admin-container">
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div style="background-color: rgba(244, 67, 54, 0.2); border: 1px solid #f44336; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <span><strong>Error:</strong> @_errorMessage</span>
+            <button style="background: none; border: none; color: white; cursor: pointer; font-size: 20px;" @onclick='() => _errorMessage = ""'>&times;</button>
+        </div>
+    }
+    
     @if (!_isAuthenticated)
     {
         <div class="login-box">
             <h2 style="color: var(--primary-color)">Admin Login</h2>
-            <input type="password" @bind="_passphrase" class="admin-input" placeholder="Enter Passphrase" @onkeyup="HandleKeyUp" />
-            <button class="btn" style="margin-top: 20px; width: 100%" @onclick="Login">Login</button>
+            <input type="password" @bind="_passphrase" class="admin-input" placeholder="Enter Passphrase"
+                   @onkeyup="HandleKeyUp"/>
+            <button class="btn" style="margin-top: 20px; width: 100%" @onclick="LoginAsync">Login</button>
         </div>
     }
     else
     {
         <h2 style="color: var(--primary-color); font-family: var(--font-family), cursive;">Manage Invitations</h2>
-        
+
         <button class="action-btn btn-add" @onclick="AddRow">Add New Entry</button>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Guests</th>
-                    <th>Language</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var invite in _invites)
-                {
+        <div class="section-wrapper">
+            <!-- Table here -->
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
                     <tr>
-                        @if (_editingId == invite.Id)
-                        {
-                            <td><input @bind="invite.Name" class="admin-input" /></td>
-                            <td><input type="number" @bind="invite.Salutation" class="admin-input" /></td>
-                            <td><input type="number" @bind="invite.NumberOfGuestsOvernight" class="admin-input" /></td>
-                            <td>
-                                <select @bind="invite.Attending" class="admin-input">
-                                    @foreach (var reply in Enum.GetValues<Reply>())
-                                    {
-                                        <option value="@reply">@reply</option>
-                                    }
-                                </select>
-                            </td>
-                            <td>
-                                <button class="action-btn btn-save" @onclick="() => Save(invite)">Save</button>
-                                <button class="action-btn" @onclick="() => _editingId = null">Cancel</button>
-                            </td>
-                        }
-                        else
-                        {
-                            <td>@invite.Name</td>
-                            <td>@invite.Salutation</td>
-                            <td>@invite.NumberOfGuestsOvernight</td>
-                            <td>@invite.Attending</td>
-                            <td>
-                                <button class="action-btn btn-edit" @onclick="() => _editingId = invite.Id">Edit</button>
-                                <button class="action-btn btn-delete" @onclick="() => Delete(invite.Id)">Delete</button>
-                            </td>
-                        }
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Salutation</th>
+                        <th>Response</th>
+                        <th>Partner</th>
+                        <th>Overnight</th>
+                        <th>Meat</th>
+                        <th>Fish</th>
+                        <th>Veg</th>
+                        <th>Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody>
+                    @foreach (var invite in _invites)
+                    {
+                        <tr>
+                            <td><span style="font-size: 0.7em; opacity: 0.6;">@invite.Id</span></td>
+                            @if (_editingId == invite.Id)
+                            {
+                                <td><input @bind="invite.Name" class="admin-input"/></td>
+                                <td><input @bind="invite.Salutation" class="admin-input"/></td>
+                                <td>
+                                    <select @bind="invite.Response" class="admin-input">
+                                        @foreach (var val in Enum.GetValues<ResponseType>())
+                                        {
+                                            <option value="@val">@val</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td>
+                                    <select @bind="invite.BringPartner" class="admin-input">
+                                        @foreach (var val in Enum.GetValues<ResponseType>())
+                                        {
+                                            <option value="@val">@val</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="number" @bind="invite.NumberOfGuestsOvernight" class="admin-input"
+                                           style="width: 50px;"/></td>
+                                <td>
+                                    <input type="number" @bind="invite.NumberOfMeatMenus" class="admin-input"
+                                           style="width: 50px;"/></td>
+                                <td>
+                                    <input type="number" @bind="invite.NumberOfFishMenus" class="admin-input"
+                                           style="width: 50px;"/></td>
+                                <td>
+                                    <input type="number" @bind="invite.NumberOfVegetarianMenus" class="admin-input"
+                                           style="width: 50px;"/></td>
+                                <td>
+                                    <button class="action-btn btn-save" @onclick="() => SaveInvite(invite)">Save</button>
+                                    <button class="action-btn" @onclick="() => _editingId = null">Cancel</button>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>@invite.Name</td>
+                                <td>@invite.Salutation</td>
+                                <td>@invite.Response</td>
+                                <td>@invite.BringPartner</td>
+                                <td>@invite.NumberOfGuestsOvernight</td>
+                                <td>@invite.NumberOfMeatMenus</td>
+                                <td>@invite.NumberOfFishMenus</td>
+                                <td>@invite.NumberOfVegetarianMenus</td>
+                                <td>
+                                    <button class="action-btn btn-edit" @onclick="() => _editingId = invite.Id">Edit
+                                    </button>
+                                    <button class="action-btn btn-delete" @onclick="() => Delete(invite.Id)">Delete
+                                    </button>
+                                </td>
+                            }
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <hr style="border: 1px solid rgba(255,255,255,0.1); margin: 40px 0;"/>
+
+        <div class="section-wrapper">
+            <!-- Dynamic Info here -->
+
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                <h2 style="color: var(--primary-color); font-family: var(--font-family), cursive; margin: 0;">Dynamic Content</h2>
+
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label style="color: var(--secondary-color);">Select Language:</label>
+                    <select class="admin-input" style="width: auto; min-width: 150px; background-color: #333; color: white;"
+                            @onchange="@(e => ChangeLanguage(e.Value?.ToString() ?? "de"))">
+                        <option value="de" selected="@(_selectedLanguage == "de")" style="background-color: #333; color: white;">German (DE)</option>
+                        <option value="en" selected="@(_selectedLanguage == "en")" style="background-color: #333; color: white;">English (EN)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <label>Invitation Text</label>
+                <textarea @bind="_information.InvitationText" class="admin-input" rows="4"
+                          style="margin-top: 10px;"></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                <!-- Itinerary Section -->
+                <div>
+                    <h3 style="color: var(--secondary-color)">Itinerary</h3>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Time/Event</th>
+                            <th>Description</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var item in _information.Itinerary)
+                        {
+                            <tr>
+                                <td>
+                                    <input value="@item.Key"
+                                           @onchange="@(e => UpdateDictionaryKey(_information.Itinerary, item.Key, e.Value?.ToString()))"
+                                           class="admin-input"/></td>
+                                <td><input @bind="_information.Itinerary[item.Key]" class="admin-input"/></td>
+                                <td>
+                                    <button class="action-btn btn-delete"
+                                            @onclick="() => _information.Itinerary.Remove(item.Key)">×
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                    <button class="action-btn btn-add" style="margin-top: 10px;"
+                            @onclick='() => _information.Itinerary["New Event"] = "Description"'>+ Add Event
+                    </button>
+                </div>
+
+                <!-- FAQ Section -->
+                <div>
+                    <h3 style="color: var(--secondary-color)">FAQs</h3>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Answer</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var item in _information.Faqs)
+                        {
+                            <tr>
+                                <td>
+                                    <input value="@item.Key"
+                                           @onchange="@(e => UpdateDictionaryKey(_information.Faqs, item.Key, e.Value?.ToString()))"
+                                           class="admin-input"/></td>
+                                <td><input @bind="_information.Faqs[item.Key]" class="admin-input"/></td>
+                                <td>
+                                    <button class="action-btn btn-delete"
+                                            @onclick="() => _information.Faqs.Remove(item.Key)">×
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                    <button class="action-btn btn-add" style="margin-top: 10px;"
+                            @onclick='() => _information.Faqs["New Question"] = "New Answer"'>+ Add FAQ
+                    </button>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; text-align: right;">
+                <button class="btn btn-save" style="padding: 10px 30px;" @onclick="SaveInformation">Save information
+                </button>
+            </div>
+        </div>
     }
 </div>
-
-@code {
-    private bool _isAuthenticated;
-    private string _passphrase = "";
-    private string? _editingId;
-    
-    // Mock data for demonstration
-    private List<GetRsvpDto> _invites = new();
-
-    private void Login()
-    {
-        // Replace "secret" with your desired passphrase
-        if (_passphrase == "secret")
-        {
-            _isAuthenticated = true;
-            // In a real app, you would fetch data from a service here
-            LoadMockData();
-        }
-    }
-
-    private void HandleKeyUp(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter")
-            Login();
-    }
-
-    private void LoadMockData()
-    {
-        _invites = new List<GetRsvpDto>
-        {
-            new() { Id = "1", Name = "Hubert", Salutation = "Lieber Hubert", NumberOfGuestsOvernight = 2 },
-            new() { Id = "2", Name = "Anna", Salutation = "Dear Anna", NumberOfGuestsOvernight = 1 }
-        };
-    }
-
-    private void AddRow()
-    {
-        var newId = Guid.NewGuid().ToString();
-        var newInvite = new GetRsvpDto { Id = newId, Name = "New Guest" };
-        _invites.Insert(0, newInvite);
-        _editingId = newId;
-    }
-
-    private void Save(GetRsvpDto invite)
-    {
-        // Implement service call to persist changes
-        _editingId = null;
-    }
-
-    private void Delete(string id)
-    {
-        _invites.RemoveAll(x => x.Id == id);
-    }
-}

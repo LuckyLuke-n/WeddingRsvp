@@ -6,25 +6,19 @@ namespace WeddingRsvp.WebApp.Components.Pages;
 public partial class Invite : ComponentBase
 {
     [Inject] private IRsvpClient RsvpClient { get; set; } = null!;
-    
     [Inject] private IInformationClient InformationClient { get; set; } = null!;
-
     [Inject] private NavigationManager Navigation { get; set; } = null!;
-
     [Inject] private ILogger<Rsvp> Logger { get; set; } = null!;
-
+    
     [Parameter] public string? Id { get; set; }
-
     [Parameter] public string? Culture { get; set; }
     
-    [Parameter] public RsvpGuest RsvpGuest { get; set; } = null!;
-    [Parameter] public DynamicInformation Information { get; set; } = null!;
+    private RsvpGuest _rsvpGuest = new();
+    private DynamicInformation _information = new();
+    private string _errorMessage = string.Empty;
     
     protected override async Task OnInitializedAsync()
     {
-        RsvpGuest ??= new();
-        Information ??= new();
-        
         if (string.IsNullOrEmpty(Culture))
         {
             Navigation.NavigateTo(NavigationMaster.Home);
@@ -60,11 +54,12 @@ public partial class Invite : ComponentBase
                 return;
             }
 
-            RsvpGuest = response.ValueSuccess!;
+            _rsvpGuest = response.ValueSuccess!;
         }
         catch (Exception e)
         {
             Logger.LogError(e, "Cannot get rsvp {Id}.", id);
+            _errorMessage = "Cannot load the invite.";
         }
     }
 
@@ -72,7 +67,7 @@ public partial class Invite : ComponentBase
     {
         try
         {
-            var response = await InformationClient.GetAsync(language).ConfigureAwait(false);
+            var response = await InformationClient.GetInformationAsync(language).ConfigureAwait(false);
             if (!response.IsSuccess)
             {
                 Navigation.NavigateTo(NavigationMaster.Home);
@@ -80,11 +75,12 @@ public partial class Invite : ComponentBase
                 return;
             }
 
-            Information = response.ValueSuccess!;
+            _information = response.ValueSuccess!;
         }
         catch (Exception e)
         {
             Logger.LogError(e, "Cannot get invitation for {Language}.", language);
+            _errorMessage = "Cannot load the invite.";
         }
     }
 }

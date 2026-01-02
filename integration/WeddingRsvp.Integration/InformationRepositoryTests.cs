@@ -1,3 +1,4 @@
+using System.Net;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
@@ -53,6 +54,34 @@ public class InformationRepositoryTests : IAsyncLifetime
         var dbResponse = await _serviceUnderTest.ReadAsync(Guid.Parse(info.Id));
         dbResponse.IsSuccess.Should().BeTrue();
         dbResponse.ValueSuccess.Should().BeEquivalentTo(info);
+    }
+    
+    [Fact]
+    public async Task CreateLanguateDuplicateAsync_ShouldReturnConflict()
+    {
+        // Arrange
+        var info = new Information
+        {
+            Language = "en",
+            InvitationText = "Welcome to our wedding!",
+            Faqs = new List<Faq> { new Faq { Question = "When?", Answer = "Now" } },
+            Itinerary = new List<ItineraryItem> { new ItineraryItem { Activity = "Ceremony", Time = "14:00" } }
+        };
+        var duplicate = new Information
+        {
+            Language = "en",
+            InvitationText = "Welcome to our wedding!",
+            Faqs = new List<Faq> { new Faq { Question = "When?", Answer = "Now" } },
+            Itinerary = new List<ItineraryItem> { new ItineraryItem { Activity = "Ceremony", Time = "14:00" } }
+        };
+
+        // Act
+        await _serviceUnderTest.CreateAsync(info);
+        var result = await _serviceUnderTest.CreateAsync(duplicate);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.ValueFail.StatusCode.Should().Be(HttpStatusCode.Conflict);
     }
 
     [Fact]

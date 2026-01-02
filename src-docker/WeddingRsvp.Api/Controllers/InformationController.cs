@@ -28,8 +28,11 @@ public class InformationController : Controller
     }
 
     [HttpGet("")]
-    public async Task<IResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IResult> GetAll([FromHeader(Name = "X-Auth-Admin")] string? value, CancellationToken cancellationToken)
     {
+        if (!IsAuthorized(value))
+            return Results.Forbid();
+        
         var response = await Repository.ReadAllAsync(cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccess)

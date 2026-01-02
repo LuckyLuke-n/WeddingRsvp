@@ -16,6 +16,7 @@ public partial class Rsvp : ComponentBase
     [Parameter] public string? Culture { get; set; }
 
     [SupplyParameterFromForm] private RsvpGuest RsvpGuest { get; set; } = null!;
+    private string _errorMessage  = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,5 +70,6 @@ public partial class Rsvp : ComponentBase
         }
 
         Logger.LogError("Cannot update rsvp {Id}.", RsvpGuest.Id);
+        _errorMessage = "Cannot update the invite.";
     }
 }

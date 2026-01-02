@@ -1,0 +1,116 @@
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Options;
+using WeddingRsvp.Client;
+using WeddingRsvp.Client.Configurations;
+
+namespace WeddingRsvp.WebApp.Components.Pages;
+
+public partial class Admin : ComponentBase
+{
+    [Inject] private IRsvpClient RsvpClient { get; set; } = null!;
+    [Inject] private IInformationClient InformationClient { get; set; } = null!;
+    [Inject] private ILogger<Admin> Logger { get; set; } = null!;
+    
+    private bool _isAuthenticated;
+    private string _passphrase = string.Empty;
+    private string _selectedLanguage = string.Empty;
+    private string? _editingId;
+    private string _errorMessage = string.Empty;
+
+    private List<RsvpGuest> _invites = [];
+    private List<DynamicInformation> _informationList = [];
+    private DynamicInformation _information = new();
+
+    private async Task LoginAsync()
+    {
+        // Replace "secret" with your desired passphrase
+        if (_passphrase == "secret")
+        {
+            _isAuthenticated = true;
+            await LoadInformationAsync().ConfigureAwait(false);
+            await LoadRsvpsAsync().ConfigureAwait(false);
+            ChangeLanguage("de");
+        }
+        else
+        {
+            _errorMessage = "Invalid passphrase.";
+        }
+    }
+
+    private void HandleKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+            LoginAsync().Wait();
+    }
+
+    private async Task LoadInformationAsync()
+    {
+        var response = await InformationClient.GetInformationInAllLanguagesAsync().ConfigureAwait(false);
+
+        if (response.IsSuccess)
+            _informationList = response.ValueSuccess!.ToList();
+        else
+        {
+            _errorMessage = "Failed to load information in all languages.";
+            Logger.LogError("Failed to load information in all languages with code {StatusCode}.", response.ValueFail.StatusCode);
+        }
+    }
+    
+    private async Task LoadRsvpsAsync()
+    {
+        var response = await RsvpClient.GetAllRsvpsAsync().ConfigureAwait(false);
+
+        if (response.IsSuccess)
+            _invites = response.ValueSuccess!.ToList();
+        else
+        {
+            _errorMessage = "Failed to load all rsvps.";
+            Logger.LogError("Failed to load all rsvps with code {StatusCode}.", response.ValueFail.StatusCode);
+        }
+    }
+    
+    private void AddRow()
+    {
+        var newId = Guid.NewGuid().ToString();
+        var newInvite = new RsvpGuest { Id = newId, Name = "New Guest" };
+        _invites.Insert(0, newInvite);
+        _editingId = newId;
+    }
+
+    private void SaveInvite(RsvpGuest invite)
+    {
+        // Implement service call to persist changes
+        _editingId = null;
+    }
+
+    private void Delete(string id)
+    {
+        _invites.RemoveAll(x => x.Id == id);
+    }
+
+    private void UpdateDictionaryKey(Dictionary<string, string> dict, string oldKey, string? newKey)
+    {
+        if (string.IsNullOrWhiteSpace(newKey) || oldKey == newKey || dict.ContainsKey(newKey)) return;
+
+        var value = dict[oldKey];
+        dict.Remove(oldKey);
+        dict[newKey] = value;
+    }
+
+    private void SaveInformation()
+    {
+        // Implement service call to save _information
+    }
+
+    /// <summary>
+    /// Sets the currently selected language and loads the corresponding information.
+    /// If the language does not exist, a new in memory entry is created.
+    /// </summary>
+    /// <param name="language"></param>
+    private void ChangeLanguage(string language)
+    {
+        _information = _informationList.FirstOrDefault(x => x.Language == language,
+            new() { Language = language });
+    }
+}

@@ -57,6 +57,7 @@ api.WithCommand("clean-db", "Clean and seed Database",
 builder.AddProject<Projects.WeddingRsvp_WebApp>("webapp")
     .WaitFor(api)
     .WithReference(api)
-    .WithEnvironment("WeddingRsvpClient:ApiKey", "my-secret-key");
+    .WithEnvironment("WeddingRsvpClient:ApiKey", "my-secret-key")
+    .WithEnvironment("WeddingRsvpClient:AdminIdentifier", "73f71b43-2a0d-48e8-8b43-4b5d89f94edf");
 
 builder.Build().Run();
