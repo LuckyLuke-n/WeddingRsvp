@@ -108,7 +108,7 @@ public class InformationRepository : MongoDbRepository<Information>, IInformatio
         var cursor = await Collection.FindAsync<Information>( filter, null, cancellationToken ).ConfigureAwait( false );
         var documents = await cursor.ToListAsync( cancellationToken ).ConfigureAwait( false );
 
-        if ( documents.Count == 0 )
+        if ( documents.Count > 0 )
         {
             RepositoryFailResponse fail = new() { StatusCode = HttpStatusCode.Conflict, Message = $"Information already exists for language {entity.Language}." };
             return RepositoryResponse<Information, RepositoryFailResponse>.CreateFail( fail );
