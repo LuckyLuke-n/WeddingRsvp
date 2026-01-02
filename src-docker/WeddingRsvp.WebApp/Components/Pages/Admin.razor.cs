@@ -8,10 +8,12 @@ namespace WeddingRsvp.WebApp.Components.Pages;
 public partial class Admin : ComponentBase
 {
     private bool _isAuthenticated;
-    private string _passphrase = "";
+    private string _passphrase = string.Empty;
+    private string _selectedLanguage = string.Empty;
     private string? _editingId;
 
-    private List<RsvpGuest> _invites = new();
+    private List<RsvpGuest> _invites = [];
+    private List<DynamicInformation> _informationList = [];
     private DynamicInformation _information = new();
 
     private void Login()
@@ -22,6 +24,7 @@ public partial class Admin : ComponentBase
             _isAuthenticated = true;
             // In a real app, you would fetch data from a service here
             LoadMockData();
+            ChangeLanguage("de");
         }
     }
 
@@ -35,16 +38,34 @@ public partial class Admin : ComponentBase
     {
         _invites = new List<RsvpGuest>
         {
-            new() { Id = "1", Name = "Hubert", Salutation = "Lieber Hubert", NumberOfGuestsOvernight = 2, Response = ResponseType.Yes },
-            new() { Id = "2", Name = "Anna", Salutation = "Dear Anna", NumberOfGuestsOvernight = 1, Response = ResponseType.None }
+            new()
+            {
+                Id = "1", Name = "Hubert", Salutation = "Lieber Hubert", NumberOfGuestsOvernight = 2,
+                Response = ResponseType.Yes
+            },
+            new()
+            {
+                Id = "2", Name = "Anna", Salutation = "Dear Anna", NumberOfGuestsOvernight = 1,
+                Response = ResponseType.None
+            }
         };
-        
-        _information = new DynamicInformation
+
+        _informationList = new List<DynamicInformation>
         {
-            Language = "DE",
-            InvitationText = "Wir laden euch herzlich ein...",
-            Itinerary = new Dictionary<string, string> { { "14:00", "Trauung" }, { "18:00", "Dinner" } },
-            Faqs = new Dictionary<string, string> { { "Dresscode", "Chic" } }
+            new()
+            {
+                Language = "de",
+                InvitationText = "Wir laden euch herzlich ein...",
+                Itinerary = new Dictionary<string, string> { { "14:00", "Trauung" }, { "18:00", "Dinner" } },
+                Faqs = new Dictionary<string, string> { { "Dresscode", "Chic" } },
+            },
+            new()
+            {
+                Language = "en",
+                InvitationText = "You are invited...",
+                Itinerary = new Dictionary<string, string> { { "14:00", "Ceremeony" }, { "18:00", "Dinner" } },
+                Faqs = new Dictionary<string, string> { { "Dresscode", "Chic" } },
+            },
         };
     }
 
@@ -56,7 +77,7 @@ public partial class Admin : ComponentBase
         _editingId = newId;
     }
 
-    private void Save(RsvpGuest invite)
+    private void SaveInivite(RsvpGuest invite)
     {
         // Implement service call to persist changes
         _editingId = null;
@@ -66,7 +87,7 @@ public partial class Admin : ComponentBase
     {
         _invites.RemoveAll(x => x.Id == id);
     }
-    
+
     private void UpdateDictionaryKey(Dictionary<string, string> dict, string oldKey, string? newKey)
     {
         if (string.IsNullOrWhiteSpace(newKey) || oldKey == newKey || dict.ContainsKey(newKey)) return;
@@ -79,5 +100,16 @@ public partial class Admin : ComponentBase
     private void SaveInformation()
     {
         // Implement service call to save _information
+    }
+
+    /// <summary>
+    /// Sets the currently selected language and loads the corresponding information.
+    /// If the language does not exist a new in memory entry is created.
+    /// </summary>
+    /// <param name="language"></param>
+    private void ChangeLanguage(string language)
+    {
+        _information = _informationList.FirstOrDefault(x => x.Language == language,
+            new() { Id = Guid.NewGuid().ToString(), Language = language });
     }
 }

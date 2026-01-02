@@ -70,7 +70,7 @@
                                 <td><input type="number" @bind="invite.NumberOfVegetarianMenus" class="admin-input"
                                            style="width: 50px;"/></td>
                                 <td>
-                                    <button class="action-btn btn-save" @onclick="() => Save(invite)">Save</button>
+                                    <button class="action-btn btn-save" @onclick="() => SaveInivite(invite)">Save</button>
                                     <button class="action-btn" @onclick="() => _editingId = null">Cancel</button>
                                 </td>
                             }
@@ -99,10 +99,22 @@
         </div>
 
         <hr style="border: 1px solid rgba(255,255,255,0.1); margin: 40px 0;"/>
+        
         <div class="section-wrapper">
             <!-- Dynamic Info here -->
-            <h2 style="color: var(--primary-color); font-family: var(--font-family), cursive;">Dynamic Content
-                (@_information.Language)</h2>
+            
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                <h2 style="color: var(--primary-color); font-family: var(--font-family), cursive; margin: 0;">Dynamic Content</h2>
+            
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label style="color: var(--secondary-color);">Select Language:</label>
+                    <select class="admin-input" style="width: auto; min-width: 150px; background-color: #333; color: white;" 
+                            @onchange="@(e => ChangeLanguage(e.Value?.ToString() ?? "de"))">
+                        <option value="de" selected="@(_selectedLanguage == "de")" style="background-color: #333; color: white;">German (DE)</option>
+                        <option value="en" selected="@(_selectedLanguage == "en")" style="background-color: #333; color: white;">English (EN)</option>
+                    </select>
+                </div>
+            </div>
 
             <div class="info-section">
                 <label>Invitation Text</label>
@@ -179,7 +191,7 @@
             </div>
 
             <div style="margin-top: 30px; text-align: right;">
-                <button class="btn btn-save" style="padding: 10px 30px;" @onclick="SaveInformation">Save All Content
+                <button class="btn btn-save" style="padding: 10px 30px;" @onclick="SaveInformation">Save information
                 </button>
             </div>
         </div>
