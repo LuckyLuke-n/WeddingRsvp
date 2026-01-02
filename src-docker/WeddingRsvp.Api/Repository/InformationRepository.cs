@@ -87,4 +87,33 @@ public class InformationRepository : MongoDbRepository<Information>, IInformatio
             });
         }
     }
+
+    /// <summary>
+    /// Overrides the base method to check if the language already exists. If the language already exists, a conflict is returned.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public override async Task<RepositoryResponse<Information, RepositoryFailResponse>> CreateAsync(Information entity,
+        CancellationToken cancellationToken = default)
+    {
+        if ( Collection is null )
+            return RepositoryResponse<Information, RepositoryFailResponse>.CreateFail( new() { StatusCode = HttpStatusCode.InternalServerError, Message = "No connection to the mongo collection." } );
+        
+        entity.Language = entity.Language.ToLowerInvariant();
+            
+        var filter = Builders<Information>.Filter
+            .Eq( d => d.Language, entity.Language );
+        
+        var cursor = await Collection.FindAsync<Information>( filter, null, cancellationToken ).ConfigureAwait( false );
+        var documents = await cursor.ToListAsync( cancellationToken ).ConfigureAwait( false );
+
+        if ( documents.Count == 0 )
+        {
+            RepositoryFailResponse fail = new() { StatusCode = HttpStatusCode.Conflict, Message = $"Information already exists for language {entity.Language}." };
+            return RepositoryResponse<Information, RepositoryFailResponse>.CreateFail( fail );
+        }
+        
+        return await base.CreateAsync(entity, cancellationToken).ConfigureAwait(false);
+    }
 }

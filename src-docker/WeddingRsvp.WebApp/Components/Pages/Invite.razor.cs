@@ -6,15 +6,11 @@ namespace WeddingRsvp.WebApp.Components.Pages;
 public partial class Invite : ComponentBase
 {
     [Inject] private IRsvpClient RsvpClient { get; set; } = null!;
-    
     [Inject] private IInformationClient InformationClient { get; set; } = null!;
-
     [Inject] private NavigationManager Navigation { get; set; } = null!;
-
     [Inject] private ILogger<Rsvp> Logger { get; set; } = null!;
-
+    
     [Parameter] public string? Id { get; set; }
-
     [Parameter] public string? Culture { get; set; }
     
     private RsvpGuest _rsvpGuest = new();
@@ -69,7 +65,7 @@ public partial class Invite : ComponentBase
     {
         try
         {
-            var response = await InformationClient.GetAsync(language).ConfigureAwait(false);
+            var response = await InformationClient.GetInformationAsync(language).ConfigureAwait(false);
             if (!response.IsSuccess)
             {
                 Navigation.NavigateTo(NavigationMaster.Home);

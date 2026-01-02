@@ -1,4 +1,3 @@
-using WeddingRsvp.Abstractions.Models;
 using WeddingRsvp.Abstractions.Models.Information;
 using WeddingRsvp.Abstractions.Models.Rsvps;
 
@@ -28,7 +27,7 @@ internal static class MappingExtensions
     {
         return new PutRsvpDto()
         {
-            Attending = (Reply)rsvp.Response, 
+            Attending = (Reply)rsvp.Response,
             BringPartner = (Reply)rsvp.BringPartner,
             NumberOfGuestsOvernight = rsvp.NumberOfGuestsOvernight,
             NumberOfMeatMenus = rsvp.NumberOfMeatMenus,
@@ -50,6 +49,17 @@ internal static class MappingExtensions
             InvitationText = dto.InvitationText,
             Itinerary = dto.Itinerary,
             Faqs = dto.Faqs,
+        };
+    }
+
+    internal static PostInformationDto ToDto(this DynamicInformation information)
+    {
+        return new PostInformationDto()
+        {
+            Language = information.Language,
+            InvitationText = information.InvitationText,
+            Itinerary = information.Itinerary,
+            Faqs = information.Faqs,
         };
     }
 }

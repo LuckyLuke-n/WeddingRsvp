@@ -28,7 +28,7 @@ namespace WeddingRsvp.Api.Repository.Generic;
 			return RepositoryResponse<T, RepositoryFailResponse>.CreateFail( new() { StatusCode = HttpStatusCode.InternalServerError, Message = "No connection to the mongo collection." } );
 		}
 
-		public async Task<RepositoryResponse<T, RepositoryFailResponse>> CreateAsync( T entity, CancellationToken cancellationToken = default )
+		public virtual async Task<RepositoryResponse<T, RepositoryFailResponse>> CreateAsync( T entity, CancellationToken cancellationToken = default )
 		{
 			entity.SetAsNew();
 
@@ -98,15 +98,15 @@ namespace WeddingRsvp.Api.Repository.Generic;
 			try
 			{
 				var cursor = await Collection.FindAsync<T>( filter, null, cancellationToken ).ConfigureAwait( false );
-				var devices = await cursor.ToListAsync( cancellationToken ).ConfigureAwait( false );
+				var documents = await cursor.ToListAsync( cancellationToken ).ConfigureAwait( false );
 
-				if ( devices.Count == 0 )
+				if ( documents.Count == 0 )
 				{
 					RepositoryFailResponse fail = new() { StatusCode = HttpStatusCode.NotFound, Message = "Document cannot be deleted. Document not found." };
 					return RepositoryResponse<T, RepositoryFailResponse>.CreateFail( fail );
 				}
 
-				return RepositoryResponse<T, RepositoryFailResponse>.CreateSuccess( devices[ 0 ] );
+				return RepositoryResponse<T, RepositoryFailResponse>.CreateSuccess( documents[ 0 ] );
 			}
 			catch ( Exception ex )
 			{
