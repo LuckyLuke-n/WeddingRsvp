@@ -26,12 +26,12 @@ public static class ApplicationBuilderExtensions
         });
         builder.Services.AddHttpClient( WeddingRsvpClient.InformationClientName, client =>
         {
-            client.BaseAddress = new Uri("http://api/api/information/"); 
+            client.BaseAddress = new Uri("http://api/api/informations/"); 
             client.DefaultRequestHeaders.Add("x-api-key", config?.ApiKey ?? "");
         });
         builder.Services.AddHttpClient( WeddingRsvpClient.InformationAdminClientName, client =>
         {
-            client.BaseAddress = new Uri("http://api/api/information/"); 
+            client.BaseAddress = new Uri("http://api/api/informations/"); 
             client.DefaultRequestHeaders.Add("x-api-key", config?.ApiKey ?? "");
             client.DefaultRequestHeaders.Add("X-Auth-Admin", config?.AdminIdentifier ?? "");
         });   

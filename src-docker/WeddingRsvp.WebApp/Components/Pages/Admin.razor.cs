@@ -77,7 +77,7 @@ public partial class Admin : ComponentBase
         if (!response.IsSuccess || response.ValueSuccess is null)
         {
             Logger.LogError("Failed to add guest with code {StatusCode}.", response.ValueFail.StatusCode);
-            _errorMessage = "Failed to add guest.";
+            _errorMessage = "Failed to add guest. Changes are displayed in the table but not saved.";
         }
         else
         {

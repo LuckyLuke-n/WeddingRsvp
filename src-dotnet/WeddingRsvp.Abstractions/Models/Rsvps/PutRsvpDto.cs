@@ -21,7 +21,7 @@ public class PutRsvpDto
     public Reply BringPartner { get; set; }
     
     [Required]
-    [Range(1, 10)]
+    [Range(0, 10)]
     public int NumberOfGuestsOvernight { get; set; }
     
     [Required]
