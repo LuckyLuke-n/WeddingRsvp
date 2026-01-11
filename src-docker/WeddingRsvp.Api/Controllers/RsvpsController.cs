@@ -2,55 +2,57 @@ using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using WeddingRsvp.Abstractions.Models.Information;
+using WeddingRsvp.Abstractions.Models;
+using WeddingRsvp.Abstractions.Models.Rsvps;
 using WeddingRsvp.Api.Configurations;
 using WeddingRsvp.Api.Repository;
 using WeddingRsvp.Api.Repository.Entities;
+using WeddingRsvp.Api.Repository.Seeding;
 
 namespace WeddingRsvp.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Policy = "ApiKeyPolicy")]
-public class InformationController : Controller
+public class RsvpsController : Controller
 {
-    private IInformationRepository Repository { get; }
+    private IRsvpRepository Repository { get; }
+    private RsvpSeeder Seeder { get; }
     private ApiConfiguration Configurations { get; }
-    private ILogger<InformationController> Logger { get; }
+    private ILogger<RsvpsController> Logger { get; }
 
-    public InformationController(IInformationRepository repository,
+    public RsvpsController(IRsvpRepository repository,
+        RsvpSeeder seeder,
         IOptions<ApiConfiguration> options,
-        ILogger<InformationController> logger)
+        ILogger<RsvpsController> logger)
     {
         Repository = repository;
+        Seeder = seeder;
         Configurations = options.Value;
         Logger = logger;
     }
 
     [HttpGet("")]
-    public async Task<IResult> GetAll([FromHeader(Name = "X-Auth-Admin")] string? value, CancellationToken cancellationToken)
+    public async Task<IResult> GetAll([FromHeader(Name = "X-Auth-Admin")] string? value,
+        CancellationToken cancellationToken)
     {
         if (!IsAuthorized(value))
             return Results.Forbid();
-        
+
         var response = await Repository.ReadAllAsync(cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccess)
         {
-            Logger.LogError("Cannot get all information with error: {Error}.", response.ValueFail.Message);
+            Logger.LogError("Cannot get all rsvps with error: {Error}.", response.ValueFail.Message);
             return Results.InternalServerError();
         }
 
-        var information = response.ValueSuccess!;
-        var dto = information.Select(item =>
-        {
-            item.SortItinerary();
-            return item.ToDto();
-        });
+        var rsvps = response.ValueSuccess!;
+        var dto = rsvps.Select(r => r.ToDto());
         return Results.Ok(dto);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = "GetRsvp")]
     public async Task<IResult> Get([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var response = await Repository.ReadAsync(id, cancellationToken).ConfigureAwait(false);
@@ -63,41 +65,17 @@ public class InformationController : Controller
                 case HttpStatusCode.NotFound:
                     return Results.NotFound();
                 default:
-                    Logger.LogError("Cannot get information with error: {ErrorMessage}.", response.ValueFail.Message);
+                    Logger.LogError("Cannot get rsvp with error: {ErrorMessage}.", response.ValueFail.Message);
                     return Results.InternalServerError();
             }
         }
 
-        var information = response.ValueSuccess!;
-        information.SortItinerary();
-        return Results.Ok(information.ToDto());
-    }
-    
-    [HttpGet("language/{language}")]
-    public async Task<IResult> Get([FromRoute] string language, CancellationToken cancellationToken)
-    {
-        var response = await Repository.ReadByLanguageAsync(language, cancellationToken).ConfigureAwait(false);
-
-        if (!response.IsSuccess)
-        {
-            var failedResponse = response.ValueFail;
-            switch (failedResponse.StatusCode)
-            {
-                case HttpStatusCode.NotFound:
-                    return Results.NotFound();
-                default:
-                    Logger.LogError("Cannot get information with error: {ErrorMessage}.", response.ValueFail.Message);
-                    return Results.InternalServerError();
-            }
-        }
-
-        var information = response.ValueSuccess!;
-        information.SortItinerary();
-        return Results.Ok(information.ToDto());
+        var rsvp = response.ValueSuccess!;
+        return Results.Ok(rsvp.ToDto());
     }
 
     [HttpPost("")]
-    public async Task<IResult> Create([FromHeader(Name = "X-Auth-Admin")] string? value, PostInformationDto dto,
+    public async Task<IResult> Create([FromHeader(Name = "X-Auth-Admin")] string? value, PostRsvpDto dto,
         CancellationToken cancellationToken)
     {
         if (!IsAuthorized(value))
@@ -106,17 +84,22 @@ public class InformationController : Controller
         var response = await Repository.CreateAsync(dto.ToEntity(), cancellationToken).ConfigureAwait(false);
 
         if (response.IsSuccess)
-            return Results.Created();
-
-        var failedResponse = response.ValueFail;
-        switch (failedResponse.StatusCode)
         {
-            case HttpStatusCode.Conflict:
-                return Results.Conflict();
-            case HttpStatusCode.BadRequest:
-                return Results.BadRequest();
-            default:
-                return Results.InternalServerError();
+            var createdRsvp = response.ValueSuccess!;
+            return Results.CreatedAtRoute("GetRsvp", new { id = createdRsvp.Id }, createdRsvp.ToDto());
+        }
+        else
+        {
+            var failedResponse = response.ValueFail;
+            switch (failedResponse.StatusCode)
+            {
+                case HttpStatusCode.Conflict:
+                    return Results.Conflict();
+                case HttpStatusCode.BadRequest:
+                    return Results.BadRequest();
+                default:
+                    return Results.InternalServerError();
+            }
         }
     }
 
@@ -131,24 +114,23 @@ public class InformationController : Controller
 
         if (response.IsSuccess)
             return Results.NoContent();
-
-        var failedResponse = response.ValueFail;
-        switch (failedResponse.StatusCode)
+        else
         {
-            case HttpStatusCode.NotFound:
-                return Results.NotFound();
-            default:
-                return Results.InternalServerError();
+            var failedResponse = response.ValueFail;
+            switch (failedResponse.StatusCode)
+            {
+                case HttpStatusCode.NotFound:
+                    return Results.NotFound();
+                default:
+                    return Results.InternalServerError();
+            }
         }
     }
 
     [HttpPut("{id}")]
     public async Task<IResult> Update([FromRoute] Guid id, [FromHeader(Name = "X-Auth-Admin")] string? value,
-        PutInformationDto dto, CancellationToken cancellationToken)
+        PutRsvpDto dto, CancellationToken cancellationToken)
     {
-        if (!IsAuthorized(value))
-            return Results.Forbid();
-        
         var responseRead = await Repository.ReadAsync(id, cancellationToken).ConfigureAwait(false);
 
         if (!responseRead.IsSuccess)
@@ -165,11 +147,17 @@ public class InformationController : Controller
             }
         }
 
-        var existingInformation = responseRead.ValueSuccess!;
-        var updatedInformation = dto.ToEntity();
-        updatedInformation.Id = existingInformation.Id;
-        
-        var responseUpdate = await Repository.UpdateAsync(updatedInformation, cancellationToken).ConfigureAwait(false);
+        var existingRsvp = responseRead.ValueSuccess!;
+        var updatedRsvp = dto.ToEntity();
+        updatedRsvp.Id = existingRsvp.Id;
+
+        if (AuthorizationNeeded(existingRsvp, updatedRsvp))
+        {
+            if (!IsAuthorized(value))
+                return Results.Forbid();
+        }
+
+        var responseUpdate = await Repository.UpdateAsync(updatedRsvp, cancellationToken).ConfigureAwait(false);
         if (!responseUpdate.IsSuccess)
         {
             var failedResponse = responseUpdate.ValueFail;
@@ -186,11 +174,31 @@ public class InformationController : Controller
         return Results.Ok(responseUpdate.ValueSuccess!.ToDto());
     }
 
+#if DEBUG
+    [HttpPost("seed")]
+    public async Task<IResult> Seed(CancellationToken cancellationToken)
+    {
+        await Seeder.SeedAsync(cancellationToken).ConfigureAwait(false);
+        return Results.Ok();
+    }
+#endif
+
     private bool IsAuthorized(string? value)
     {
         if (value is null || !string.Equals(value, Configurations.AdminIdentifier))
             return false;
 
         return true;
+    }
+
+    private bool AuthorizationNeeded(Rsvp existingEntity, Rsvp incomingEntity)
+    {
+        if (!string.Equals(existingEntity.Name, incomingEntity.Name)
+            || !string.Equals(existingEntity.Salutation, incomingEntity.Salutation))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

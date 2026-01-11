@@ -14,7 +14,7 @@ using WeddingRsvp.Api.Repository.Generic;
 
 namespace WeddingRsvp.Integration;
 
-public class InformationControllerTests : IClassFixture<WebApplicationFactory<Program>>
+public class InformationsControllerTests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly WebApplicationFactory<Program> _factory;
     private readonly Mock<IInformationRepository> _repositoryMock = new();
@@ -23,7 +23,7 @@ public class InformationControllerTests : IClassFixture<WebApplicationFactory<Pr
     private const string AdminSecret = "secret-key";
     private const string ApiKey = "api-key";
 
-    public InformationControllerTests(WebApplicationFactory<Program> factory)
+    public InformationsControllerTests(WebApplicationFactory<Program> factory)
     {
         _factory = factory.WithWebHostBuilder(builder =>
         {
@@ -56,7 +56,7 @@ public class InformationControllerTests : IClassFixture<WebApplicationFactory<Pr
             .ReturnsAsync(RepositoryResponse<IEnumerable<Information>, RepositoryFailResponse>.CreateSuccess(infoList));
 
         // Act
-        var response = await client.GetAsync("/api/information");
+        var response = await client.GetAsync("/api/informations");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -74,7 +74,7 @@ public class InformationControllerTests : IClassFixture<WebApplicationFactory<Pr
             .ReturnsAsync(RepositoryResponse<IEnumerable<Information>, RepositoryFailResponse>.CreateSuccess(infoList));
 
         // Act
-        var response = await client.GetAsync("/api/information");
+        var response = await client.GetAsync("/api/informations");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
@@ -99,7 +99,7 @@ public class InformationControllerTests : IClassFixture<WebApplicationFactory<Pr
             .ReturnsAsync(RepositoryResponse<Information, RepositoryFailResponse>.CreateSuccess(info));
 
         // Act
-        var response = await client.GetAsync($"/api/information/language/{language}");
+        var response = await client.GetAsync($"/api/informations/language/{language}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -123,7 +123,7 @@ public class InformationControllerTests : IClassFixture<WebApplicationFactory<Pr
             }));
 
         // Act
-        var response = await client.GetAsync($"/api/information/language/{language}");
+        var response = await client.GetAsync($"/api/informations/language/{language}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -136,7 +136,7 @@ public class InformationControllerTests : IClassFixture<WebApplicationFactory<Pr
         var client = _factory.CreateClient();
 
         // Act
-        var response = await client.GetAsync("/api/information");
+        var response = await client.GetAsync("/api/informations");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -163,10 +163,13 @@ public class InformationControllerTests : IClassFixture<WebApplicationFactory<Pr
             .ReturnsAsync(RepositoryResponse<Information, RepositoryFailResponse>.CreateSuccess(createdInfo));
 
         // Act
-        var response = await client.PostAsJsonAsync("/api/information", dto);
+        var response = await client.PostAsJsonAsync("/api/informations", dto);
 
         // Assert
+        var result = await response.Content.ReadFromJsonAsync<GetInformationDto>();
         response.StatusCode.Should().Be(HttpStatusCode.Created);
+        result.Should().NotBeNull();
+        result.Should().BeEquivalentTo(createdInfo.ToDto());
     }
 
     [Fact]
@@ -182,7 +185,7 @@ public class InformationControllerTests : IClassFixture<WebApplicationFactory<Pr
             .ReturnsAsync(RepositoryResponse<RepositoryFailResponse>.CreateSuccess());
 
         // Act
-        var response = await client.DeleteAsync($"/api/information/{id}");
+        var response = await client.DeleteAsync($"/api/informations/{id}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -200,7 +203,7 @@ public class InformationControllerTests : IClassFixture<WebApplicationFactory<Pr
             .ReturnsAsync(RepositoryResponse<RepositoryFailResponse>.CreateSuccess());
 
         // Act
-        var response = await client.DeleteAsync($"/api/information/{id}");
+        var response = await client.DeleteAsync($"/api/informations/{id}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
@@ -230,10 +233,13 @@ public class InformationControllerTests : IClassFixture<WebApplicationFactory<Pr
             .ReturnsAsync(RepositoryResponse<Information, RepositoryFailResponse>.CreateSuccess(updatedInfo));
 
         // Act
-        var response = await client.PutAsJsonAsync($"/api/information/{id}", dto);
+        var response = await client.PutAsJsonAsync($"/api/informations/{id}", dto);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<GetInformationDto>();
+        result.Should().BeEquivalentTo(updatedInfo.ToDto());
+        result.Should().NotBeNull();
     }
 
     [Fact]
@@ -254,7 +260,7 @@ public class InformationControllerTests : IClassFixture<WebApplicationFactory<Pr
         };
 
         // Act
-        var response = await client.PutAsJsonAsync($"/api/information/{id}", dto);
+        var response = await client.PutAsJsonAsync($"/api/informations/{id}", dto);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
