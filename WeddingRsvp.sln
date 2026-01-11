@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeddingRsvp.Abstractions", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeddingRsvp.Client", "src-dotnet\WeddingRsvp.Client\WeddingRsvp.Client.csproj", "{A3C83C23-9FE3-46CB-8E24-A3DCB2FA7E0C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeddingRsvp.Test", "test\WeddingRsvp.Test\WeddingRsvp.Test.csproj", "{7CB6CEE1-E622-4E28-9340-C46452F0EA70}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,5 +55,9 @@ Global
 		{A3C83C23-9FE3-46CB-8E24-A3DCB2FA7E0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3C83C23-9FE3-46CB-8E24-A3DCB2FA7E0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3C83C23-9FE3-46CB-8E24-A3DCB2FA7E0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CB6CEE1-E622-4E28-9340-C46452F0EA70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CB6CEE1-E622-4E28-9340-C46452F0EA70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CB6CEE1-E622-4E28-9340-C46452F0EA70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CB6CEE1-E622-4E28-9340-C46452F0EA70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
