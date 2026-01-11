@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using WeddingRsvp.Client;
@@ -86,15 +87,28 @@ public partial class Admin : ComponentBase
         }
     }
 
-    private async Task SaveInvite(RsvpGuest invite)
+    private async Task SaveInvite()
     {
-        var response = await RsvpClient.UpdateRsvpAsync(invite).ConfigureAwait(false);
-        if (!response.IsSuccess)
+        var invite = _invites.FirstOrDefault(x => x.Id == _editingId);
+        if (invite is null)
         {
-            Logger.LogError("Failed to update guest with code {StatusCode}.", response.ValueFail.StatusCode);
+            Logger.LogError("Failed to update guest. Rsvp was null.");
             _errorMessage = "Failed to update guest.";
         }
-        _editingId = null;
+        else
+        {
+            var response = await RsvpClient.UpdateRsvpAsync(invite, true).ConfigureAwait(false);
+            if (!response.IsSuccess)
+            {
+                if (response.ValueFail!.StatusCode == HttpStatusCode.BadRequest)
+                    _errorMessage = "Failed to update guest. Invalid input data.";
+                else
+                    _errorMessage = "Failed to update guest.";                 
+                
+                Logger.LogError("Failed to update guest with code {StatusCode}.", response.ValueFail.StatusCode);
+            }
+            _editingId = null;
+        }
     }
 
     private async Task DeleteAsync(string id)
@@ -138,9 +152,13 @@ public partial class Admin : ComponentBase
             var response = await InformationClient.UpdateInformationAsync(_information).ConfigureAwait(false);
             if (!response.IsSuccess)
             {
+                if (response.ValueFail!.StatusCode == HttpStatusCode.BadRequest)
+                    _errorMessage = "Failed to update information. Invalid input data.";
+                else
+                    _errorMessage = "Failed to update information.";
+                
                 Logger.LogError("Failed to update information in {Language} with code {StatusCode}.",
                     _information.Language, response.ValueFail.StatusCode);
-                _errorMessage = "Failed to update information.";
             }
         }
         else

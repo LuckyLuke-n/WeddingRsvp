@@ -36,7 +36,6 @@ public class PutRsvpDto
     [Range(0, 10)]
     public int NumberOfVegetarianMenus { get; set; }
     
-    [Required]
     public string AdditionalInformation { get; set; } = string.Empty;
     
     [Required]
