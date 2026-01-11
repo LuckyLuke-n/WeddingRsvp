@@ -72,7 +72,7 @@ public partial class Admin : ComponentBase
 
     private async Task AddRow()
     {
-        var newInvite = new RsvpGuest { Name = "New Guest" };
+        var newInvite = new RsvpGuest { Name = "New Guest", Salutation = "Dear guest"};
         var response = await RsvpClient.AddRsvpAsync(newInvite).ConfigureAwait(false);
         if (!response.IsSuccess || response.ValueSuccess is null)
         {
@@ -81,9 +81,8 @@ public partial class Admin : ComponentBase
         }
         else
         {
-            _invites.Add(response.ValueSuccess);
-            _invites.Insert(0, newInvite);
-            _editingId = response.ValueSuccess!.Id;
+            _invites.Insert(0, response.ValueSuccess);
+            _editingId = response.ValueSuccess.Id;
         }
     }
 

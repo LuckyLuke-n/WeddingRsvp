@@ -84,7 +84,10 @@ public class RsvpsController : Controller
         var response = await Repository.CreateAsync(dto.ToEntity(), cancellationToken).ConfigureAwait(false);
 
         if (response.IsSuccess)
-            return Results.Created();
+        {
+            var createdRsvp = response.ValueSuccess!;
+            return Results.Created($"/api/rsvps/{createdRsvp.Id}", createdRsvp.ToDto());
+        }
         else
         {
             var failedResponse = response.ValueFail;

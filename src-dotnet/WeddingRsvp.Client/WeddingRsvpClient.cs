@@ -110,7 +110,7 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient
 
         try
         {
-            var responseMessage = await client.PutAsJsonAsync($"{rsvp.Id}", rsvp.ToDto(), cancellationToken)
+            var responseMessage = await client.PutAsJsonAsync($"{rsvp.Id}", rsvp.ToPutDto(), cancellationToken)
                 .ConfigureAwait(false);
 
             if (!responseMessage.IsSuccessStatusCode)
@@ -146,7 +146,7 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient
 
         try
         {
-            var responseMessage = await client.PostAsJsonAsync("", rsvp.ToDto(), cancellationToken)
+            var responseMessage = await client.PostAsJsonAsync("", rsvp.ToPostDto(), cancellationToken)
                 .ConfigureAwait(false);
 
             if (!responseMessage.IsSuccessStatusCode)
@@ -289,7 +289,7 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient
         
         try
         {
-            var responseMessage = await client.PutAsJsonAsync($"{information.Id}", information.ToDto(), cancellationToken).ConfigureAwait(false);
+            var responseMessage = await client.PutAsJsonAsync($"{information.Id}", information.ToPutDto(), cancellationToken).ConfigureAwait(false);
 
             if (!responseMessage.IsSuccessStatusCode)
                 return ClientResponse<DynamicInformation,ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
@@ -327,7 +327,7 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient
         
         try
         {
-            var responseMessage = await client.PostAsJsonAsync("", information.ToDto(), cancellationToken).ConfigureAwait(false);
+            var responseMessage = await client.PostAsJsonAsync("", information.ToPostDto(), cancellationToken).ConfigureAwait(false);
 
             if (!responseMessage.IsSuccessStatusCode)
                 return ClientResponse<DynamicInformation,ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
