@@ -38,6 +38,6 @@ jobs:
 
     - name: Run WeddingRsvp.Test Tests
       run: |
-        dotnet test integration/WeddingRsvp.Test \
+        dotnet test test/WeddingRsvp.Test \
           --logger "trx;LogFileName=unit-test-results.trx" \
           --collect:"XPlat Code Coverage"
