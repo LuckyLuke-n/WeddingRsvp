@@ -12,15 +12,15 @@ namespace WeddingRsvp.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Policy = "ApiKeyPolicy")]
-public class InformationController : Controller
+public class InformationsController : Controller
 {
     private IInformationRepository Repository { get; }
     private ApiConfiguration Configurations { get; }
-    private ILogger<InformationController> Logger { get; }
+    private ILogger<InformationsController> Logger { get; }
 
-    public InformationController(IInformationRepository repository,
+    public InformationsController(IInformationRepository repository,
         IOptions<ApiConfiguration> options,
-        ILogger<InformationController> logger)
+        ILogger<InformationsController> logger)
     {
         Repository = repository;
         Configurations = options.Value;
@@ -50,7 +50,7 @@ public class InformationController : Controller
         return Results.Ok(dto);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = "GetInformation")]
     public async Task<IResult> Get([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var response = await Repository.ReadAsync(id, cancellationToken).ConfigureAwait(false);
@@ -106,7 +106,10 @@ public class InformationController : Controller
         var response = await Repository.CreateAsync(dto.ToEntity(), cancellationToken).ConfigureAwait(false);
 
         if (response.IsSuccess)
-            return Results.Created();
+        {
+            var createdInformation = response.ValueSuccess!;
+            return Results.CreatedAtRoute("GetInformation", new { id = createdInformation.Id }, createdInformation.ToDto());
+        }
 
         var failedResponse = response.ValueFail;
         switch (failedResponse.StatusCode)

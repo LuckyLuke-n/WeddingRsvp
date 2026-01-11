@@ -1,8 +1,7 @@
+using System.Net;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.Options;
 using WeddingRsvp.Client;
-using WeddingRsvp.Client.Configurations;
 
 namespace WeddingRsvp.WebApp.Components.Pages;
 
@@ -11,9 +10,10 @@ public partial class Admin : ComponentBase
     [Inject] private IRsvpClient RsvpClient { get; set; } = null!;
     [Inject] private IInformationClient InformationClient { get; set; } = null!;
     [Inject] private ILogger<Admin> Logger { get; set; } = null!;
-    
+
     private bool _isAuthenticated;
     private string _passphrase = string.Empty;
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private string _selectedLanguage = string.Empty;
     private string? _editingId;
     private string _errorMessage = string.Empty;
@@ -53,10 +53,11 @@ public partial class Admin : ComponentBase
         else
         {
             _errorMessage = "Failed to load information in all languages.";
-            Logger.LogError("Failed to load information in all languages with code {StatusCode}.", response.ValueFail.StatusCode);
+            Logger.LogError("Failed to load information in all languages with code {StatusCode}.",
+                response.ValueFail.StatusCode);
         }
     }
-    
+
     private async Task LoadRsvpsAsync()
     {
         var response = await RsvpClient.GetAllRsvpsAsync().ConfigureAwait(false);
@@ -69,38 +70,111 @@ public partial class Admin : ComponentBase
             Logger.LogError("Failed to load all rsvps with code {StatusCode}.", response.ValueFail.StatusCode);
         }
     }
-    
-    private void AddRow()
+
+    private async Task AddRow()
     {
-        var newId = Guid.NewGuid().ToString();
-        var newInvite = new RsvpGuest { Id = newId, Name = "New Guest" };
-        _invites.Insert(0, newInvite);
-        _editingId = newId;
+        var newInvite = new RsvpGuest { Name = "New Guest", Salutation = "Dear guest"};
+        var response = await RsvpClient.AddRsvpAsync(newInvite).ConfigureAwait(false);
+        if (!response.IsSuccess || response.ValueSuccess is null)
+        {
+            Logger.LogError("Failed to add guest with code {StatusCode}.", response.ValueFail.StatusCode);
+            _errorMessage = "Failed to add guest. Changes are displayed in the table but not saved.";
+        }
+        else
+        {
+            _invites.Insert(0, response.ValueSuccess);
+            _editingId = response.ValueSuccess.Id;
+        }
     }
 
-    private void SaveInvite(RsvpGuest invite)
+    private async Task SaveInvite()
     {
-        // Implement service call to persist changes
-        _editingId = null;
+        var invite = _invites.FirstOrDefault(x => x.Id == _editingId);
+        if (invite is null)
+        {
+            Logger.LogError("Failed to update guest. Rsvp was null.");
+            _errorMessage = "Failed to update guest.";
+        }
+        else
+        {
+            var response = await RsvpClient.UpdateRsvpAsync(invite, true).ConfigureAwait(false);
+            if (!response.IsSuccess)
+            {
+                if (response.ValueFail!.StatusCode == HttpStatusCode.BadRequest)
+                    _errorMessage = "Failed to update guest. Invalid input data.";
+                else
+                    _errorMessage = "Failed to update guest.";                 
+                
+                Logger.LogError("Failed to update guest with code {StatusCode}.", response.ValueFail.StatusCode);
+            }
+            _editingId = null;
+        }
     }
 
-    private void Delete(string id)
+    private async Task DeleteAsync(string id)
     {
-        _invites.RemoveAll(x => x.Id == id);
+        if (Guid.TryParse(id, out var guid))
+        {
+            var response = await RsvpClient.DeleteRsvpAsync(guid).ConfigureAwait(false);
+            if (!response.IsSuccess)
+            {
+                Logger.LogError("Failed to delete guest with code {StatusCode}.", response.ValueFail.StatusCode);
+                _errorMessage = "Failed to delete guest.";
+            }
+            else
+            {
+                _invites.RemoveAll(x => x.Id == id);
+            }
+        }
+        else
+        {
+            Logger.LogError("Failed to delete guest.");
+            _errorMessage = "Failed to delete guest.";
+        }
     }
 
     private void UpdateDictionaryKey(Dictionary<string, string> dict, string oldKey, string? newKey)
     {
-        if (string.IsNullOrWhiteSpace(newKey) || oldKey == newKey || dict.ContainsKey(newKey)) return;
+        if (string.IsNullOrWhiteSpace(newKey) || oldKey == newKey || dict.ContainsKey(newKey))
+            return;
 
         var value = dict[oldKey];
         dict.Remove(oldKey);
         dict[newKey] = value;
     }
 
-    private void SaveInformation()
+    private async Task SaveInformationAsync()
     {
-        // Implement service call to save _information
+        var exists = _informationList.Any(x => x.Language == _information.Language);
+
+        if (exists)
+        {
+            var response = await InformationClient.UpdateInformationAsync(_information).ConfigureAwait(false);
+            if (!response.IsSuccess)
+            {
+                if (response.ValueFail!.StatusCode == HttpStatusCode.BadRequest)
+                    _errorMessage = "Failed to update information. Invalid input data.";
+                else
+                    _errorMessage = "Failed to update information.";
+                
+                Logger.LogError("Failed to update information in {Language} with code {StatusCode}.",
+                    _information.Language, response.ValueFail.StatusCode);
+            }
+        }
+        else
+        {
+            var response = await InformationClient.AddInformationAsync(_information).ConfigureAwait(false);
+            if (!response.IsSuccess || response.ValueSuccess is null)
+            {
+                Logger.LogError("Failed to add information in {Language} with code {StatusCode}.",
+                    _information.Language, response.ValueFail.StatusCode);
+                _errorMessage = "Failed to add information.";
+            }
+            else
+            {
+                _informationList.Add(response.ValueSuccess);
+            }
+        }
     }
 
     /// <summary>

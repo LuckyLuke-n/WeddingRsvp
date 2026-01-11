@@ -82,7 +82,7 @@
                                     <input type="number" @bind="invite.NumberOfVegetarianMenus" class="admin-input"
                                            style="width: 50px;"/></td>
                                 <td>
-                                    <button class="action-btn btn-save" @onclick="() => SaveInvite(invite)">Save</button>
+                                    <button class="action-btn btn-save" @onclick="() => SaveInvite()">Save</button>
                                     <button class="action-btn" @onclick="() => _editingId = null">Cancel</button>
                                 </td>
                             }
@@ -99,7 +99,7 @@
                                 <td>
                                     <button class="action-btn btn-edit" @onclick="() => _editingId = invite.Id">Edit
                                     </button>
-                                    <button class="action-btn btn-delete" @onclick="() => Delete(invite.Id)">Delete
+                                    <button class="action-btn btn-delete" @onclick="() => DeleteAsync(invite.Id)">Delete
                                     </button>
                                 </td>
                             }
@@ -205,7 +205,7 @@
             </div>
 
             <div style="margin-top: 30px; text-align: right;">
-                <button class="btn btn-save" style="padding: 10px 30px;" @onclick="SaveInformation">Save information
+                <button class="btn btn-save" style="padding: 10px 30px;" @onclick="SaveInformationAsync">Save information
                 </button>
             </div>
         </div>

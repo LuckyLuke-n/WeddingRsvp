@@ -2,6 +2,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var mongodb = builder.AddMongoDB("weddingrsvp-mongo")
     .WithDataBindMount("data/mongo")
+    .WithMongoExpress()
     .WithLifetime(ContainerLifetime.Persistent);
 
 var api = builder.AddProject<Projects.WeddingRsvp_Api>("api")

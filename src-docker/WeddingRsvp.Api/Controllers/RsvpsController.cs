@@ -52,7 +52,7 @@ public class RsvpsController : Controller
         return Results.Ok(dto);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = "GetRsvp")]
     public async Task<IResult> Get([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var response = await Repository.ReadAsync(id, cancellationToken).ConfigureAwait(false);
@@ -84,7 +84,10 @@ public class RsvpsController : Controller
         var response = await Repository.CreateAsync(dto.ToEntity(), cancellationToken).ConfigureAwait(false);
 
         if (response.IsSuccess)
-            return Results.Created();
+        {
+            var createdRsvp = response.ValueSuccess!;
+            return Results.CreatedAtRoute("GetRsvp", new { id = createdRsvp.Id }, createdRsvp.ToDto());
+        }
         else
         {
             var failedResponse = response.ValueFail;

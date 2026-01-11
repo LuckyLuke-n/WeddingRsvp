@@ -16,7 +16,7 @@ using Reply = WeddingRsvp.Abstractions.Models.Rsvps.Reply;
 
 namespace WeddingRsvp.Integration;
 
-public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>, IClassFixture<TimeProviderFixture>
+public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>>, IClassFixture<TimeProviderFixture>
 {
     private TimeProvider TimeProvider { get; }
     private readonly WebApplicationFactory<Program> _factory;
@@ -26,7 +26,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     private const string AdminSecret = "secret-key";
     private const string ApiKey = "api-key";
 
-    public RsvpControllerTests(WebApplicationFactory<Program> factory, TimeProviderFixture timeFixture )
+    public RsvpsControllerTests(WebApplicationFactory<Program> factory, TimeProviderFixture timeFixture )
     {
         timeFixture.ProviderMock.Setup(x => x.GetUtcNow()).Returns(new DateTimeOffset(2022, 1, 1, 12, 0, 0, TimeSpan.Zero));
         TimeProvider = timeFixture.ProviderMock.Object;
@@ -97,7 +97,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var result = await response.Content.ReadFromJsonAsync<IEnumerable<Rsvp>>();
+        var result = await response.Content.ReadFromJsonAsync<IEnumerable<GetRsvpDto>>();
         result.Should().HaveCount(2);
     }
 
@@ -139,9 +139,9 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var result = await response.Content.ReadFromJsonAsync<Rsvp>(); // The controller returns DTO, assuming JSON compatibility
+        var result = await response.Content.ReadFromJsonAsync<GetRsvpDto>();
         result.Should().NotBeNull();
-        result!.ToDto().Should().BeEquivalentTo(dto);
+        result.Should().BeEquivalentTo(dto);
     }
 
     [Fact]
@@ -164,7 +164,7 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
-    public async Task Create_WithValidDataAndAuth_ReturnsCreated()
+    public async Task Create_WithValidDataAndAuth_ReturnsCreatedAt()
     {
         // Arrange
         var client = _factory.CreateClient();
@@ -189,6 +189,8 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
+        var result = await response.Content.ReadFromJsonAsync<GetRsvpDto>();
+        result!.Should().BeEquivalentTo(dto);
     }
 
     [Fact]
@@ -330,8 +332,8 @@ public class RsvpControllerTests : IClassFixture<WebApplicationFactory<Program>>
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var result = await response.Content.ReadFromJsonAsync<Rsvp>();
-        result!.ToDto().Should().BeEquivalentTo(updateDto);
+        var result = await response.Content.ReadFromJsonAsync<GetRsvpDto>();
+        result!.Should().BeEquivalentTo(updateDto);
     }
 
     [Theory]

@@ -1,4 +1,4 @@
-name: Integration Tests
+name: Automated Tests
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - develop
 
 jobs:
-  integration-tests:
+  automated-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -40,4 +40,10 @@ jobs:
       run: |
         dotnet test integration/WeddingRsvp.Integration \
           --logger "trx;LogFileName=integration-test-results.trx" \
+          --collect:"XPlat Code Coverage"
+        
+    - name: Run WeddingRsvp.Test Tests
+      run: |
+        dotnet test test/WeddingRsvp.Test \
+          --logger "trx;LogFileName=unit-test-results.trx" \
           --collect:"XPlat Code Coverage"

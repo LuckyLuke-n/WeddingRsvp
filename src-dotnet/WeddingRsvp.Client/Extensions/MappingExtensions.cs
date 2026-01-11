@@ -23,7 +23,7 @@ internal static class MappingExtensions
         };
     }
 
-    internal static PutRsvpDto ToDto(this RsvpGuest rsvp)
+    internal static PutRsvpDto ToPutDto(this RsvpGuest rsvp)
     {
         return new PutRsvpDto()
         {
@@ -34,6 +34,16 @@ internal static class MappingExtensions
             NumberOfFishMenus = rsvp.NumberOfFishMenus,
             NumberOfVegetarianMenus = rsvp.NumberOfVegetarianMenus,
             AdditionalInformation = rsvp.AdditionalInformation,
+            Name = rsvp.Name,
+            Salutation = rsvp.Salutation,
+            IsPlural = rsvp.IsPlural,
+        };
+    }
+    
+    internal static PostRsvpDto ToPostDto(this RsvpGuest rsvp)
+    {
+        return new PostRsvpDto()
+        {
             Name = rsvp.Name,
             Salutation = rsvp.Salutation,
             IsPlural = rsvp.IsPlural,
@@ -52,9 +62,20 @@ internal static class MappingExtensions
         };
     }
 
-    internal static PostInformationDto ToDto(this DynamicInformation information)
+    internal static PostInformationDto ToPostDto(this DynamicInformation information)
     {
         return new PostInformationDto()
+        {
+            Language = information.Language,
+            InvitationText = information.InvitationText,
+            Itinerary = information.Itinerary,
+            Faqs = information.Faqs,
+        };
+    }
+    
+    internal static PutInformationDto ToPutDto(this DynamicInformation information)
+    {
+        return new PutInformationDto()
         {
             Language = information.Language,
             InvitationText = information.InvitationText,
