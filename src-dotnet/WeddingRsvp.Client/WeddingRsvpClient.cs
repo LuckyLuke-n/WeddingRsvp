@@ -126,18 +126,84 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient
         }
         catch (HttpRequestException e)
         {
-            Logger.LogError(e, "Network error or server is unreachable while getting rsvp {Id}.", rsvp.Id);
+            Logger.LogError(e, "Network error or server is unreachable while updating rsvp {Id}.", rsvp.Id);
         }
         catch (OperationCanceledException e)
         {
-            Logger.LogInformation(e, "The request for rsvp {Id} timed out or was cancelled.", rsvp.Id);
+            Logger.LogInformation(e, "The request for updating rsvp {Id} timed out or was cancelled.", rsvp.Id);
         }
         catch (Exception e)
         {
-            Logger.LogError(e, "An unexpected error occurred while getting rsvp {Id}.", rsvp.Id);
+            Logger.LogError(e, "An unexpected error occurred while updating rsvp {Id}.", rsvp.Id);
         }
 
         return ClientResponse<RsvpGuest, ClientFailResponse>.CreateFail(new(HttpStatusCode.InternalServerError));
+    }
+
+    public async Task<ClientResponse<RsvpGuest, ClientFailResponse>> AddRsvpAsync(RsvpGuest rsvp, CancellationToken cancellationToken = default)
+    {
+        using var client = HttpClientFactory.CreateClient(RsvpAdminClientName);
+
+        try
+        {
+            var responseMessage = await client.PostAsJsonAsync("", rsvp.ToDto(), cancellationToken)
+                .ConfigureAwait(false);
+
+            if (!responseMessage.IsSuccessStatusCode)
+                return ClientResponse<RsvpGuest, ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
+
+            var dto = await responseMessage.Content.ReadFromJsonAsync<GetRsvpDto>(cancellationToken: cancellationToken);
+
+            if (dto is not null)
+                return ClientResponse<RsvpGuest, ClientFailResponse>.CreateSuccess(dto.ToDomainObject());
+
+            Logger.LogError("Cannot deserialize response from {ClientName} to {DtoType}.", RsvpClientName, typeof(GetRsvpDto));
+            return ClientResponse<RsvpGuest, ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
+        }
+        catch (HttpRequestException e)
+        {
+            Logger.LogError(e, "Network error or server is unreachable while creating rsvp {Id}.", rsvp.Id);
+        }
+        catch (OperationCanceledException e)
+        {
+            Logger.LogInformation(e, "The request for creating rsvp {Id} timed out or was cancelled.", rsvp.Id);
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "An unexpected error occurred while creating rsvp {Id}.", rsvp.Id);
+        }
+
+        return ClientResponse<RsvpGuest, ClientFailResponse>.CreateFail(new(HttpStatusCode.InternalServerError));
+    }
+
+    public async Task<ClientResponse<ClientFailResponse>> DeleteRsvpAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        using var client = HttpClientFactory.CreateClient(RsvpAdminClientName);
+
+        try
+        {
+            var responseMessage = await client.DeleteAsync("", cancellationToken)
+                .ConfigureAwait(false);
+            
+            if (!responseMessage.IsSuccessStatusCode)
+                return ClientResponse<ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
+
+            return ClientResponse<ClientFailResponse>.CreateSuccess();
+        }
+        catch (HttpRequestException e)
+        {
+            Logger.LogError(e, "Network error or server is unreachable while deleting rsvp {Id}.", id);
+        }
+        catch (OperationCanceledException e)
+        {
+            Logger.LogInformation(e, "The request for deleting rsvp {Id} timed out or was cancelled.", id);
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "An unexpected error occurred while deleting rsvp {Id}.", id);
+        }
+        
+        return ClientResponse<ClientFailResponse>.CreateFail(new(HttpStatusCode.InternalServerError));
     }
 
     public async Task<ClientResponse<IEnumerable<DynamicInformation>, ClientFailResponse>> GetInformationInAllLanguagesAsync(CancellationToken cancellationToken = default)
