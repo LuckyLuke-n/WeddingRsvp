@@ -39,7 +39,7 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and push Docker image
+    - name: Build and push Docker image for api
       uses: docker/build-push-action@v4
       with:
           context: .
@@ -47,5 +47,16 @@ jobs:
           push: true
           platforms: linux/arm64, linux/amd64
           tags: |
-            luckyluke4411/weddingrsvp:latest
-            luckyluke4411/weddingrsvp:${{ env.latest_tag }}
+            luckyluke4411/weddingrsvp-api:latest
+            luckyluke4411/weddingrsvp-api:${{ env.latest_tag }}
+
+    - name: Build and push Docker image for webapp
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: src-docker/WeddingRsvp.WebApp/Dockerfile
+        push: true
+        platforms: linux/arm64, linux/amd64
+        tags: |
+          luckyluke4411/weddingrsvp-WebApp:latest
+          luckyluke4411/weddingrsvp-WebApp:${{ env.latest_tag }}
