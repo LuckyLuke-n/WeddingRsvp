@@ -2,7 +2,7 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 jobs:
 
@@ -58,5 +58,5 @@ jobs:
         push: true
         platforms: linux/arm64, linux/amd64
         tags: |
-          luckyluke4411/weddingrsvp-WebApp:latest
-          luckyluke4411/weddingrsvp-WebApp:${{ env.latest_tag }}
+          luckyluke4411/weddingrsvp-webapp:latest
+          luckyluke4411/weddingrsvp-webapp:${{ env.latest_tag }}
