@@ -1,0 +1,46 @@
+@page "/{culture}/invite"
+@page "/{culture}/invite/{id}"
+@using Microsoft.Extensions.Localization
+
+@inject IStringLocalizer<Invite> Localizer
+
+<div class="invite-container">
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div style="background-color: rgba(244, 67, 54, 0.2); border: 1px solid #f44336; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <span><strong>Error:</strong> @_errorMessage</span>
+            <button style="background: none; border: none; color: white; cursor: pointer; font-size: 20px;" @onclick='() => _errorMessage = ""'>&times;</button>
+        </div>
+    }
+    
+    <h1>@_rsvpGuest.Salutation</h1>
+
+    <div class="text-block">@_information.InvitationText</div>
+
+    <div class="itinerary">
+        <h2>@Localizer["ItineraryHeader"]</h2>
+        @foreach (var item in _information.Itinerary)
+        {
+            <div class="itinerary-item"><span>@item.Key</span> <span>@item.Value</span></div>
+        }
+    </div>
+
+    <div class="btn-container">
+        <a href=@NavigationMaster.Rsvp(@Culture, @Id) class="btn">@Localizer["RsvpButton"]</a>
+    </div>
+
+    <div class="faq-section">
+        <h2 class="faq-header">FAQ</h2>
+        <div class="faq-description">
+            @Localizer["FaqHeader"]
+        </div>
+
+        @foreach (var item in _information.Faqs)
+        {
+            <details>
+                <summary>@item.Key</summary>
+                <div class="faq-answer">@item.Value</div>
+            </details>
+        }
+    </div>
+</div>

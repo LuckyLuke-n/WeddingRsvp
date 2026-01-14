@@ -1,0 +1,23 @@
+namespace WeddingRsvp.Api.Repository.Entities;
+
+public class Rsvp : IEntity
+{
+    public string Id { get; set; } = string.Empty;
+    public DateTime? LastUpdated { get; set; }
+    
+    public string Name { get; set; } = string.Empty;
+    public string Salutation { get; set; } = string.Empty;
+    public bool IsPlural { get; set; }
+    
+    public Reply Attending { get; set; }
+    public Reply BringPartner { get; set; }
+    public int NumberOfGuestsOvernight { get; set; }
+    
+    public int NumberOfMeatMenus { get; set; }
+    public int NumberOfFishMenus { get; set; }
+    public int NumberOfVegetarianMenus { get; set; }
+    
+    public string AdditionalInformation { get; set; } = string.Empty;
+    
+    public void SetAsNew() => Id = Guid.NewGuid().ToString();
+}
