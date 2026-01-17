@@ -26,7 +26,7 @@ public class RsvpSeeder
     }
 
 
-    public async Task SeedAsync(CancellationToken cancellationToken)
+    public async Task RunAsync(bool onlyClean = false, CancellationToken cancellationToken = default)
     {
         if (RsvpCollection is null || InformationCollection is null)
         {
@@ -38,6 +38,9 @@ public class RsvpSeeder
         await InformationCollection.DeleteManyAsync(FilterDefinition<Information>.Empty, cancellationToken)
             .ConfigureAwait(false);
         _logger.LogWarning("Cleaning mongo db completed.");
+        
+        if (onlyClean)
+            return;
 
         Rsvp[] rsvps =
         [
