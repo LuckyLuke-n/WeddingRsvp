@@ -178,7 +178,14 @@ public class RsvpsController : Controller
     [HttpPost("seed")]
     public async Task<IResult> Seed(CancellationToken cancellationToken)
     {
-        await Seeder.SeedAsync(cancellationToken).ConfigureAwait(false);
+        await Seeder.RunAsync(false, cancellationToken).ConfigureAwait(false);
+        return Results.Ok();
+    }
+    
+    [HttpPost("clean")]
+    public async Task<IResult> Clean(CancellationToken cancellationToken)
+    {
+        await Seeder.RunAsync(true, cancellationToken).ConfigureAwait(false);
         return Results.Ok();
     }
 #endif
