@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi;
 using WeddingRsvp.Api.Configurations;
+using WeddingRsvp.Api.Diagnostics;
 using WeddingRsvp.Api.Repository;
 using WeddingRsvp.Api.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+builder.Services.AddApiOpenTelemetry();
 builder.Services.Configure<ApiConfiguration>( builder.Configuration.GetSection( ApiConfiguration.Section ) );
 builder.Services.AddSingleton(TimeProvider.System);
 builder.AddMongoDbRsvpRepository();

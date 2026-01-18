@@ -11,6 +11,14 @@
         </div>
     }
     
+    @if (!string.IsNullOrEmpty(_successMessage))
+    {
+        <div style="background-color: rgba(76, 175, 80, 0.2); border: 1px solid #4CAF50; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <span><strong>Success:</strong> @_successMessage</span>
+            <button style="background: none; border: none; color: white; cursor: pointer; font-size: 20px;" @onclick='() => _successMessage = ""'>&times;</button>
+        </div>
+    }
+    
     @if (!_isAuthenticated)
     {
         <div class="login-box">
@@ -165,7 +173,7 @@
                         </tbody>
                     </table>
                     <button class="action-btn btn-add" style="margin-top: 10px;"
-                            @onclick='() => _information.Itinerary["New Event"] = "Description"'>+ Add Event
+                            @onclick='() => AddDictionaryEntry(_information.Itinerary, "New Event", "Description")'>+ Add Event
                     </button>
                 </div>
 
@@ -199,7 +207,7 @@
                         </tbody>
                     </table>
                     <button class="action-btn btn-add" style="margin-top: 10px;"
-                            @onclick='() => _information.Faqs["New Question"] = "New Answer"'>+ Add FAQ
+                            @onclick='() => AddDictionaryEntry(_information.Faqs, "New Question", "New Answer")'>+ Add FAQ
                     </button>
                 </div>
             </div>
