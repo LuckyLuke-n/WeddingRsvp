@@ -17,6 +17,7 @@ public partial class Admin : ComponentBase
     private string _selectedLanguage = string.Empty;
     private string? _editingId;
     private string _errorMessage = string.Empty;
+    private string _successMessage = string.Empty;
 
     private List<RsvpGuest> _invites = [];
     private List<DynamicInformation> _informationList = [];
@@ -143,6 +144,21 @@ public partial class Admin : ComponentBase
         dict[newKey] = value;
     }
 
+    private void AddDictionaryEntry(Dictionary<string, string> dict, string defaultKey, string defaultValue)
+    {
+        var key = defaultKey;
+        int counter = 1;
+        
+        // Ensure we don't overwrite if "New Event" already exists
+        while (dict.ContainsKey(key))
+        {
+            key = $"{defaultKey} {counter++}";
+        }
+
+        dict[key] = defaultValue;
+        StateHasChanged();
+    }
+
     private async Task SaveInformationAsync()
     {
         var exists = _informationList.Any(x => x.Language == _information.Language);
@@ -160,6 +176,8 @@ public partial class Admin : ComponentBase
                 Logger.LogError("Failed to update information in {Language} with code {StatusCode}.",
                     _information.Language, response.ValueFail.StatusCode);
             }
+            else
+                _successMessage = "Information updated successfully.";
         }
         else
         {
@@ -168,11 +186,16 @@ public partial class Admin : ComponentBase
             {
                 Logger.LogError("Failed to add information in {Language} with code {StatusCode}.",
                     _information.Language, response.ValueFail.StatusCode);
-                _errorMessage = "Failed to add information.";
+                
+                if (response.ValueFail!.StatusCode == HttpStatusCode.BadRequest)
+                    _errorMessage = "Failed to add information. Invalid input data.";
+                else
+                    _errorMessage = "Failed to add information.";
             }
             else
             {
                 _informationList.Add(response.ValueSuccess);
+                _successMessage = "Information added successfully.";
             }
         }
     }
