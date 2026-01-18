@@ -1,7 +1,9 @@
 using System.Net;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Options;
 using WeddingRsvp.Client;
+using WeddingRsvp.WebApp.Configurations;
 
 namespace WeddingRsvp.WebApp.Components.Pages;
 
@@ -10,6 +12,7 @@ public partial class Admin : ComponentBase
     [Inject] private IRsvpClient RsvpClient { get; set; } = null!;
     [Inject] private IInformationClient InformationClient { get; set; } = null!;
     [Inject] private ILogger<Admin> Logger { get; set; } = null!;
+    [Inject] private IOptions<WebAppConfiguration> WebAppConfiguration { get; set; } = null!;
 
     private bool _isAuthenticated;
     private string _passphrase = string.Empty;
@@ -26,7 +29,7 @@ public partial class Admin : ComponentBase
     private async Task LoginAsync()
     {
         // Replace "secret" with your desired passphrase
-        if (_passphrase == "secret")
+        if (string.Equals(_passphrase, WebAppConfiguration.Value.AdminPassword, StringComparison.Ordinal))
         {
             _isAuthenticated = true;
             await LoadInformationAsync().ConfigureAwait(false);
