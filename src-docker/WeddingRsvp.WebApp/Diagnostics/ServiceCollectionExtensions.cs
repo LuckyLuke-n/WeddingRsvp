@@ -1,18 +1,18 @@
 using System.Reflection;
 using OpenTelemetry.Resources;
-using WeddingRsvp.Api.Diagnostics.Meters;
+using WeddingRsvp.WebApp.Diagnostics.Meters;
 
-namespace WeddingRsvp.Api.Diagnostics;
+namespace WeddingRsvp.WebApp.Diagnostics;
 
 public static class ServiceCollectionExtension
 {
-    public static IServiceCollection AddApiOpenTelemetry( this IServiceCollection services )
+    public static IServiceCollection AddWebAppOpenTelemetry( this IServiceCollection services )
     {
         services.AddOpenTelemetry()
             .ConfigureResource(resource =>
             {
                 resource
-                    .AddService("RsvpApi", "WeddingRsvp.Api",
+                    .AddService("RsvpApi", "WeddingRsvp.WebApp",
                         Assembly.GetExecutingAssembly().GetName().Version!.ToString())
                     .AddAttributes(
                     [
@@ -21,7 +21,7 @@ public static class ServiceCollectionExtension
                     ]);
             })
             .WithMetrics( meters =>
-                meters.AddMeter( ResponseMeter.Name )
+                meters.AddMeter( WebAppMeter.Name )
             )
             .WithLogging()
             .WithTracing();
