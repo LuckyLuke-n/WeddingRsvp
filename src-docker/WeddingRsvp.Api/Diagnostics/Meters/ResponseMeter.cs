@@ -1,5 +1,4 @@
 using System.Diagnostics.Metrics;
-using ZstdSharp.Unsafe;
 
 namespace WeddingRsvp.Api.Diagnostics.Meters;
 

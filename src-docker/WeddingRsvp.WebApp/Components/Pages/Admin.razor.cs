@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Options;
 using WeddingRsvp.Client;
 using WeddingRsvp.WebApp.Configurations;
+using WeddingRsvp.WebApp.Diagnostics.Meters;
 
 namespace WeddingRsvp.WebApp.Components.Pages;
 
@@ -28,9 +29,9 @@ public partial class Admin : ComponentBase
 
     private async Task LoginAsync()
     {
-        // Replace "secret" with your desired passphrase
         if (string.Equals(_passphrase, WebAppConfiguration.Value.AdminPassword, StringComparison.Ordinal))
         {
+            WebAppMeter.SuccessfulAdminLogin();
             _isAuthenticated = true;
             await LoadInformationAsync().ConfigureAwait(false);
             await LoadRsvpsAsync().ConfigureAwait(false);
@@ -39,6 +40,7 @@ public partial class Admin : ComponentBase
         else
         {
             _errorMessage = "Invalid passphrase.";
+            WebAppMeter.FailedAdminLogin();
         }
     }
 
