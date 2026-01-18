@@ -4,12 +4,13 @@ using WeddingRsvp.Client.Configurations;
 using WeddingRsvp.WebApp.Components;
 using WeddingRsvp.WebApp.Components.Helpers;
 using WeddingRsvp.WebApp.Configurations;
+using WeddingRsvp.WebApp.Diagnostics;
 using WeddingRsvp.WebApp.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-
+builder.Services.AddWebAppOpenTelemetry();
 builder.AddRsvpClient();
 builder.Services.Configure<WeddingRsvpClientConfiguration>(builder.Configuration.GetSection(WeddingRsvpClientConfiguration.Section));
 builder.Services.Configure<WebAppConfiguration>(builder.Configuration.GetSection(WebAppConfiguration.Section));
