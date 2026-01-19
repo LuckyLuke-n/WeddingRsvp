@@ -438,4 +438,43 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         result!.Name.Should().Be("Frank Updated");
         _repositoryMock.Verify(x => x.UpdateAsync(It.Is<Rsvp>(r => r.Name == "Frank Updated"), It.IsAny<CancellationToken>()), Times.Once);
     }
+    
+    [Theory]
+    [InlineData("Changed Name", "Dear Original", false)]
+    [InlineData("Original Name", "Dear Change", false)]
+    [InlineData("Original Name", "Dear Original", true)]
+    public async Task Update_CriticalData_WithoutAdminHeader_ReturnsForbidden( string name, string salutation, bool isPlural)
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
+        var id = Guid.NewGuid();
+
+        var existingRsvp = new Rsvp
+        {
+            Id = id.ToString(),
+            Name = "Original Name",
+            Salutation = "Dear Original",
+            IsPlural = false,
+        };
+
+        // Attempting to change the name without the X-Auth-Admin header
+        var updateDto = new PutRsvpDto
+        {
+            Name = name,
+            Salutation = salutation,
+            IsPlural = isPlural,
+            AdditionalInformation = "Trying to bypass security"
+        };
+
+        _repositoryMock.Setup(x => x.ReadAsync(id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(RepositoryResponse<Rsvp, RepositoryFailResponse>.CreateSuccess(existingRsvp));
+
+        // Act
+        var response = await client.PutAsJsonAsync($"/api/rsvps/{id}", updateDto);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Rsvp>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
 }
