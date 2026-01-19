@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using WeddingRsvp.Client;
+using WeddingRsvp.WebApp.Diagnostics.Meters;
 
 namespace WeddingRsvp.WebApp.Components.Pages;
 
@@ -66,10 +67,12 @@ public partial class Rsvp : ComponentBase
         if (response.IsSuccess)
         {
             Navigation.NavigateTo(NavigationMaster.Invite(Culture!, RsvpGuest.Id));
+            WebAppMeter.CountValidResponse(RsvpGuest.Id);
             return;
         }
 
         Logger.LogError("Cannot update rsvp {Id}.", RsvpGuest.Id);
         _errorMessage = "Cannot update the invite.";
+        WebAppMeter.CountFailedResponse(RsvpGuest.Id);
     }
 }
