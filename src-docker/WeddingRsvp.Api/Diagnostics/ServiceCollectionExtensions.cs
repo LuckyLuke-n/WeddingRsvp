@@ -1,6 +1,5 @@
 using System.Reflection;
 using OpenTelemetry.Resources;
-using WeddingRsvp.Api.Diagnostics.Meters;
 
 namespace WeddingRsvp.Api.Diagnostics;
 
@@ -20,9 +19,7 @@ public static class ServiceCollectionExtension
                         new KeyValuePair<string, object>("service.hostname", Environment.MachineName)
                     ]);
             })
-            .WithMetrics( meters =>
-                meters.AddMeter( ResponseMeter.Name )
-            )
+            .WithMetrics()
             .WithLogging()
             .WithTracing();
 
