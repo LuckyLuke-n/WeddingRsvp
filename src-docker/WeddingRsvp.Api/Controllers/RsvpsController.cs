@@ -201,7 +201,8 @@ public class RsvpsController : Controller
     private bool AuthorizationNeeded(Rsvp existingEntity, Rsvp incomingEntity)
     {
         if (!string.Equals(existingEntity.Name, incomingEntity.Name)
-            || !string.Equals(existingEntity.Salutation, incomingEntity.Salutation))
+            || !string.Equals(existingEntity.Salutation, incomingEntity.Salutation)
+            || existingEntity.IsPlural != incomingEntity.IsPlural)
         {
             return true;
         }

@@ -48,12 +48,15 @@ public class RsvpSeeder
             {
                 Id = "e69a7fd5-f76b-41b0-ab28-78a9b9a9ba2b",
                 Name = "John and Jane",
+                IsPlural = true,
+                Salutation = "Dear John and Jane,",
             },
 
             new()
             {
                 Id = "79d33d23-9f91-4fcb-a777-1c2cbad82a46",
                 Name = "Maria",
+                Salutation = "Dear Maria,",
             },
 
             new()

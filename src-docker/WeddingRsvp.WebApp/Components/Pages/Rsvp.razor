@@ -9,12 +9,15 @@
 <div class="rsvp-container">
     @if (!string.IsNullOrEmpty(_errorMessage))
     {
-        <div style="background-color: rgba(244, 67, 54, 0.2); border: 1px solid #f44336; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div
+            style="background-color: rgba(244, 67, 54, 0.2); border: 1px solid #f44336; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
             <span><strong>Error:</strong> @_errorMessage</span>
-            <button style="background: none; border: none; color: white; cursor: pointer; font-size: 20px;" @onclick='() => _errorMessage = ""'>&times;</button>
+            <button style="background: none; border: none; color: white; cursor: pointer; font-size: 20px;"
+                    @onclick='() => _errorMessage = ""'>&times;
+            </button>
         </div>
     }
-    
+
     <EditForm Model="@RsvpGuest" OnValidSubmit="HandleValidSubmitAsync" FormName="RsvpForm" class="rsvp-container">
         <DataAnnotationsValidator/>
         <ValidationSummary/>
@@ -33,19 +36,22 @@
                 </div>
             </InputRadioGroup>
 
-            <label>@Localizer["BringPartner"]</label>
-            <InputRadioGroup @bind-Value="@RsvpGuest.BringPartner">
-                <div class="radio-group">
-                    <label class="radio-option">
-                        <InputRadio Value="@ResponseType.Yes"/>
-                        @Localizer["Yes"]
-                    </label>
-                    <label class="radio-option">
-                        <InputRadio Value="@ResponseType.No"/>
-                        @Localizer["No"]
-                    </label>
-                </div>
-            </InputRadioGroup>
+            @if (!RsvpGuest.IsPlural)
+            {
+                <label>@Localizer["BringPartner"]</label>
+                <InputRadioGroup @bind-Value="@RsvpGuest.BringPartner">
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <InputRadio Value="@ResponseType.Yes"/>
+                            @Localizer["Yes"]
+                        </label>
+                        <label class="radio-option">
+                            <InputRadio Value="@ResponseType.No"/>
+                            @Localizer["No"]
+                        </label>
+                    </div>
+                </InputRadioGroup>
+            }
         </div>
 
         <div class="form-group">
