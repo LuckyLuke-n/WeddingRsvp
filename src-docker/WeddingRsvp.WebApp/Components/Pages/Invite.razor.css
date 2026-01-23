@@ -2,9 +2,15 @@
     width: 100%;
     max-width: 800px;
     margin: 20px auto 40px; /* Centered with top/bottom margin */
-    padding: 0 30px;
+    padding: 0 15px; /* Reduced padding for mobile */
     color: var(--text-color);
     font-family: var(--font-family), sans-serif;
+}
+
+@media (min-width: 768px) {
+    .invite-container {
+        padding: 0 30px;
+    }
 }
 
 h1 {
@@ -14,7 +20,6 @@ h1 {
     margin-bottom: 30px;
     text-align: center;
     font-weight: 600;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Added shadow for readability on background */
 }
 
 .text-block {
@@ -23,22 +28,27 @@ h1 {
     margin-bottom: 40px;
     text-align: center;
     font-weight: 600;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Added shadow for readability on background */
 }
 
 .itinerary {
     background-color: rgba(0, 0, 0, 0.2); /* Less dark background */
-    padding: 30px;
+    padding: 20px; /* Reduced padding for mobile */
     border-radius: 15px;
     border: 1px solid var(--secondary-color); /* Thin pink frame color */
     margin-bottom: 40px;
     backdrop-filter: blur(4px);
 }
 
+@media (min-width: 768px) {
+    .itinerary {
+        padding: 30px;
+    }
+}
+
 .itinerary h2 {
     color: var(--text-color);
     font-size: var(--font-size);
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     text-align: center;
     font-weight: 600;
 }
@@ -99,13 +109,19 @@ h1 {
 /* FAQ Collapsible Styling */
 .faq-section {
     margin-top: 50px;
-    padding: 30px;
+    padding: 20px; /* Reduced padding for mobile */
     background-color: rgba(0, 0, 0, 0.2); /* Less dark background */
     border-radius: 20px;
     border: 1px solid var(--secondary-color); /* Thinner pink frame color */
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(8px); /* Glassmorphism effect */
     -webkit-backdrop-filter: blur(8px);
+}
+
+@media (min-width: 768px) {
+    .faq-section {
+        padding: 30px;
+    }
 }
 
 details {

@@ -5,7 +5,7 @@
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
-    padding: 30px; /* Increased padding */
+    padding: 15px; /* Reduced padding for mobile */
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, 0.2); /* Less dark semi-transparent background */
     border: 1px solid var(--secondary-color); /* Thinner pink frame color */
@@ -15,6 +15,12 @@
     -webkit-backdrop-filter: blur(8px);
     margin-top: 20px;
     margin-bottom: 40px;
+}
+
+@media (min-width: 768px) {
+    .rsvp-container {
+        padding: 30px;
+    }
 }
 
 /* Ensure the form inside takes full width of the container */
