@@ -5,8 +5,15 @@
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
-    padding: 0 20px; /* Adds a bit of "breathing room" on small screens */
+    padding: 30px; /* Increased padding */
     box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.4); /* Dark semi-transparent background */
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+    backdrop-filter: blur(8px); /* Glassmorphism effect */
+    -webkit-backdrop-filter: blur(8px);
+    margin-top: 20px;
+    margin-bottom: 40px;
 }
 
 /* Ensure the form inside takes full width of the container */
@@ -47,14 +54,14 @@ body {
 ::deep .form-group:has(.meal-selection) {
     margin-top: 40px;
     padding-top: 20px;
-    border-top: 1px solid rgba(138, 79, 255, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 ::deep label {
     display: block;
     margin-bottom: 10px;
     font-weight: 600;
-    color: var(--primary-color);
+    color: var(--text-color);
     font-family: var(--font-family), cursive;
     font-size: var(--font-size);
     line-height: var(--line-height);
