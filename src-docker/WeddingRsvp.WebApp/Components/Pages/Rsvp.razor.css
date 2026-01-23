@@ -7,7 +7,8 @@
     margin-right: auto;
     padding: 30px; /* Increased padding */
     box-sizing: border-box;
-    background-color: rgba(0, 0, 0, 0.4); /* Dark semi-transparent background */
+    background-color: rgba(0, 0, 0, 0.2); /* Less dark semi-transparent background */
+    border: 1px solid var(--secondary-color); /* Thinner pink frame color */
     border-radius: 20px;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
     backdrop-filter: blur(8px); /* Glassmorphism effect */
@@ -75,7 +76,7 @@ body {
     width: 100%;
     padding: 12px;
     margin-top: 8px;
-    border: 2px solid var(--secondary-color);
+    border: 1px solid var(--secondary-color);
     border-radius: 10px;
     transition: all 0.3s ease;
     font-family: var(--font-family), sans-serif;
@@ -115,7 +116,7 @@ body {
     -webkit-appearance: none;
     width: 24px;
     height: 24px;
-    border: 2px solid var(--secondary-color);
+    border: 1px solid var(--secondary-color);
     border-radius: 50%;
     margin-right: 12px;
     background-color: rgba(255, 255, 255, 0.2);
