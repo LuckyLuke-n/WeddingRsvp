@@ -1,11 +1,21 @@
-/* 1. Root container selector should NOT have ::deep */
-/* Wrapper for the form content */
-.rsvp-container {
+/* Outer wrapper with horizontal padding */
+.rsvp-wrapper {
     width: 100%;
     max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 15px; /* Reduced padding for mobile */
+    margin: 20px auto 40px;
+    padding: 0 15px; /* Horizontal padding for mobile */
+}
+
+@media (min-width: 768px) {
+    .rsvp-wrapper {
+        padding: 0 30px;
+    }
+}
+
+/* Inner container with border and background */
+.rsvp-container {
+    width: 100%;
+    padding: 20px; /* Reduced padding for mobile */
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, 0.2); /* Less dark semi-transparent background */
     border: 1px solid var(--secondary-color); /* Thinner pink frame color */
@@ -13,8 +23,6 @@
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
     backdrop-filter: blur(8px); /* Glassmorphism effect */
     -webkit-backdrop-filter: blur(8px);
-    margin-top: 20px;
-    margin-bottom: 40px;
 }
 
 @media (min-width: 768px) {

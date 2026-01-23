@@ -6,8 +6,9 @@
 
 @inject IStringLocalizer<Rsvp> Localizer
 
-<div class="rsvp-container">
-    @if (!string.IsNullOrEmpty(_errorMessage))
+<div class="rsvp-wrapper">
+    <div class="rsvp-container">
+        @if (!string.IsNullOrEmpty(_errorMessage))
     {
         <div
             style="background-color: rgba(244, 67, 54, 0.2); border: 1px solid #f44336; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
@@ -94,4 +95,5 @@
             <button type="submit" class="btn">@Localizer["Submit"]</button>
         </div>
     </EditForm>
+    </div>
 </div>
