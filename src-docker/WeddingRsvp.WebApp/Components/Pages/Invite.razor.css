@@ -1,6 +1,6 @@
 .invite-container {
     width: 100%;
-    max-width: 600px;
+    max-width: 800px;
     margin: 20px auto 40px; /* Centered with top/bottom margin */
     padding: 0 30px;
     color: var(--text-color);
@@ -30,7 +30,7 @@ h1 {
     background-color: rgba(0, 0, 0, 0.2); /* Less dark background */
     padding: 30px;
     border-radius: 15px;
-    border: 1px solid var(--secondary-color); /* Thinner pink frame color */
+    border: 1px solid var(--secondary-color); /* Thin pink frame color */
     margin-bottom: 40px;
     backdrop-filter: blur(4px);
 }
