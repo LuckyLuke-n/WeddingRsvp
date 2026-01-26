@@ -142,7 +142,7 @@ public partial class Admin : ComponentBase
     
     private void ToggleInfo(string id)
     {
-        _expandedId = (_expandedId == id) ? null : id;
+        _expandedId = string.Equals(_expandedId, id) ? null : id;
     }
 
     private void UpdateDictionaryKey(Dictionary<string, string> dict, string oldKey, string? newKey)
