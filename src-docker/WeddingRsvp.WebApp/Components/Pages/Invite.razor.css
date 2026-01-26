@@ -24,10 +24,10 @@ h1 {
 
 .text-block {
     font-size: var(--font-size);
-    line-height: var(--line-height);
+    line-height: 1.2;
     margin-bottom: 40px;
     text-align: center;
-    font-weight: 600;
+    font-weight: 400;
 }
 
 .itinerary {
