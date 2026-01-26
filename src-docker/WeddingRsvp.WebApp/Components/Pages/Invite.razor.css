@@ -24,10 +24,10 @@ h1 {
 
 .text-block {
     font-size: var(--font-size);
-    line-height: var(--line-height);
+    line-height: 1.2;
     margin-bottom: 40px;
     text-align: center;
-    font-weight: 600;
+    font-weight: 400;
 }
 
 .itinerary {
@@ -70,19 +70,21 @@ h1 {
 .faq-header {
     font-family: var(--font-family), cursive;
     color: var(--text-color);
-    font-size: 42px;
+    font-size: var(--faq-header-size);
     text-align: center;
     margin-bottom: 10px;
+    font-weight: 400;
 }
 
 .faq-description {
     text-align: center;
-    font-size: var(--font-size);
-    line-height: var(--line-height);
-    font-weight: 600;
+    font-size: var(--faq-description-size);
+    line-height: var(--faq-description-line-height);
+    font-weight: 300;
     color: var(--text-color);
     margin-bottom: 30px;
     padding: 0 20px;
+    font-family: var(--faq-font-family),sans-serif;
 }
 
 .btn {
@@ -115,6 +117,7 @@ h1 {
     border: 1px solid var(--secondary-color); /* Thinner pink frame color */
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(8px); /* Glassmorphism effect */
+    font-family: 'Helvetica', sans-serif;
     -webkit-backdrop-filter: blur(8px);
 }
 
@@ -134,12 +137,13 @@ details {
 }
 
 summary {
-    font-weight: 600;
+    font-weight: 300;
     cursor: pointer;
     list-style: none;
     color: var(--text-color);
-    font-size: var(--font-size);
-    line-height: var(--line-height);
+    font-size: var(--faq-question-size);
+    line-height: var(--faq-question-line-height);
+    font-family: var(--faq-font-family), sans-serif;
 }
 
 summary::-webkit-details-marker {
@@ -150,6 +154,8 @@ summary::-webkit-details-marker {
     margin-top: 15px;
     padding-top: 15px;
     border-top: 1px solid rgba(255, 255, 255, 0.3);
-    font-size: 28px;
-    line-height: var(--line-height);
+    font-size: var(--faq-answer-size);
+    line-height: var(--faq-answer-line-height);
+    font-family: var(--faq-font-family), sans-serif;
+    font-weight: 400;
 }
