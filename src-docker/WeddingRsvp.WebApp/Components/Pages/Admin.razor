@@ -56,6 +56,7 @@
                         <th>Meat</th>
                         <th>Fish</th>
                         <th>Veg</th>
+                        <th>Additional Info</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
@@ -104,6 +105,12 @@
                                     <input type="number" @bind="invite.NumberOfVegetarianMenus" class="admin-input"
                                            style="width: 50px;"/></td>
                                 <td>
+                                    <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                          title="@invite.AdditionalInformation">
+                                        @(string.IsNullOrWhiteSpace(invite.AdditionalInformation) ? "No" : "Yes")
+                                    </span>
+                                </td>
+                                <td>
                                     <button class="action-btn btn-save" @onclick="() => SaveInvite()">Save</button>
                                     <button class="action-btn" @onclick="() => _editingId = null">Cancel</button>
                                 </td>
@@ -120,6 +127,11 @@
                                 <td>@invite.NumberOfFishMenus</td>
                                 <td>@invite.NumberOfVegetarianMenus</td>
                                 <td>
+                                    <span title="@invite.AdditionalInformation">
+                                        @(string.IsNullOrWhiteSpace(invite.AdditionalInformation) ? "No" : "Yes")
+                                    </span>
+                                </td>
+                                <td>
                                     <button class="action-btn btn-edit" @onclick="() => _editingId = invite.Id">Edit
                                     </button>
                                     <button class="action-btn btn-delete" @onclick="() => DeleteAsync(invite.Id)">Delete
@@ -130,115 +142,6 @@
                     }
                     </tbody>
                 </table>
-            </div>
-        </div>
-
-        <hr style="border: 1px solid rgba(255,255,255,0.1); margin: 40px 0;"/>
-
-        <div class="section-wrapper">
-            <!-- Dynamic Info here -->
-
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-                <h2 style="color: var(--primary-color); font-family: var(--font-family), cursive; margin: 0;">Dynamic
-                    Content</h2>
-
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <label style="color: var(--secondary-color);">Select Language:</label>
-                    <select class="admin-input"
-                            style="width: auto; min-width: 150px; background-color: #333; color: white;"
-                            @onchange="@(e => ChangeLanguage(e.Value?.ToString() ?? "de"))">
-                        <option value="de" selected="@(_selectedLanguage == "de")"
-                                style="background-color: #333; color: white;">German (DE)
-                        </option>
-                        <option value="en" selected="@(_selectedLanguage == "en")"
-                                style="background-color: #333; color: white;">English (EN)
-                        </option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="info-section">
-                <label>Invitation Text</label>
-                <textarea @bind="_information.InvitationText" class="admin-input" rows="4"
-                          style="margin-top: 10px;"></textarea>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
-                <!-- Itinerary Section -->
-                <div>
-                    <h3 style="color: var(--secondary-color)">Itinerary</h3>
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Time/Event</th>
-                            <th>Description</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var item in _information.Itinerary)
-                        {
-                            <tr>
-                                <td>
-                                    <input value="@item.Key"
-                                           @onchange="@(e => UpdateDictionaryKey(_information.Itinerary, item.Key, e.Value?.ToString()))"
-                                           class="admin-input"/></td>
-                                <td><input @bind="_information.Itinerary[item.Key]" class="admin-input"/></td>
-                                <td>
-                                    <button class="action-btn btn-delete"
-                                            @onclick="() => _information.Itinerary.Remove(item.Key)">×
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                    <button class="action-btn btn-add" style="margin-top: 10px;"
-                            @onclick='() => AddDictionaryEntry(_information.Itinerary, "New Event", "Description")'>+
-                        Add Event
-                    </button>
-                </div>
-
-                <!-- FAQ Section -->
-                <div>
-                    <h3 style="color: var(--secondary-color)">FAQs</h3>
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Question</th>
-                            <th>Answer</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var item in _information.Faqs)
-                        {
-                            <tr>
-                                <td>
-                                    <input value="@item.Key"
-                                           @onchange="@(e => UpdateDictionaryKey(_information.Faqs, item.Key, e.Value?.ToString()))"
-                                           class="admin-input"/></td>
-                                <td><input @bind="_information.Faqs[item.Key]" class="admin-input"/></td>
-                                <td>
-                                    <button class="action-btn btn-delete"
-                                            @onclick="() => _information.Faqs.Remove(item.Key)">×
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                    <button class="action-btn btn-add" style="margin-top: 10px;"
-                            @onclick='() => AddDictionaryEntry(_information.Faqs, "New Question", "New Answer")'>+ Add
-                        FAQ
-                    </button>
-                </div>
-            </div>
-
-            <div style="margin-top: 30px; text-align: right;">
-                <button class="btn btn-save" style="padding: 10px 30px;" @onclick="SaveInformationAsync">Save
-                    information
-                </button>
             </div>
         </div>
     }
