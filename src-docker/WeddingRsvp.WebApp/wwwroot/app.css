@@ -99,6 +99,7 @@ h1:focus {
     --font-family: 'Licorice';
     --font-size: 36px;
     --line-height: 36px;
+    --info-color: #8B9DC3;
 
     /* FAQ-specific variables */
     --faq-font-family: 'Helvetica';
