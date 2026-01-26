@@ -70,7 +70,7 @@ h1 {
 .faq-header {
     font-family: var(--font-family), cursive;
     color: var(--text-color);
-    font-size: 42px;
+    font-size: var(--faq-header-size);
     text-align: center;
     margin-bottom: 10px;
     font-weight: 400;
@@ -78,13 +78,13 @@ h1 {
 
 .faq-description {
     text-align: center;
-    font-size: 24px;
-    line-height: 28px;
-    font-weight: 400;
+    font-size: var(--faq-description-size);
+    line-height: var(--faq-description-line-height);
+    font-weight: 300;
     color: var(--text-color);
     margin-bottom: 30px;
     padding: 0 20px;
-    font-family: 'Helvetica', sans-serif;
+    font-family: var(--faq-font-family),sans-serif;
 }
 
 .btn {
@@ -141,9 +141,9 @@ summary {
     cursor: pointer;
     list-style: none;
     color: var(--text-color);
-    font-size: 20px;
-    line-height: 24px;
-    font-family: 'Helvetica', sans-serif;
+    font-size: var(--faq-question-size);
+    line-height: var(--faq-question-line-height);
+    font-family: var(--faq-font-family), sans-serif;
 }
 
 summary::-webkit-details-marker {
@@ -154,8 +154,8 @@ summary::-webkit-details-marker {
     margin-top: 15px;
     padding-top: 15px;
     border-top: 1px solid rgba(255, 255, 255, 0.3);
-    font-size: 18px;
-    line-height: 22px;
-    font-family: 'Helvetica', sans-serif;
+    font-size: var(--faq-answer-size);
+    line-height: var(--faq-answer-line-height);
+    font-family: var(--faq-font-family), sans-serif;
     font-weight: 400;
 }
