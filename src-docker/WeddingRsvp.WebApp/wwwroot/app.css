@@ -91,6 +91,7 @@ h1:focus {
 }
 
 :root {
+    /* General variables */
     --primary-color: #F4E1D2;
     --secondary-color: #FFB6C1;
     --accent-color: #4A4238;
@@ -98,4 +99,15 @@ h1:focus {
     --font-family: 'Licorice';
     --font-size: 36px;
     --line-height: 36px;
+    --info-color: #8B9DC3;
+
+    /* FAQ-specific variables */
+    --faq-font-family: 'Helvetica';
+    --faq-header-size: 28px;
+    --faq-description-size: 24px;
+    --faq-description-line-height: 28px;
+    --faq-question-size: 20px;
+    --faq-question-line-height: 24px;
+    --faq-answer-size: 18px;
+    --faq-answer-line-height: 22px;    
 }

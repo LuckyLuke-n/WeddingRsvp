@@ -20,6 +20,7 @@ public partial class Admin : ComponentBase
     // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private string _selectedLanguage = string.Empty;
     private string? _editingId;
+    private string? _expandedId;
     private string _errorMessage = string.Empty;
     private string _successMessage = string.Empty;
 
@@ -137,6 +138,11 @@ public partial class Admin : ComponentBase
             Logger.LogError("Failed to delete guest.");
             _errorMessage = "Failed to delete guest.";
         }
+    }
+    
+    private void ToggleInfo(string id)
+    {
+        _expandedId = string.Equals(_expandedId, id) ? null : id;
     }
 
     private void UpdateDictionaryKey(Dictionary<string, string> dict, string oldKey, string? newKey)
