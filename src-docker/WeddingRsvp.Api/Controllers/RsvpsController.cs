@@ -5,9 +5,11 @@ using Microsoft.Extensions.Options;
 using WeddingRsvp.Abstractions.Models;
 using WeddingRsvp.Abstractions.Models.Rsvps;
 using WeddingRsvp.Api.Configurations;
+using WeddingRsvp.Api.Extensions;
 using WeddingRsvp.Api.Repository;
 using WeddingRsvp.Api.Repository.Entities;
 using WeddingRsvp.Api.Repository.Seeding;
+using WeddingRsvp.Api.Services;
 
 namespace WeddingRsvp.Api.Controllers;
 
@@ -18,16 +20,19 @@ public class RsvpsController : Controller
 {
     private IRsvpRepository Repository { get; }
     private RsvpSeeder Seeder { get; }
+    private IEmailService EmailService { get; }
     private ApiConfiguration Configurations { get; }
     private ILogger<RsvpsController> Logger { get; }
 
     public RsvpsController(IRsvpRepository repository,
         RsvpSeeder seeder,
+        IEmailService emailService,
         IOptions<ApiConfiguration> options,
         ILogger<RsvpsController> logger)
     {
         Repository = repository;
         Seeder = seeder;
+        EmailService = emailService;
         Configurations = options.Value;
         Logger = logger;
     }
@@ -129,7 +134,7 @@ public class RsvpsController : Controller
 
     [HttpPut("{id}")]
     public async Task<IResult> Update([FromRoute] Guid id, [FromHeader(Name = "X-Auth-Admin")] string? value,
-        PutRsvpDto dto, CancellationToken cancellationToken)
+        [FromQuery] bool sendMail, PutRsvpDto dto, CancellationToken cancellationToken)
     {
         var responseRead = await Repository.ReadAsync(id, cancellationToken).ConfigureAwait(false);
 
@@ -171,6 +176,9 @@ public class RsvpsController : Controller
             }
         }
 
+        if (sendMail)
+            await EmailService.SendRsvpConfirmationAsync(dto.ToEmailTemplate(), cancellationToken).ConfigureAwait(false);
+        
         return Results.Ok(responseUpdate.ValueSuccess!.ToDto());
     }
 
