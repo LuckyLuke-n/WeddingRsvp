@@ -103,7 +103,7 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient
         return ClientResponse<IEnumerable<RsvpGuest>, ClientFailResponse>.CreateFail(new(HttpStatusCode.InternalServerError));
     }
 
-    public async Task<ClientResponse<RsvpGuest, ClientFailResponse>> UpdateRsvpAsync(RsvpGuest rsvp, bool isAdmin = false,
+    public async Task<ClientResponse<RsvpGuest, ClientFailResponse>> UpdateRsvpAsync(RsvpGuest rsvp, bool sendMail = false, bool isAdmin = false,
         CancellationToken cancellationToken = default)
     {
         try
@@ -112,13 +112,13 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient
             if (isAdmin)
             {
                 using var client = HttpClientFactory.CreateClient(RsvpAdminClientName);
-                responseMessage = await client.PutAsJsonAsync($"{rsvp.Id}", rsvp.ToPutDto(), cancellationToken)
+                responseMessage = await client.PutAsJsonAsync($"{rsvp.Id}?sendMail={sendMail}", rsvp.ToPutDto(), cancellationToken)
                     .ConfigureAwait(false);
             }
             else
             {
                 using var client = HttpClientFactory.CreateClient(RsvpClientName); 
-                responseMessage = await client.PutAsJsonAsync($"{rsvp.Id}", rsvp.ToPutDto(), cancellationToken)
+                responseMessage = await client.PutAsJsonAsync($"{rsvp.Id}?sendMail={sendMail}", rsvp.ToPutDto(), cancellationToken)
                     .ConfigureAwait(false);
             }
 

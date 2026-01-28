@@ -17,18 +17,21 @@ public partial class Rsvp : ComponentBase
     [Parameter] public string? Culture { get; set; }
 
     [SupplyParameterFromForm] private RsvpGuest RsvpGuest { get; set; } = null!;
-    private string _errorMessage  = string.Empty;
+
+    private string _errorMessage = string.Empty;
+    private int rsvpHash = 0;
 
     protected override async Task OnInitializedAsync()
     {
         RsvpGuest ??= new();
+        rsvpHash = RsvpGuest.GetHashCode();
 
         if (string.IsNullOrEmpty(Culture))
         {
             Navigation.NavigateTo(NavigationMaster.Home);
             return;
         }
-        
+
         if (string.IsNullOrEmpty(Id))
         {
             Navigation.NavigateTo(NavigationMaster.Home);
@@ -48,11 +51,13 @@ public partial class Rsvp : ComponentBase
             if (!response.IsSuccess)
             {
                 Navigation.NavigateTo(NavigationMaster.Home);
-                Logger.LogWarning("Cannot get rsvp {Id} with status code {StatusCode}.", id, response.ValueFail.StatusCode);
+                Logger.LogWarning("Cannot get rsvp {Id} with status code {StatusCode}.", id,
+                    response.ValueFail.StatusCode);
                 return;
             }
 
             RsvpGuest = response.ValueSuccess!;
+            rsvpHash = RsvpGuest.GetHashCode();
         }
         catch (Exception e)
         {
@@ -62,7 +67,12 @@ public partial class Rsvp : ComponentBase
 
     private async Task HandleValidSubmitAsync()
     {
-        var response = await RsvpClient.UpdateRsvpAsync(RsvpGuest).ConfigureAwait(false);
+        bool rsvpChanged = false;
+        
+        if (rsvpHash != RsvpGuest.GetHashCode())
+            rsvpChanged = true;
+
+        var response = await RsvpClient.UpdateRsvpAsync(rsvp: RsvpGuest, sendMail: rsvpChanged, isAdmin: false ).ConfigureAwait(false);
 
         if (response.IsSuccess)
         {

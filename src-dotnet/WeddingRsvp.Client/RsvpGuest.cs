@@ -17,4 +17,18 @@ public class RsvpGuest
     public string Name { get; set; } = string.Empty;
     public bool IsPlural { get; set; }
     public string Salutation { get; set; } = string.Empty;
+
+    public override int GetHashCode()
+    {
+        // ReSharper disable NonReadonlyMemberInGetHashCode
+        return HashCode.Combine(
+            Name,
+            BringPartner,
+            NumberOfGuestsOvernight,
+            NumberOfMeatMenus,
+            NumberOfFishMenus,
+            NumberOfVegetarianMenus,
+            AdditionalInformation
+        );
+    }
 }

@@ -10,8 +10,8 @@ public static class MappingExtensions
         return new EmailTemplate()
         {
             Name = dto.Name,
-            Attending = dto.Attending == Reply.Yes,
-            BringPartner = dto.BringPartner == Reply.Yes,
+            Attending = dto.Attending.ToString(),
+            BringPartner = dto.BringPartner.ToString(),
             NumberOfGuestsOvernight = dto.NumberOfGuestsOvernight,
             NumberOfMeatMenus = dto.NumberOfMeatMenus,
             NumberOfVegetarianMenus = dto.NumberOfVegetarianMenus,

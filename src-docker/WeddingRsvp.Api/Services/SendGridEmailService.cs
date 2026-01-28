@@ -27,7 +27,6 @@ public class SendGridEmailService : IEmailService
         {
             ApiKey = options.Value.ApiKey,
         };
-        sendgridOptions.SetDataResidency("eu");
 
         Client = new SendGridClient(sendgridOptions);
     }
@@ -40,7 +39,7 @@ public class SendGridEmailService : IEmailService
             return;
         }
         
-        var from = new EmailAddress("no-reply@lsoftware.cloud", "No Reply");
+        var from = new EmailAddress("no-reply@lsoftware.cloud", "wedding rsvp");
         List<EmailAddress> tos = [];
 
         foreach (var to in ToEmails)
@@ -51,10 +50,10 @@ public class SendGridEmailService : IEmailService
             From = from,
             TemplateId = TemplateId
         };
-
+        
         message.AddTos(tos);
         message.SetTemplateData(template);
-
+        
         try
         {
             var response = await Client.SendEmailAsync(message, cancellationToken).ConfigureAwait(false);
@@ -62,7 +61,10 @@ public class SendGridEmailService : IEmailService
             if (response.IsSuccessStatusCode)
                 Logger.LogInformation("Email sent successfully.");
             else
-                Logger.LogError("Email failed to send with status code {StatusCode}.", response.StatusCode);
+            {
+                var body = await response.Body.ReadAsStringAsync(cancellationToken);
+                Logger.LogError("Email failed to send with status code {StatusCode}. Response: {Response}", response.StatusCode, body);
+            }
         }
         catch (Exception ex)
         {
