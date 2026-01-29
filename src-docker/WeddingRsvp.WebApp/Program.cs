@@ -12,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.Services.AddWebAppOpenTelemetry();
 builder.AddRsvpClient();
+builder.AddNotificationClient();
 builder.Services.Configure<WeddingRsvpClientConfiguration>(builder.Configuration.GetSection(WeddingRsvpClientConfiguration.Section));
 builder.Services.Configure<WebAppConfiguration>(builder.Configuration.GetSection(WebAppConfiguration.Section));
 

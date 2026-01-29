@@ -2,7 +2,6 @@ using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using WeddingRsvp.Abstractions.Models;
 using WeddingRsvp.Abstractions.Models.Rsvps;
 using WeddingRsvp.Api.Configurations;
 using WeddingRsvp.Api.Repository;
@@ -128,7 +127,7 @@ public class RsvpsController : Controller
     }
 
     [HttpPut("{id}")]
-    public async Task<IResult> Update([FromRoute] Guid id, [FromHeader(Name = "X-Auth-Admin")] string? value,
+    public async Task<IResult> Update([FromRoute] Guid id, [FromHeader(Name = "X-Auth-Admin")] string? value, 
         PutRsvpDto dto, CancellationToken cancellationToken)
     {
         var responseRead = await Repository.ReadAsync(id, cancellationToken).ConfigureAwait(false);
@@ -170,7 +169,7 @@ public class RsvpsController : Controller
                     return Results.InternalServerError();
             }
         }
-
+        
         return Results.Ok(responseUpdate.ValueSuccess!.ToDto());
     }
 

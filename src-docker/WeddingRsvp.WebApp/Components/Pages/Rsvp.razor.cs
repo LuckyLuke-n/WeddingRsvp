@@ -7,6 +7,8 @@ namespace WeddingRsvp.WebApp.Components.Pages;
 public partial class Rsvp : ComponentBase
 {
     [Inject] private IRsvpClient RsvpClient { get; set; } = null!;
+    
+    [Inject] private INotificationClient NotificationClient { get; set; } = null!;
 
     [Inject] private NavigationManager Navigation { get; set; } = null!;
 
@@ -17,18 +19,21 @@ public partial class Rsvp : ComponentBase
     [Parameter] public string? Culture { get; set; }
 
     [SupplyParameterFromForm] private RsvpGuest RsvpGuest { get; set; } = null!;
-    private string _errorMessage  = string.Empty;
+
+    private string _errorMessage = string.Empty;
+    private int _rsvpHash = 0;
 
     protected override async Task OnInitializedAsync()
     {
         RsvpGuest ??= new();
+        _rsvpHash = RsvpGuest.GetHashCode();
 
         if (string.IsNullOrEmpty(Culture))
         {
             Navigation.NavigateTo(NavigationMaster.Home);
             return;
         }
-        
+
         if (string.IsNullOrEmpty(Id))
         {
             Navigation.NavigateTo(NavigationMaster.Home);
@@ -48,11 +53,13 @@ public partial class Rsvp : ComponentBase
             if (!response.IsSuccess)
             {
                 Navigation.NavigateTo(NavigationMaster.Home);
-                Logger.LogWarning("Cannot get rsvp {Id} with status code {StatusCode}.", id, response.ValueFail.StatusCode);
+                Logger.LogWarning("Cannot get rsvp {Id} with status code {StatusCode}.", id,
+                    response.ValueFail.StatusCode);
                 return;
             }
 
             RsvpGuest = response.ValueSuccess!;
+            _rsvpHash = RsvpGuest.GetHashCode();
         }
         catch (Exception e)
         {
@@ -62,12 +69,24 @@ public partial class Rsvp : ComponentBase
 
     private async Task HandleValidSubmitAsync()
     {
-        var response = await RsvpClient.UpdateRsvpAsync(RsvpGuest).ConfigureAwait(false);
+        if (_rsvpHash == RsvpGuest.GetHashCode())
+        {
+            Logger.LogInformation("No changes in Rsvp {RsvpId} detected. Clients not called.", RsvpGuest.Id);
+            Navigation.NavigateTo(NavigationMaster.Invite(Culture!, RsvpGuest.Id));
+            return;
+        }
+        
+        var response = await RsvpClient.UpdateRsvpAsync(rsvp: RsvpGuest, isAdmin: false ).ConfigureAwait(false);
 
         if (response.IsSuccess)
         {
             Navigation.NavigateTo(NavigationMaster.Invite(Culture!, RsvpGuest.Id));
             WebAppMeter.CountValidResponse(RsvpGuest.Id);
+            
+            var res = await NotificationClient.SendNotificationAsync(RsvpGuest).ConfigureAwait(false);
+            if (!res.IsSuccess)
+                Logger.LogError("Cannot send email for {RsvpId} with status code {StatusCode}.", RsvpGuest.Id, res.ValueFail.StatusCode);
+            
             return;
         }
 
