@@ -23,6 +23,7 @@ public class RsvpGuest
         // ReSharper disable NonReadonlyMemberInGetHashCode
         return HashCode.Combine(
             Name,
+            Response,
             BringPartner,
             NumberOfGuestsOvernight,
             NumberOfMeatMenus,

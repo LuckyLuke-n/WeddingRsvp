@@ -378,17 +378,12 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient, INotificationC
         {
             var responseMessage = await client.PostAsJsonAsync("", rsvp.ToPostNotificationDto(), cancellationToken).ConfigureAwait(false);
 
-            if (!responseMessage.IsSuccessStatusCode)
-                return ClientResponse<ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
-
-            var dto = await responseMessage.Content.ReadFromJsonAsync<GetInformationDto>(cancellationToken);
-
-            if (responseMessage.IsSuccessStatusCode )
+            if ( !responseMessage.IsSuccessStatusCode )
             {
                 Logger.LogWarning("Cannot send email for {RsvpId} with status code {StatusCode}.", rsvp.Id, responseMessage.StatusCode);
                 return ClientResponse<ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
             }
-
+            
             return ClientResponse<ClientFailResponse>.CreateSuccess();
         }
         catch (HttpRequestException e)
@@ -401,7 +396,7 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient, INotificationC
         }
         catch (Exception e)
         {
-            Logger.LogError(e, "An unexpected error occurred while ctriggering email notification for {RsvpId}.", rsvp.Id);
+            Logger.LogError(e, "An unexpected error occurred while triggering email notification for {RsvpId}.", rsvp.Id);
         }
         
         return ClientResponse<ClientFailResponse>.CreateFail(new(HttpStatusCode.InternalServerError));

@@ -42,7 +42,7 @@ public class SendGridEmailService : IEmailService
             return ServiceResponse.CreateFail(HttpStatusCode.Forbidden);
         }
 
-        var from = new EmailAddress("no-reply@lsoftware.cloud", "wedding rsvp");
+        var from = new EmailAddress("no-reply@lsoftware.cloud", "WeddingRsvp");
         List<EmailAddress> tos = [];
 
         foreach (var to in ToEmails)

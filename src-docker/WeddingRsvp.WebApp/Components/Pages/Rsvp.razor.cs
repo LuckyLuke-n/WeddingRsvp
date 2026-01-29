@@ -72,6 +72,7 @@ public partial class Rsvp : ComponentBase
         if (_rsvpHash == RsvpGuest.GetHashCode())
         {
             Logger.LogInformation("No changes in Rsvp {RsvpId} detected. Clients not called.", RsvpGuest.Id);
+            Navigation.NavigateTo(NavigationMaster.Invite(Culture!, RsvpGuest.Id));
             return;
         }
         

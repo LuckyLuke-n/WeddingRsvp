@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WeddingRsvp.Abstractions.Models.Notifications;
@@ -26,7 +27,8 @@ public class NotificationsController : Controller
         var response = await EmailService.SendRsvpConfirmationAsync(dto.ToEmailTemplate(), cancellationToken)
             .ConfigureAwait(false);
         
-        if (!response.IsSuccess)
+        // forbidden is returned when email sending is disabled
+        if (!response.IsSuccess && response.StatusCode != HttpStatusCode.Forbidden)
         {
             Logger.LogError("Email notification not sent with status code {StatusCode}.", response.StatusCode);
             return Results.Problem( detail: "Email notification not sent.", statusCode: (int)response.StatusCode);
