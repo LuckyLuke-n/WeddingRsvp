@@ -19,12 +19,12 @@ public partial class Rsvp : ComponentBase
     [SupplyParameterFromForm] private RsvpGuest RsvpGuest { get; set; } = null!;
 
     private string _errorMessage = string.Empty;
-    private int rsvpHash = 0;
+    private int _rsvpHash = 0;
 
     protected override async Task OnInitializedAsync()
     {
         RsvpGuest ??= new();
-        rsvpHash = RsvpGuest.GetHashCode();
+        _rsvpHash = RsvpGuest.GetHashCode();
 
         if (string.IsNullOrEmpty(Culture))
         {
@@ -57,7 +57,7 @@ public partial class Rsvp : ComponentBase
             }
 
             RsvpGuest = response.ValueSuccess!;
-            rsvpHash = RsvpGuest.GetHashCode();
+            _rsvpHash = RsvpGuest.GetHashCode();
         }
         catch (Exception e)
         {
@@ -67,12 +67,12 @@ public partial class Rsvp : ComponentBase
 
     private async Task HandleValidSubmitAsync()
     {
-        bool rsvpChanged = false;
+        // bool rsvpChanged = false;
         
-        if (rsvpHash != RsvpGuest.GetHashCode())
-            rsvpChanged = true;
+        // if (_rsvpHash != RsvpGuest.GetHashCode())
+        //     rsvpChanged = true;
 
-        var response = await RsvpClient.UpdateRsvpAsync(rsvp: RsvpGuest, sendMail: rsvpChanged, isAdmin: false ).ConfigureAwait(false);
+        var response = await RsvpClient.UpdateRsvpAsync(rsvp: RsvpGuest, isAdmin: false ).ConfigureAwait(false);
 
         if (response.IsSuccess)
         {
