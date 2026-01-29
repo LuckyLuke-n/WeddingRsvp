@@ -8,12 +8,14 @@ using WeddingRsvp.Client.Generics;
 
 namespace WeddingRsvp.Client;
 
-public class WeddingRsvpClient : IRsvpClient, IInformationClient
+public class WeddingRsvpClient : IRsvpClient, IInformationClient, INotificationClient
 {
     public static string RsvpClientName => "RsvpClient";
     public static string RsvpAdminClientName => "RsvpAdminClient";
     public static string InformationClientName => "InformationClient";
     public static string InformationAdminClientName => "InformationAdminClient";
+    public static string NotificationClientName => "NotificationClient";
+    
     private IHttpClientFactory HttpClientFactory { get; }
     private ILogger<WeddingRsvpClient> Logger { get; }
 
@@ -366,5 +368,42 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient
         }
         
         return ClientResponse<DynamicInformation,ClientFailResponse>.CreateFail(new(HttpStatusCode.InternalServerError));
+    }
+
+    public async Task<ClientResponse<ClientFailResponse>> SendNotificationAsync(RsvpGuest rsvp, CancellationToken cancellationToken = default)
+    {
+        using var client = HttpClientFactory.CreateClient(NotificationClientName);
+        
+        try
+        {
+            var responseMessage = await client.PostAsJsonAsync("", rsvp.ToPostNotificationDto(), cancellationToken).ConfigureAwait(false);
+
+            if (!responseMessage.IsSuccessStatusCode)
+                return ClientResponse<ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
+
+            var dto = await responseMessage.Content.ReadFromJsonAsync<GetInformationDto>(cancellationToken);
+
+            if (responseMessage.IsSuccessStatusCode )
+            {
+                Logger.LogWarning("Cannot send email for {RsvpId} with status code {StatusCode}.", rsvp.Id, responseMessage.StatusCode);
+                return ClientResponse<ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
+            }
+
+            return ClientResponse<ClientFailResponse>.CreateSuccess();
+        }
+        catch (HttpRequestException e)
+        {
+            Logger.LogError(e, "Network error or server is unreachable while triggering email notification for {RsvpId}.", rsvp.Id);
+        }
+        catch (OperationCanceledException e)
+        {
+            Logger.LogInformation(e, "The request triggering email notification for {RsvpId} timed out or was cancelled.", rsvp.Id);
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "An unexpected error occurred while ctriggering email notification for {RsvpId}.", rsvp.Id);
+        }
+        
+        return ClientResponse<ClientFailResponse>.CreateFail(new(HttpStatusCode.InternalServerError));
     }
 }

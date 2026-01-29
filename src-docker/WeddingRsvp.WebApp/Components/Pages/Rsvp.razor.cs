@@ -7,6 +7,8 @@ namespace WeddingRsvp.WebApp.Components.Pages;
 public partial class Rsvp : ComponentBase
 {
     [Inject] private IRsvpClient RsvpClient { get; set; } = null!;
+    
+    [Inject] private INotificationClient NotificationClient { get; set; } = null!;
 
     [Inject] private NavigationManager Navigation { get; set; } = null!;
 
@@ -67,17 +69,23 @@ public partial class Rsvp : ComponentBase
 
     private async Task HandleValidSubmitAsync()
     {
-        // bool rsvpChanged = false;
+        if (_rsvpHash == RsvpGuest.GetHashCode())
+        {
+            Logger.LogInformation("No changes in Rsvp {RsvpId} detected. Clients not called.", RsvpGuest.Id);
+            return;
+        }
         
-        // if (_rsvpHash != RsvpGuest.GetHashCode())
-        //     rsvpChanged = true;
-
         var response = await RsvpClient.UpdateRsvpAsync(rsvp: RsvpGuest, isAdmin: false ).ConfigureAwait(false);
 
         if (response.IsSuccess)
         {
             Navigation.NavigateTo(NavigationMaster.Invite(Culture!, RsvpGuest.Id));
             WebAppMeter.CountValidResponse(RsvpGuest.Id);
+            
+            var res = await NotificationClient.SendNotificationAsync(RsvpGuest).ConfigureAwait(false);
+            if (!res.IsSuccess)
+                Logger.LogError("Cannot send email for {RsvpId} with status code {StatusCode}.", RsvpGuest.Id, res.ValueFail.StatusCode);
+            
             return;
         }
 
