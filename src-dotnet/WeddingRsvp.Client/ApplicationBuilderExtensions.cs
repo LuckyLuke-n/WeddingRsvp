@@ -34,7 +34,21 @@ public static class ApplicationBuilderExtensions
             client.BaseAddress = new Uri("http://api/api/informations/"); 
             client.DefaultRequestHeaders.Add("x-api-key", config?.ApiKey ?? "");
             client.DefaultRequestHeaders.Add("X-Auth-Admin", config?.AdminIdentifier ?? "");
-        });   
+        });
+        
+        return builder;
+    }
+
+    public static IHostApplicationBuilder AddNotificationClient(this IHostApplicationBuilder builder)
+    {
+        var config = builder.Configuration.GetSection(WeddingRsvpClientConfiguration.Section).Get<WeddingRsvpClientConfiguration>();
+        builder.Services.AddScoped<INotificationClient, WeddingRsvpClient>();
+        
+        builder.Services.AddHttpClient( WeddingRsvpClient.NotificationClientName, client =>
+        {
+            client.BaseAddress = new Uri("http://api/api/notifications/"); 
+            client.DefaultRequestHeaders.Add("x-api-key", config?.ApiKey ?? "");
+        });
         
         return builder;
     }

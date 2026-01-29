@@ -1,4 +1,5 @@
 using WeddingRsvp.Abstractions.Models.Information;
+using WeddingRsvp.Abstractions.Models.Notifications;
 using WeddingRsvp.Abstractions.Models.Rsvps;
 
 namespace WeddingRsvp.Client.Extensions;
@@ -39,7 +40,7 @@ internal static class MappingExtensions
             IsPlural = rsvp.IsPlural,
         };
     }
-    
+
     internal static PostRsvpDto ToPostDto(this RsvpGuest rsvp)
     {
         return new PostRsvpDto()
@@ -72,7 +73,7 @@ internal static class MappingExtensions
             Faqs = information.Faqs,
         };
     }
-    
+
     internal static PutInformationDto ToPutDto(this DynamicInformation information)
     {
         return new PutInformationDto()
@@ -81,6 +82,21 @@ internal static class MappingExtensions
             InvitationText = information.InvitationText,
             Itinerary = information.Itinerary,
             Faqs = information.Faqs,
+        };
+    }
+
+    internal static PostEmailDto ToPostNotificationDto(this RsvpGuest rsvp)
+    {
+        return new PostEmailDto()
+        {
+            Name = rsvp.Name,
+            Attending = rsvp.Response.ToString(),
+            BringPartner = rsvp.BringPartner.ToString(),
+            NumberOfGuestsOvernight = rsvp.NumberOfGuestsOvernight,
+            NumberOfMeatMenus = rsvp.NumberOfMeatMenus,
+            NumberOfVegetarianMenus = rsvp.NumberOfVegetarianMenus,
+            NumberOfBrunchGuests = 0,
+            AdditionalInformation = rsvp.AdditionalInformation,
         };
     }
 }

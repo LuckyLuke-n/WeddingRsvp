@@ -4,14 +4,17 @@ using WeddingRsvp.Api.Configurations;
 using WeddingRsvp.Api.Diagnostics;
 using WeddingRsvp.Api.Repository;
 using WeddingRsvp.Api.Security;
+using WeddingRsvp.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 builder.Services.AddApiOpenTelemetry();
 builder.Services.Configure<ApiConfiguration>( builder.Configuration.GetSection( ApiConfiguration.Section ) );
+builder.Services.Configure<EmailServiceConfiguration>( builder.Configuration.GetSection( EmailServiceConfiguration.Section ) );
 builder.Services.AddSingleton(TimeProvider.System);
 builder.AddMongoDbRsvpRepository();
+builder.Services.AddEmailService();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
