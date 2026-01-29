@@ -75,8 +75,6 @@ public partial class Rsvp : ComponentBase
             Navigation.NavigateTo(NavigationMaster.Invite(Culture!, RsvpGuest.Id));
             return;
         }
-        else
-            _rsvpHash = RsvpGuest.GetHashCode();
         
         var response = await RsvpClient.UpdateRsvpAsync(rsvp: RsvpGuest, isAdmin: false ).ConfigureAwait(false);
 
