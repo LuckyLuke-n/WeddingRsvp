@@ -2,14 +2,11 @@ using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using WeddingRsvp.Abstractions.Models;
 using WeddingRsvp.Abstractions.Models.Rsvps;
 using WeddingRsvp.Api.Configurations;
-using WeddingRsvp.Api.Extensions;
 using WeddingRsvp.Api.Repository;
 using WeddingRsvp.Api.Repository.Entities;
 using WeddingRsvp.Api.Repository.Seeding;
-using WeddingRsvp.Api.Services;
 
 namespace WeddingRsvp.Api.Controllers;
 

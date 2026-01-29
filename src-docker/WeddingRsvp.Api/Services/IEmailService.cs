@@ -1,8 +1,8 @@
-using WeddingRsvp.Abstractions.Models.Rsvps;
+using WeddingRsvp.Api.Services.Generics;
 
 namespace WeddingRsvp.Api.Services;
 
 public interface IEmailService
 {
-    Task SendRsvpConfirmationAsync(EmailTemplate template, CancellationToken cancellationToken = default);
+    Task<ServiceResponse> SendRsvpConfirmationAsync(EmailTemplate template, CancellationToken cancellationToken = default);
 }
