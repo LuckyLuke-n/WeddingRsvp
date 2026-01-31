@@ -27,8 +27,8 @@
     <data name="MeatMenu" xml:space="preserve">
     <value>Fleisch Menü</value>
   </data>
-    <data name="FishMenu" xml:space="preserve">
-    <value>Fisch Menü</value>
+  <data name="Brunch" xml:space="preserve">
+    <value>Teilnehmer am Brunch</value>
   </data>
     <data name="VegetarianMenu" xml:space="preserve">
     <value>Vegetarisches Menü</value>

@@ -55,7 +55,7 @@ public class WeddingRsvpClientTests
             BringPartner = Reply.No,
             NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
-            NumberOfFishMenus = 0,
+            NumberOfBrunchGuests = 0,
             NumberOfVegetarianMenus = 1,
             AdditionalInformation = "None",
             IsPlural = false

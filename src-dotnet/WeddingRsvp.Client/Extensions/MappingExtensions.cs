@@ -15,7 +15,7 @@ internal static class MappingExtensions
             BringPartner = (ResponseType)dto.BringPartner,
             NumberOfGuestsOvernight = dto.NumberOfGuestsOvernight,
             NumberOfMeatMenus = dto.NumberOfMeatMenus,
-            NumberOfFishMenus = dto.NumberOfFishMenus,
+            NumberOfBrunchGuests = dto.NumberOfBrunchGuests,
             NumberOfVegetarianMenus = dto.NumberOfVegetarianMenus,
             AdditionalInformation = dto.AdditionalInformation,
             Name = dto.Name,
@@ -32,7 +32,7 @@ internal static class MappingExtensions
             BringPartner = (Reply)rsvp.BringPartner,
             NumberOfGuestsOvernight = rsvp.NumberOfGuestsOvernight,
             NumberOfMeatMenus = rsvp.NumberOfMeatMenus,
-            NumberOfFishMenus = rsvp.NumberOfFishMenus,
+            NumberOfBrunchGuests = rsvp.NumberOfBrunchGuests,
             NumberOfVegetarianMenus = rsvp.NumberOfVegetarianMenus,
             AdditionalInformation = rsvp.AdditionalInformation,
             Name = rsvp.Name,
@@ -93,9 +93,9 @@ internal static class MappingExtensions
             Attending = rsvp.Response.ToString(),
             BringPartner = rsvp.BringPartner.ToString(),
             NumberOfGuestsOvernight = rsvp.NumberOfGuestsOvernight,
+            NumberOfBrunchGuests = rsvp.NumberOfBrunchGuests,
             NumberOfMeatMenus = rsvp.NumberOfMeatMenus,
             NumberOfVegetarianMenus = rsvp.NumberOfVegetarianMenus,
-            NumberOfBrunchGuests = 0,
             AdditionalInformation = rsvp.AdditionalInformation,
         };
     }

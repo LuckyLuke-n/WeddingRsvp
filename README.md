@@ -1,3 +1,4 @@
+
 # WeddingRsvp Solution
 
 A modern, cloud-native Wedding RSVP management system built with **.NET 10**, **Aspire**, and **Blazor**. This solution leverages a microservices-friendly architecture to manage guest responses and dynamic wedding information.
@@ -5,6 +6,7 @@ A modern, cloud-native Wedding RSVP management system built with **.NET 10**, **
 ## 🚀 Features
 
 - **Guest Management**: Track RSVPs, dietary requirements, and guest counts.
+- **Email Notifications**: Automated confirmation emails sent to organizer upon RSVP submission.
 - **Dynamic Information**: Manage wedding details (locations, schedules, etc.) via a dedicated API.
 - **Aspire Integration**: Seamless local development orchestration, service discovery, and monitoring.
 - **Blazor WebApp**: An interactive UI for guests to submit their replies.
@@ -16,18 +18,22 @@ A modern, cloud-native Wedding RSVP management system built with **.NET 10**, **
 The solution is divided into several logical components:
 
 ### Core Services (`src-docker`)
-- **WeddingRsvp.Api**: An ASP.NET Core API providing the backend logic and MongoDB integration.
+- **WeddingRsvp.Api**: An ASP.NET Core API providing the backend logic, MongoDB integration, and email notification services.
 - **WeddingRsvp.WebApp**: A Blazor Web App (Interactive SSR/Server) for the guest-facing interface.
 
 ### Shared Libraries (`src-dotnet`)
 - **WeddingRsvp.AppHost**: The **.NET Aspire** orchestrator project. It manages the lifecycle of the API, WebApp, and MongoDB container.
 - **WeddingRsvp.ServiceDefaults**: Standardized configurations for resilience, service discovery, and telemetry.
 - **WeddingRsvp.Abstractions**: Shared DTOs (Data Transfer Objects) and models used across the solution.
-- **WeddingRsvp.Client**: A strongly-typed HttpClient wrapper for interacting with the RSVP API.
+- **WeddingRsvp.Client**: A HttpClient wrapper for interacting with the RSVP API.
 
 ### Infrastructure
 - **MongoDB**: Used as the primary data store, managed via Aspire in development.
-- **integration**: Contains integration tests or resources for verifying system behavior.
+- **Email Service**: Configurable email service leveraging features of [SendGrid](https://sendgrid.com/en-us) for sending RSVP confirmation notifications.
+
+### Test coverage
+- **Unit Tests** (`test`): Comprehensive unit tests covering core functionality.
+- **Integration Tests** (`integration`): Integration tests ensuring seamless interaction between system boundaries.
 
 ## 🛠️ Getting Started
 
@@ -43,7 +49,7 @@ The solution is divided into several logical components:
 4. The Aspire Dashboard will open, showing the status of the API, WebApp, and MongoDB.
 
 ### Seeding the Database
-The AppHost includes a custom command to seed the database. 
+The AppHost includes a custom command to seed the database.
 1. Open the Aspire Dashboard.
 2. Locate the `api` resource.
 3. Click the **"Clean and seed Database"** button (Database icon).
@@ -53,11 +59,4 @@ The AppHost includes a custom command to seed the database.
 Key settings are managed via `appsettings.json` or environment variables:
 - `WeddingRsvp:ApiKey`: Secures the API communications.
 - `WeddingRsvp:AdminIdentifier`: Unique ID for administrative access.
-
-## 🐳 Docker Support
-
-You can also build and run the solution using the provided `compose.yaml` in the root directory:
-
-```bash
-docker compose up --build
-```
+- Email service configuration for RSVP confirmation notifications (see `EmailServiceConfiguration` section).
