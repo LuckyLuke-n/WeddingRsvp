@@ -46,7 +46,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
             Name = "John Doe",
             NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
-            NumberOfFishMenus = 1,
+            NumberOfBrunchGuests = 1,
             NumberOfVegetarianMenus = 0,
             AdditionalInformation = ""
         };
@@ -147,7 +147,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
             Name = "Updated Name",
             NumberOfGuestsOvernight = 6,
             NumberOfMeatMenus = 2,
-            NumberOfFishMenus = 2,
+            NumberOfBrunchGuests = 2,
             NumberOfVegetarianMenus = 1,
             AdditionalInformation = "Updated info",
             LastUpdated = TimeProvider!.GetUtcNow().DateTime,
@@ -213,7 +213,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
             Name = "Updated Name",
             NumberOfGuestsOvernight = 6,
             NumberOfMeatMenus = 2,
-            NumberOfFishMenus = 2,
+            NumberOfBrunchGuests = 2,
             NumberOfVegetarianMenus = 1,
             AdditionalInformation = "Updated info",
             LastUpdated = TimeProvider!.GetUtcNow().DateTime,

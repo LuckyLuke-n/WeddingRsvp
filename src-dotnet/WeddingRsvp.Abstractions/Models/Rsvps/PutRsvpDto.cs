@@ -30,7 +30,7 @@ public class PutRsvpDto
     
     [Required]
     [Range(0, 10)]
-    public int NumberOfFishMenus { get; set; }
+    public int NumberOfBrunchGuests { get; set; }
     
     [Required]
     [Range(0, 10)]

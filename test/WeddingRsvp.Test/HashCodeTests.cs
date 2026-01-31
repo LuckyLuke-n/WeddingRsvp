@@ -15,7 +15,7 @@ public class HashCodeTests
             BringPartner = ResponseType.No,
             NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
-            NumberOfFishMenus = 1,
+            NumberOfBrunchGuests = 1,
             NumberOfVegetarianMenus = 0,
             AdditionalInformation = "No dietary restrictions",
             IsPlural = false,
@@ -141,7 +141,7 @@ public class HashCodeTests
         // Arrange
         var originalRsvp = CreateBaseRsvpGuest();
         var modifiedRsvp = CreateBaseRsvpGuest();
-        modifiedRsvp.NumberOfFishMenus = differentNumber;
+        modifiedRsvp.NumberOfBrunchGuests = differentNumber;
 
         // Act
         var originalHash = originalRsvp.GetHashCode();
@@ -261,7 +261,7 @@ public class HashCodeTests
             BringPartner = ResponseType.None,
             NumberOfGuestsOvernight = 0,
             NumberOfMeatMenus = 0,
-            NumberOfFishMenus = 0,
+            NumberOfBrunchGuests = 0,
             NumberOfVegetarianMenus = 0,
             AdditionalInformation = ""
         };
@@ -273,7 +273,7 @@ public class HashCodeTests
             BringPartner = ResponseType.Yes,
             NumberOfGuestsOvernight = int.MaxValue,
             NumberOfMeatMenus = int.MaxValue,
-            NumberOfFishMenus = int.MaxValue,
+            NumberOfBrunchGuests = int.MaxValue,
             NumberOfVegetarianMenus = int.MaxValue,
             AdditionalInformation = new string('A', 1000) // Long string
         };

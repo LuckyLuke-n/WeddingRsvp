@@ -9,8 +9,8 @@ public class RsvpGuest
     public ResponseType Response { get; set; }
     public ResponseType BringPartner { get; set; }
     public int NumberOfGuestsOvernight { get; set; }
+    public int NumberOfBrunchGuests { get; set; }
     public int NumberOfMeatMenus { get; set; }
-    public int NumberOfFishMenus { get; set; }
     public int NumberOfVegetarianMenus { get; set; }
     public string AdditionalInformation { get; set; } = string.Empty;
     
@@ -26,10 +26,20 @@ public class RsvpGuest
             Response,
             BringPartner,
             NumberOfGuestsOvernight,
+            NumberOfBrunchGuests,
             NumberOfMeatMenus,
-            NumberOfFishMenus,
             NumberOfVegetarianMenus,
             AdditionalInformation
         );
+    }
+
+    public void UpdateForNotAttending()
+    {
+        BringPartner = Response;
+        NumberOfGuestsOvernight = 0;
+        NumberOfBrunchGuests = 0;
+        NumberOfMeatMenus = 0;
+        NumberOfVegetarianMenus = 0;
+        AdditionalInformation = "";
     }
 }

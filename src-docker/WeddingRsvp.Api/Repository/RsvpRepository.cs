@@ -30,7 +30,7 @@ public class RsvpRepository : MongoDbRepository<Rsvp>, IRsvpRepository
             .Set(r => r.NumberOfGuestsOvernight, entity.NumberOfGuestsOvernight)
             .Set(r => r.NumberOfMeatMenus, entity.NumberOfMeatMenus)
             .Set(r => r.NumberOfVegetarianMenus, entity.NumberOfVegetarianMenus)
-            .Set(r => r.NumberOfFishMenus, entity.NumberOfFishMenus)
+            .Set(r => r.NumberOfBrunchGuests, entity.NumberOfBrunchGuests)
             .Set(r => r.AdditionalInformation, entity.AdditionalInformation)
             .Set(r => r.Attending, entity.Attending)
             .Set(r => r.BringPartner, entity.BringPartner)

@@ -67,7 +67,7 @@ public class RsvpSeeder
                 BringPartner = Reply.Yes,
                 NumberOfGuestsOvernight = 2,
                 NumberOfMeatMenus = 1,
-                NumberOfFishMenus = 1,
+                NumberOfBrunchGuests = 1,
                 NumberOfVegetarianMenus = 0,
                 AdditionalInformation = "Let's do this.",
                 Salutation = "Lieber Max,",
