@@ -70,17 +70,17 @@
                         </label>
                     </div>
                     <div class="meal-type">
-                        <label for="fish-menus">
-                            @Localizer["FishMenu"]
-                            <InputNumber @bind-Value="@RsvpGuest.NumberOfFishMenus" id="fish-menus" min="0" max="10"
-                                         placeholder="0"/>
-                        </label>
-                    </div>
-                    <div class="meal-type">
                         <label for="vegetarian-menus">
                             @Localizer["VegetarianMenu"]
                             <InputNumber @bind-Value="@RsvpGuest.NumberOfVegetarianMenus" id="vegetarian-menus" min="0"
                                          max="10" placeholder="0"/>
+                        </label>
+                    </div>
+                    <div class="meal-type">
+                        <label for="brunch-participants">
+                            @Localizer["Brunch"]
+                            <InputNumber @bind-Value="@RsvpGuest.NumberOfBrunchGuests" id="brunch-participants" min="0" max="10"
+                                         placeholder="0"/>
                         </label>
                     </div>
                 </div>

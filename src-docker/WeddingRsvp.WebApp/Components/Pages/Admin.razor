@@ -53,8 +53,8 @@
                         <th>Response</th>
                         <th>Partner</th>
                         <th>Overnight</th>
+                        <th>Brunch</th>
                         <th>Meat</th>
-                        <th>Fish</th>
                         <th>Veg</th>
                         <th>Additional Info</th>
                         <th>Actions</th>
@@ -96,10 +96,10 @@
                                     <input type="number" @bind="invite.NumberOfGuestsOvernight" class="admin-input"
                                            style="width: 50px;"/></td>
                                 <td>
-                                    <input type="number" @bind="invite.NumberOfMeatMenus" class="admin-input"
+                                    <input type="number" @bind="invite.NumberOfBrunchGuests" class="admin-input"
                                            style="width: 50px;"/></td>
                                 <td>
-                                    <input type="number" @bind="invite.NumberOfFishMenus" class="admin-input"
+                                    <input type="number" @bind="invite.NumberOfMeatMenus" class="admin-input"
                                            style="width: 50px;"/></td>
                                 <td>
                                     <input type="number" @bind="invite.NumberOfVegetarianMenus" class="admin-input"
@@ -131,8 +131,8 @@
                                 <td>@invite.Response</td>
                                 <td>@invite.BringPartner</td>
                                 <td>@invite.NumberOfGuestsOvernight</td>
+                                <td>@invite.NumberOfBrunchGuests</td>
                                 <td>@invite.NumberOfMeatMenus</td>
-                                <td>@invite.NumberOfFishMenus</td>
                                 <td>@invite.NumberOfVegetarianMenus</td>
                                 <td>
                                     @if (!string.IsNullOrWhiteSpace(invite.AdditionalInformation))

@@ -241,7 +241,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
             NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
             NumberOfVegetarianMenus = 1,
-            NumberOfFishMenus = 0,
+            NumberOfBrunchGuests = 0,
             AdditionalInformation = "New Info"
         };
 
@@ -254,7 +254,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
             BringPartner = (Api.Repository.Entities.Reply)Reply.No,
             NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
-            NumberOfFishMenus = 0,
+            NumberOfBrunchGuests = 0,
             NumberOfVegetarianMenus = 1,
             AdditionalInformation = "New Info",
         };
@@ -290,7 +290,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
             IsPlural = false,
             NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
-            NumberOfFishMenus = 1,
+            NumberOfBrunchGuests = 1,
             NumberOfVegetarianMenus = 0,
             AdditionalInformation = "Old Info",
         };
@@ -303,7 +303,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
             IsPlural = false,
             NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
-            NumberOfFishMenus = 1,
+            NumberOfBrunchGuests = 1,
             NumberOfVegetarianMenus = 0,
             AdditionalInformation = "Old Info",
         };
@@ -316,7 +316,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
             IsPlural = false,
             NumberOfGuestsOvernight = 2,
             NumberOfMeatMenus = 1,
-            NumberOfFishMenus = 1,
+            NumberOfBrunchGuests = 1,
             NumberOfVegetarianMenus = 0,
             AdditionalInformation = "Old Info"
         };
@@ -369,7 +369,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
             NumberOfGuestsOvernight = overnight,
             NumberOfMeatMenus = meat,
             NumberOfVegetarianMenus = vegetarian,
-            NumberOfFishMenus = fish,
+            NumberOfBrunchGuests = fish,
             AdditionalInformation = info,
         };
 
