@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using WeddingRsvp.Abstractions.Models.Rsvps;
 using WeddingRsvp.Client;
 using WeddingRsvp.WebApp.Diagnostics.Meters;
 
@@ -75,6 +76,9 @@ public partial class Rsvp : ComponentBase
             Navigation.NavigateTo(NavigationMaster.Invite(Culture!, RsvpGuest.Id));
             return;
         }
+
+        if (RsvpGuest.Response == ResponseType.No)
+            RsvpGuest.UpdateForNotAttending();
         
         var response = await RsvpClient.UpdateRsvpAsync(rsvp: RsvpGuest, isAdmin: false ).ConfigureAwait(false);
 

@@ -63,7 +63,7 @@ body {
 
 /* Ensure the button is reached if it's rendered inside a component or the form */
 ::deep .btn[type="submit"] {
-    margin-bottom: 50px;
+    margin-bottom: 0;
 }
 
 /* Add space between meal selection heading and the meal options */

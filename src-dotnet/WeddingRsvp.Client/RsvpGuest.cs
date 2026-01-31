@@ -32,4 +32,14 @@ public class RsvpGuest
             AdditionalInformation
         );
     }
+
+    public void UpdateForNotAttending()
+    {
+        BringPartner = Response;
+        NumberOfGuestsOvernight = 0;
+        NumberOfBrunchGuests = 0;
+        NumberOfMeatMenus = 0;
+        NumberOfVegetarianMenus = 0;
+        AdditionalInformation = "";
+    }
 }

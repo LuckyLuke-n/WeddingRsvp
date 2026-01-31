@@ -37,7 +37,7 @@
                     </div>
                 </InputRadioGroup>
 
-                @if (!RsvpGuest.IsPlural)
+                @if (!RsvpGuest.IsPlural && RsvpGuest.Response != ResponseType.No)
                 {
                     <label>@Localizer["BringPartner"]</label>
                     <InputRadioGroup @bind-Value="@RsvpGuest.BringPartner">
@@ -54,48 +54,51 @@
                     </InputRadioGroup>
                 }
             </div>
-
-            <div class="form-group">
-                <label for="overnightGuests">@Localizer["OvernightStay"]</label>
-                <InputNumber @bind-Value="@RsvpGuest.NumberOfGuestsOvernight" id="overnightGuests" min="0" max="10"/>
-
+            
+            @if (RsvpGuest.Response != ResponseType.No)
+            {
                 <div class="form-group">
-                    <label>@Localizer["MealSelection"]</label>
-                    <div class="meal-selection">
-                        <div class="meal-type">
-                            <label for="meat-menus">
-                                @Localizer["MeatMenu"]
-                                <InputNumber @bind-Value="@RsvpGuest.NumberOfMeatMenus" id="meat-menus" min="0" max="10"
-                                             placeholder="0"/>
-                            </label>
-                        </div>
-                        <div class="meal-type">
-                            <label for="vegetarian-menus">
-                                @Localizer["VegetarianMenu"]
-                                <InputNumber @bind-Value="@RsvpGuest.NumberOfVegetarianMenus" id="vegetarian-menus"
-                                             min="0"
-                                             max="10" placeholder="0"/>
-                            </label>
-                        </div>
-                        <div class="meal-type">
-                            <label for="brunch-participants">
-                                @Localizer["Brunch"]
-                                <InputNumber @bind-Value="@RsvpGuest.NumberOfBrunchGuests" id="brunch-participants"
-                                             min="0" max="10"
-                                             placeholder="0"/>
-                            </label>
-                        </div>
-                    </div>
-                </div>
+                    <label for="overnightGuests">@Localizer["OvernightStay"]</label>
+                    <InputNumber @bind-Value="@RsvpGuest.NumberOfGuestsOvernight" id="overnightGuests" min="0" max="10"/>
 
-                <div class="form-group">
                     <div class="form-group">
-                        <label for="names">@Localizer["AdditionalInfo"]</label>
-                        <InputTextArea @bind-Value="@RsvpGuest.AdditionalInformation" id="names" rows="3"
-                                       placeholder="@Localizer["AdditionalInfoPlaceholder"]"/>
+                        <label>@Localizer["MealSelection"]</label>
+                        <div class="meal-selection">
+                            <div class="meal-type">
+                                <label for="meat-menus">
+                                    @Localizer["MeatMenu"]
+                                    <InputNumber @bind-Value="@RsvpGuest.NumberOfMeatMenus" id="meat-menus" min="0" max="10"
+                                                 placeholder="0"/>
+                                </label>
+                            </div>
+                            <div class="meal-type">
+                                <label for="vegetarian-menus">
+                                    @Localizer["VegetarianMenu"]
+                                    <InputNumber @bind-Value="@RsvpGuest.NumberOfVegetarianMenus" id="vegetarian-menus"
+                                                 min="0"
+                                                 max="10" placeholder="0"/>
+                                </label>
+                            </div>
+                            <div class="meal-type">
+                                <label for="brunch-participants">
+                                    @Localizer["Brunch"]
+                                    <InputNumber @bind-Value="@RsvpGuest.NumberOfBrunchGuests" id="brunch-participants"
+                                                 min="0" max="10"
+                                                 placeholder="0"/>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label for="names">@Localizer["AdditionalInfo"]</label>
+                            <InputTextArea @bind-Value="@RsvpGuest.AdditionalInformation" id="names" rows="3"
+                                           placeholder="@Localizer["AdditionalInfoPlaceholder"]"/>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
             
             <div class="form-group">
                 <button type="submit" class="btn">@Localizer["Submit"]</button>
