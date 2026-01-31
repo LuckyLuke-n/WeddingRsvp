@@ -11,7 +11,6 @@ A modern, cloud-native Wedding RSVP management system built with **.NET 10**, **
 - **Aspire Integration**: Seamless local development orchestration, service discovery, and monitoring.
 - **Blazor WebApp**: An interactive UI for guests to submit their replies.
 - **MongoDB Backend**: Flexible document storage for RSVP data.
-- **Docker Ready**: Includes Dockerfiles and a `compose.yaml` for containerized deployment.
 
 ## 🏗️ Architecture & Project Structure
 
