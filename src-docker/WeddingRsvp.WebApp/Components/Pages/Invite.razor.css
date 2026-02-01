@@ -28,6 +28,7 @@ h1 {
     margin-bottom: 40px;
     text-align: center;
     font-weight: 400;
+    white-space: pre-line;
 }
 
 .itinerary {
