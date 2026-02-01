@@ -31,12 +31,12 @@
             <h2 style="color: var(--primary-color)">Admin Login</h2>
             <input type="password" @bind="_passphrase" class="admin-input" placeholder="Enter Passphrase"
                    @onkeyup="HandleKeyUp"/>
-            <button class="btn" style="margin-top: 20px; width: 100%" @onclick="LoginAsync">Login</button>
+            <button class="btn" style="margin-top: 20px; width: auto; color: white; background: var(--secondary-color);" @onclick="LoginAsync">Login</button>
         </div>
     }
     else
     {
-        <h2 style="color: var(--primary-color); font-family: var(--font-family), cursive;">Manage Invitations</h2>
+        <h2 style="color: var(--secondary-color); font-family: var(--font-family), cursive;">Manage Invitations</h2>
 
         <button class="action-btn btn-add" @onclick="AddRow">Add New Entry</button>
 
@@ -49,7 +49,7 @@
                         <th>ID</th>
                         <th>Name</th>
                         <th>Salutation</th>
-                        <th>Ask for partner</th>
+                        <th>Multiple guests</th>
                         <th>Response</th>
                         <th>Partner</th>
                         <th>Overnight</th>
@@ -72,15 +72,15 @@
                                 <td>
                                     <select class="admin-input" value="@invite.IsPlural.ToString().ToLower()"
                                             @onchange="@(e => invite.IsPlural = bool.Parse(e.Value?.ToString() ?? "false"))">
-                                        <option value="true">Yes</option>
-                                        <option value="false">No</option>
+                                        <option style="background-color: var(--combobox-background); color: white;" value="true">Yes</option>
+                                        <option style="background-color: var(--combobox-background); color: white;" value="false">No</option>
                                     </select>
                                 </td>
                                 <td>
                                     <select @bind="invite.Response" class="admin-input">
                                         @foreach (var val in Enum.GetValues<ResponseType>())
                                         {
-                                            <option value="@val">@val</option>
+                                            <option style="background-color: var(--combobox-background); color: white;" value="@val">@val</option>
                                         }
                                     </select>
                                 </td>
@@ -88,7 +88,7 @@
                                     <select @bind="invite.BringPartner" class="admin-input">
                                         @foreach (var val in Enum.GetValues<ResponseType>())
                                         {
-                                            <option value="@val">@val</option>
+                                            <option style="background-color: var(--combobox-background); color: white;" value="@val">@val</option>
                                         }
                                     </select>
                                 </td>
@@ -127,7 +127,7 @@
                             {
                                 <td>@invite.Name</td>
                                 <td>@invite.Salutation</td>
-                                <td>@invite.IsPlural</td>
+                                <td>@(invite.IsPlural ? "Yes" : "No")</td>
                                 <td>@invite.Response</td>
                                 <td>@invite.BringPartner</td>
                                 <td>@invite.NumberOfGuestsOvernight</td>
@@ -182,34 +182,38 @@
             <!-- Dynamic Info here -->
 
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-                <h2 style="color: var(--primary-color); font-family: var(--font-family), cursive; margin: 0;">Dynamic
+                <h2 style="color: var(--secondary-color); font-family: var(--font-family), cursive; margin: 0;">Dynamic
                     Content</h2>
 
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <label style="color: var(--secondary-color);">Select Language:</label>
                     <select class="admin-input"
-                            style="width: auto; min-width: 150px; background-color: #333; color: white;"
+                            style="width: auto; min-width: 150px; background-color: var(--combobox-background); color: white;"
                             @onchange="@(e => ChangeLanguage(e.Value?.ToString() ?? "de"))">
                         <option value="de" selected="@(_selectedLanguage == "de")"
-                                style="background-color: #333; color: white;">German (DE)
+                                style="background-color: var(--combobox-background); color: white;">German (DE)
                         </option>
                         <option value="en" selected="@(_selectedLanguage == "en")"
-                                style="background-color: #333; color: white;">English (EN)
+                                style="background-color: var(--combobox-background); color: white;">English (EN)
                         </option>
                     </select>
                 </div>
             </div>
+            
+            <div style="margin-top: -10px; margin-bottom: 20px; color: var(--text-color); font-size: 0.9em;">
+                The invitation text and FAQ answers can include links using a markup like this: [this page](https://example.com)
+            </div>
 
             <div class="info-section">
-                <label>Invitation Text</label>
-                <textarea @bind="_information.InvitationText" class="admin-input" rows="4"
+                <label>Invitation text</label>
+                <textarea @bind="_information.InvitationText" class="admin-input" rows="6"
                           style="margin-top: 10px;"></textarea>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
                 <!-- Itinerary Section -->
                 <div>
-                    <h3 style="color: var(--secondary-color)">Itinerary</h3>
+                    <h3>Itinerary</h3>
                     <table>
                         <thead>
                         <tr>
@@ -244,7 +248,7 @@
 
                 <!-- FAQ Section -->
                 <div>
-                    <h3 style="color: var(--secondary-color)">FAQs</h3>
+                    <h3>FAQs</h3>
                     <table>
                         <thead>
                         <tr>

@@ -1,6 +1,7 @@
 @page "/{culture}/invite"
 @page "/{culture}/invite/{id}"
 @using Microsoft.Extensions.Localization
+@using WeddingRsvp.WebApp.Components.Helpers
 
 @inject IStringLocalizer<Invite> Localizer
 
@@ -15,7 +16,7 @@
     
     <h1>@_rsvpGuest.Salutation</h1>
 
-    <div class="text-block">@_information.InvitationText</div>
+    <div class="text-block">@((MarkupString)MarkupFactory.Linkify(_information.InvitationText))</div>
 
     <div class="itinerary">
         <h2>@Localizer["ItineraryHeader"]</h2>
@@ -26,7 +27,14 @@
     </div>
 
     <div class="btn-container">
-        <a href=@NavigationMaster.Rsvp(@Culture, @Id) class="btn">@Localizer["RsvpButton"]</a>
+        @if (_rsvpGuest.IsPlural)
+        {
+            <a href=@NavigationMaster.Rsvp(@Culture, @Id) class="btn">@Localizer["RsvpButtonPlural"]</a>
+        }
+        else
+        {
+            <a href=@NavigationMaster.Rsvp(@Culture, @Id) class="btn">@Localizer["RsvpButton"]</a>
+        }
     </div>
 
     <div class="faq-section">
@@ -39,7 +47,7 @@
         {
             <details>
                 <summary>@item.Key</summary>
-                <div class="faq-answer">@item.Value</div>
+                <div class="faq-answer">@((MarkupString)MarkupFactory.Linkify(item.Value))</div>
             </details>
         }
     </div>

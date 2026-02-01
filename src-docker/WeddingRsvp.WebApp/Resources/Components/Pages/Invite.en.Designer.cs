@@ -62,5 +62,11 @@ namespace WeddingRsvp.WebApp.Resources.Components.Pages {
                 return ResourceManager.GetString("RsvpButton", resourceCulture);
             }
         }
+        
+        internal static string RsvpButtonPlural {
+            get {
+                return ResourceManager.GetString("RsvpButtonPlural", resourceCulture);
+            }
+        }
     }
 }

@@ -27,4 +27,7 @@
     <data name="RsvpButton" xml:space="preserve">
         <value>Gib uns hier Rückmeldung</value>
     </data>
+    <data name="RsvpButtonPlural" xml:space="preserve">
+        <value>Gebt und hier Rückmeldung</value>
+    </data>
 </root>
