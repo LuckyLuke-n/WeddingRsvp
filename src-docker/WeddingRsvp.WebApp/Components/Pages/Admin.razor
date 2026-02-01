@@ -72,15 +72,15 @@
                                 <td>
                                     <select class="admin-input" value="@invite.IsPlural.ToString().ToLower()"
                                             @onchange="@(e => invite.IsPlural = bool.Parse(e.Value?.ToString() ?? "false"))">
-                                        <option value="true">Yes</option>
-                                        <option value="false">No</option>
+                                        <option style="background-color: var(--combobox-background); color: white;" value="true">Yes</option>
+                                        <option style="background-color: var(--combobox-background); color: white;" value="false">No</option>
                                     </select>
                                 </td>
                                 <td>
                                     <select @bind="invite.Response" class="admin-input">
                                         @foreach (var val in Enum.GetValues<ResponseType>())
                                         {
-                                            <option value="@val">@val</option>
+                                            <option style="background-color: var(--combobox-background); color: white;" value="@val">@val</option>
                                         }
                                     </select>
                                 </td>
@@ -88,7 +88,7 @@
                                     <select @bind="invite.BringPartner" class="admin-input">
                                         @foreach (var val in Enum.GetValues<ResponseType>())
                                         {
-                                            <option value="@val">@val</option>
+                                            <option style="background-color: var(--combobox-background); color: white;" value="@val">@val</option>
                                         }
                                     </select>
                                 </td>
@@ -188,13 +188,13 @@
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <label style="color: var(--secondary-color);">Select Language:</label>
                     <select class="admin-input"
-                            style="width: auto; min-width: 150px; background-color: #333; color: white;"
+                            style="width: auto; min-width: 150px; background-color: var(--combobox-background); color: white;"
                             @onchange="@(e => ChangeLanguage(e.Value?.ToString() ?? "de"))">
                         <option value="de" selected="@(_selectedLanguage == "de")"
-                                style="background-color: #333; color: white;">German (DE)
+                                style="background-color: var(--combobox-background); color: white;">German (DE)
                         </option>
                         <option value="en" selected="@(_selectedLanguage == "en")"
-                                style="background-color: #333; color: white;">English (EN)
+                                style="background-color: var(--combobox-background); color: white;">English (EN)
                         </option>
                     </select>
                 </div>
