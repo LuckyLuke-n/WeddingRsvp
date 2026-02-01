@@ -23,7 +23,14 @@
             <DataAnnotationsValidator/>
             <ValidationSummary/>
             <div class="form-group">
-                <label>@Localizer["WillYouAttend"]</label>
+                @if (RsvpGuest.IsPlural)
+                {
+                    <label>@Localizer["WillYouAttendPlural"]</label>
+                }
+                else
+                {
+                    <label>@Localizer["WillYouAttend"]</label>
+                }
                 <InputRadioGroup @bind-Value="@RsvpGuest.Response">
                     <div class="radio-group">
                         <label class="radio-option">

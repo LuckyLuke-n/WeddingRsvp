@@ -12,8 +12,8 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="WillYouAttend" xml:space="preserve">
-    <value>Wirst du kommen?</value>
+  <data name="WillYouAttend" xml:space="preserve">
+    <value>Feierst du mit uns?</value>
   </data>
     <data name="BringPartner" xml:space="preserve">
     <value>Bringst du deinen Partner oder deine Partnerin mit?</value>
@@ -47,5 +47,8 @@
   </data>
     <data name="No" xml:space="preserve">
     <value>Nein</value>
+  </data>
+  <data name="WillYouAttendPlural" xml:space="preserve">
+    <value>Feiert ihr mit uns?</value>
   </data>
 </root>
