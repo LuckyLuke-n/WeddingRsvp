@@ -54,6 +54,16 @@ th {
     width: 100%;
 }
 
+.info-section > label {
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.section-wrapper h3 {
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
 .login-box .admin-input {
     background: rgba(255, 255, 255, 0.2);
 }
