@@ -27,7 +27,14 @@
     </div>
 
     <div class="btn-container">
-        <a href=@NavigationMaster.Rsvp(@Culture, @Id) class="btn">@Localizer["RsvpButton"]</a>
+        @if (_rsvpGuest.IsPlural)
+        {
+            <a href=@NavigationMaster.Rsvp(@Culture, @Id) class="btn">@Localizer["RsvpButtonPlural"]</a>
+        }
+        else
+        {
+            <a href=@NavigationMaster.Rsvp(@Culture, @Id) class="btn">@Localizer["RsvpButton"]</a>
+        }
     </div>
 
     <div class="faq-section">

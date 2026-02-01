@@ -27,4 +27,7 @@
     <data name="RsvpButton" xml:space="preserve">
         <value>Let us know if you are attending</value>
     </data>
+    <data name="RsvpButtonPlural" xml:space="preserve">
+        <value>Let us know if you are attending</value>
+    </data>
 </root>
