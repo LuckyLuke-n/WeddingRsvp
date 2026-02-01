@@ -15,7 +15,7 @@ public static class MappingExtensions
             NumberOfGuestsOvernight = dto.NumberOfGuestsOvernight,
             NumberOfMeatMenus = dto.NumberOfMeatMenus,
             NumberOfVegetarianMenus = dto.NumberOfVegetarianMenus,
-            NumberOfBrunchGuests = 0,
+            NumberOfBrunchGuests = dto.NumberOfBrunchGuests,
             AdditionalInformation = dto.AdditionalInformation,
         };
     }
