@@ -81,3 +81,35 @@ th {
 .btn-delete { background-color: #f44336; color: white; }
 .btn-edit { background-color: var(--secondary-color); color: white; }
 .btn-add { background-color: var(--primary-color); color: var(--accent-color); font-weight: bold; margin-bottom: 10px; }
+
+.rsvp-table-wrapper {
+    overflow: visible;
+}
+
+.rsvp-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin-top: 0;
+}
+
+.rsvp-table thead,
+.rsvp-table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.rsvp-table tbody {
+    display: block;
+    max-height: calc(5 * 48px); /* 5 rows */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.rsvp-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--accent-color);
+}
