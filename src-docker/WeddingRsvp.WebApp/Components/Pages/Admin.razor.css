@@ -83,16 +83,18 @@ th {
 .btn-add { background-color: var(--primary-color); color: var(--accent-color); font-weight: bold; margin-bottom: 10px; }
 
 .rsvp-table-wrapper {
-    overflow: visible;
+    border-radius: 10px;
+    overflow: hidden; /* keeps rounded corners clean */
 }
 
+/* restore clean table look (no vertical seams) */
 .rsvp-table {
-    width: 100%;
-    table-layout: fixed;
     border-collapse: collapse;
+    border-spacing: 0;
     margin-top: 0;
 }
 
+/* Keep header + body aligned */
 .rsvp-table thead,
 .rsvp-table tbody tr {
     display: table;
@@ -100,16 +102,15 @@ th {
     table-layout: fixed;
 }
 
+/* Scroll only the rows */
 .rsvp-table tbody {
     display: block;
-    max-height: calc(5 * 48px); /* 5 rows */
+    max-height: 50vh; /* half screen height */
     overflow-y: auto;
     overflow-x: hidden;
 }
 
+/* keep header solid */
 .rsvp-table thead th {
-    position: sticky;
-    top: 0;
-    z-index: 2;
     background: var(--accent-color);
 }
