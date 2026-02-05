@@ -15,8 +15,12 @@
     }
     
     <h1>@_rsvpGuest.Salutation</h1>
-
-    <div class="text-block">@((MarkupString)MarkupFactory.Linkify(_information.InvitationText))</div>
+    
+    @{
+        var pluralAdujustedText = MarkupFactory.SelectPluralForm(_rsvpGuest.IsPlural, _information.InvitationText);
+        var markupText = MarkupFactory.Linkify(pluralAdujustedText);
+    }
+    <div class="text-block">@((MarkupString)markupText)</div>
 
     <div class="itinerary">
         <h2>@Localizer["ItineraryHeader"]</h2>
