@@ -107,9 +107,9 @@ public class RsvpSeeder
                 Id = "6d7c5bfa-e8bb-410e-b33b-87caedc95897",
                 Language = "de",
                 InvitationText = """
-                                 Wir freuen uns riesig, euch zur Feier unseres besonderen Tages einzuladen.
-                                 Es wäre nicht dasselbe ohne euch, um unsere Liebe und unser Glück zu teilen, 
-                                 während wir unser gemeinsames Leben beginnen.
+                                 Wir freuen uns riesig, {dich/euch} zur Feier unseres besonderen Tages einzuladen.
+                                 Es wäre nicht dasselbe ohne {dich/euch}, um unsere Liebe und unser Glück zu teilen, 
+                                 während wir unser gemeinsames Leben beginnen. {Du bist/Ihr seid} eingeladen.
                                  """,
                 Faqs = new List<Faq>
                 {

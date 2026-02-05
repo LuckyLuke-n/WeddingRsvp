@@ -18,4 +18,16 @@ public static class MarkupFactory
             encoded,
             "<a href=\"$2\" target=\"_blank\" rel=\"noopener\">$1</a>");
     }
+
+    public static string SelectPluralForm(bool isPlural, string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return string.Empty;
+
+        // Look for {singular/plural}
+        var pattern = @"\{([^{}\/]+)\/([^{}\/]+)\}";
+
+        return Regex.Replace(text, pattern, match =>
+            isPlural ? match.Groups[2].Value : match.Groups[1].Value);
+    }
 }
