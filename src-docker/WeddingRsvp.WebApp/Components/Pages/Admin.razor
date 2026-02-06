@@ -47,16 +47,16 @@
                     <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
-                        <th>Salutation</th>
-                        <th>Multiple guests</th>
-                        <th>Response</th>
-                        <th>Partner</th>
-                        <th>Overnight</th>
-                        <th>Brunch</th>
-                        <th>Meat menu</th>
-                        <th>Vegetarian menu</th>
-                        <th>Additional info</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.Name)">Name @SortIndicator(SortColumn.Name)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.Salutation)">Salutation @SortIndicator(SortColumn.Salutation)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.IsPlural)">Multiple guests @SortIndicator(SortColumn.IsPlural)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.Response)">Response @SortIndicator(SortColumn.Response)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.BringPartner)">Partner @SortIndicator(SortColumn.BringPartner)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.Overnight)">Overnight @SortIndicator(SortColumn.Overnight)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.Brunch)">Brunch @SortIndicator(SortColumn.Brunch)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.MeatMenu)">Meat menu @SortIndicator(SortColumn.MeatMenu)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.VegetarianMenu)">Vegetarian menu @SortIndicator(SortColumn.VegetarianMenu)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.AdditionalInfo)">Additional info @SortIndicator(SortColumn.AdditionalInfo)</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
