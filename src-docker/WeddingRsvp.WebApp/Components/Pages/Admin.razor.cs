@@ -24,6 +24,96 @@ public partial class Admin : ComponentBase
     private string _errorMessage = string.Empty;
     private string _successMessage = string.Empty;
 
+    private SortColumn _sortColumn = SortColumn.Name;
+    private bool _sortAscending = true;
+
+    private enum SortColumn
+    {
+        Name,
+        Salutation,
+        IsPlural,
+        Response,
+        BringPartner,
+        Overnight,
+        Brunch,
+        MeatMenu,
+        VegetarianMenu,
+        AdditionalInfo
+    }
+
+    private void ApplySort(SortColumn column)
+    {
+        if (_sortColumn == column)
+            _sortAscending = !_sortAscending;
+        else
+        {
+            _sortColumn = column;
+            _sortAscending = true;
+        }
+
+        _invites = SortInvites(_invites).ToList();
+    }
+
+    private IEnumerable<RsvpGuest> SortInvites(IEnumerable<RsvpGuest> invites)
+    {
+        return _sortColumn switch
+        {
+            SortColumn.Name => _sortAscending
+                ? invites.OrderBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
+                : invites.OrderByDescending(x => x.Name, StringComparer.OrdinalIgnoreCase),
+
+            SortColumn.Salutation => _sortAscending
+                ? invites.OrderBy(x => x.Salutation, StringComparer.OrdinalIgnoreCase)
+                : invites.OrderByDescending(x => x.Salutation, StringComparer.OrdinalIgnoreCase),
+
+            SortColumn.IsPlural => _sortAscending
+                ? invites.OrderBy(x => x.IsPlural)
+                : invites.OrderByDescending(x => x.IsPlural),
+
+            SortColumn.Response => _sortAscending
+                ? invites.OrderBy(x => x.Response)
+                : invites.OrderByDescending(x => x.Response),
+
+            SortColumn.BringPartner => _sortAscending
+                ? invites.OrderBy(x => x.BringPartner)
+                : invites.OrderByDescending(x => x.BringPartner),
+
+            SortColumn.Overnight => _sortAscending
+                ? invites.OrderBy(x => x.NumberOfGuestsOvernight)
+                : invites.OrderByDescending(x => x.NumberOfGuestsOvernight),
+
+            SortColumn.Brunch => _sortAscending
+                ? invites.OrderBy(x => x.NumberOfBrunchGuests)
+                : invites.OrderByDescending(x => x.NumberOfBrunchGuests),
+
+            SortColumn.MeatMenu => _sortAscending
+                ? invites.OrderBy(x => x.NumberOfMeatMenus)
+                : invites.OrderByDescending(x => x.NumberOfMeatMenus),
+
+            SortColumn.VegetarianMenu => _sortAscending
+                ? invites.OrderBy(x => x.NumberOfVegetarianMenus)
+                : invites.OrderByDescending(x => x.NumberOfVegetarianMenus),
+
+            SortColumn.AdditionalInfo => _sortAscending
+                ? invites
+                    .OrderBy(x => string.IsNullOrWhiteSpace(x.AdditionalInformation))
+                    .ThenBy(x => x.AdditionalInformation, StringComparer.OrdinalIgnoreCase)
+                : invites
+                    .OrderByDescending(x => string.IsNullOrWhiteSpace(x.AdditionalInformation))
+                    .ThenByDescending(x => x.AdditionalInformation, StringComparer.OrdinalIgnoreCase),
+
+            _ => invites
+        };
+    }
+
+    private string SortIndicator(SortColumn column)
+    {
+        if (_sortColumn != column)
+            return string.Empty;
+
+        return _sortAscending ? "▲" : "▼";
+    }
+
     private List<RsvpGuest> _invites = [];
     private List<DynamicInformation> _informationList = [];
     private DynamicInformation _information = new();
@@ -70,7 +160,9 @@ public partial class Admin : ComponentBase
         var response = await RsvpClient.GetAllRsvpsAsync().ConfigureAwait(false);
 
         if (response.IsSuccess)
+        {
             _invites = response.ValueSuccess!.ToList();
+        }
         else
         {
             _errorMessage = "Failed to load all rsvps.";

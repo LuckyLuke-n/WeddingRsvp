@@ -12,7 +12,7 @@ namespace WeddingRsvp.Integration;
 
 public class InformationRepositoryTests : IAsyncLifetime
 {
-    private readonly MongoDbContainer _mongoDbContainer = new MongoDbBuilder().Build();
+    private readonly MongoDbContainer _mongoDbContainer = new MongoDbBuilder("mongo:8").Build();
     private IInformationRepository _serviceUnderTest = null!;
     private IMongoClient _mongoClient = null!;
 

@@ -114,3 +114,12 @@ th {
 .rsvp-table thead th {
     background: var(--accent-color);
 }
+
+th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+th.sortable:hover {
+    background: color-mix(in srgb, var(--accent-color) 85%, white 15%);
+}
