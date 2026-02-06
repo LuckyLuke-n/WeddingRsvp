@@ -86,7 +86,7 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient, INotificationC
                 return ClientResponse<IEnumerable<RsvpGuest>, ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
             }
 
-            var rsvps = dto.Select( i => i.ToDomainObject());
+            var rsvps = dto.Select( i => i.ToDomainObject()).OrderBy(r => r.Name, StringComparer.OrdinalIgnoreCase);
             return ClientResponse<IEnumerable<RsvpGuest>, ClientFailResponse>.CreateSuccess(rsvps);
         }
         catch (HttpRequestException e)
