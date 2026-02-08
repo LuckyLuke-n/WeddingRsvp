@@ -19,7 +19,7 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="FaqHeader" xml:space="preserve">
-        <value>Falls es Fragen gibt sind wir natürlich erreichbar. Alternativ kann unser FAQ helfen.</value>
+        <value>Falls es Fragen gibt, sind wir natürlich erreichbar. Alternativ kann unser FAQ helfen.</value>
     </data>
     <data name="ItineraryHeader" xml:space="preserve">
         <value>Ablauf</value>
@@ -28,6 +28,6 @@
         <value>Gib uns hier Rückmeldung</value>
     </data>
     <data name="RsvpButtonPlural" xml:space="preserve">
-        <value>Gebt und hier Rückmeldung</value>
+        <value>Gebt uns hier Rückmeldung</value>
     </data>
 </root>
