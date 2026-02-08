@@ -116,4 +116,22 @@ public class SettingsControllerTests : IClassFixture<WebApplicationFactory<Progr
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
+
+    [Fact]
+    public async Task Put_WithInvalidEmail_ReturnsBadRequest()
+    {
+        var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
+
+        var dto = new PutSettingsDto
+        {
+            EnableEmailNotifications = true,
+            EmailRecipients = ["not-an-email"],
+            RespondUntil = new DateTime(2031, 2, 2, 12, 0, 0, DateTimeKind.Utc)
+        };
+
+        var response = await client.PutAsJsonAsync("/api/settings", dto);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
 }

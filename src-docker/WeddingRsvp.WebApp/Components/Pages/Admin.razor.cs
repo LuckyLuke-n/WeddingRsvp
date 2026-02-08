@@ -14,6 +14,7 @@ public partial class Admin : ComponentBase
     [Inject] private IInformationClient InformationClient { get; set; } = null!;
     [Inject] private ILogger<Admin> Logger { get; set; } = null!;
     [Inject] private IOptions<WebAppConfiguration> WebAppConfiguration { get; set; } = null!;
+    [Inject] private ISettingsClient SettingsClient { get; set; } = null!;
 
     private bool _isAuthenticated;
     private string _passphrase = string.Empty;
@@ -23,6 +24,14 @@ public partial class Admin : ComponentBase
     private string? _expandedId;
     private string _errorMessage = string.Empty;
     private string _successMessage = string.Empty;
+    
+    private List<RsvpGuest> _invites = [];
+    private List<DynamicInformation> _informationList = [];
+    private DynamicInformation _information = new();
+
+    private ApplicationSettings _settings = new();
+    private string _emailRecipientsText = string.Empty;
+    private DateTime _respondUntilLocalTime ;
 
     private SortColumn _sortColumn = SortColumn.Name;
     private bool _sortAscending = true;
@@ -114,10 +123,6 @@ public partial class Admin : ComponentBase
         return _sortAscending ? "▲" : "▼";
     }
 
-    private List<RsvpGuest> _invites = [];
-    private List<DynamicInformation> _informationList = [];
-    private DynamicInformation _information = new();
-
     private async Task LoginAsync()
     {
         if (string.Equals(_passphrase, WebAppConfiguration.Value.AdminPassword, StringComparison.Ordinal))
@@ -126,6 +131,7 @@ public partial class Admin : ComponentBase
             _isAuthenticated = true;
             await LoadInformationAsync().ConfigureAwait(false);
             await LoadRsvpsAsync().ConfigureAwait(false);
+            await LoadSettingsAsync().ConfigureAwait(false);
             ChangeLanguage("de");
         }
         else
@@ -300,6 +306,47 @@ public partial class Admin : ComponentBase
                 _informationList.Add(response.ValueSuccess);
                 _successMessage = "Information added successfully.";
             }
+        }
+    }
+
+    private async Task LoadSettingsAsync()
+    {
+        var response = await SettingsClient.GetSettingsAsync().ConfigureAwait(false);
+
+        if (response.IsSuccess)
+        {
+            _settings = response.ValueSuccess!;
+            _emailRecipientsText = string.Join(Environment.NewLine, _settings.EmailRecipients);
+            _respondUntilLocalTime = _settings.RespondUntil;
+        }
+        else
+        {
+            _errorMessage = "Failed to load settings.";
+            Logger.LogError("Failed to load settings with code {StatusCode}.", response.ValueFail.StatusCode);
+        }
+    }
+
+    private async Task SaveSettingsAsync()
+    {
+        _settings.EmailRecipients = _emailRecipientsText
+            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToList();
+        
+        _settings.RespondUntil = _respondUntilLocalTime;
+
+        var response = await SettingsClient.UpdateSettingsAsync(_settings).ConfigureAwait(false);
+        if (!response.IsSuccess)
+        {
+            if (response.ValueFail!.StatusCode == HttpStatusCode.BadRequest)
+                _errorMessage = "Failed to update settings. Invalid input data.";
+            else
+                _errorMessage = "Failed to update settings.";
+
+            Logger.LogError("Failed to update settings with code {StatusCode}.", response.ValueFail.StatusCode);
+        }
+        else
+        {
+            _successMessage = "Settings updated successfully.";
         }
     }
 
