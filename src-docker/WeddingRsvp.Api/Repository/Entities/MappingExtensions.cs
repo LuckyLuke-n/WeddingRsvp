@@ -1,6 +1,6 @@
-using WeddingRsvp.Abstractions.Models;
 using WeddingRsvp.Abstractions.Models.Information;
 using WeddingRsvp.Abstractions.Models.Rsvps;
+using WeddingRsvp.Abstractions.Models.Settings;
 
 namespace WeddingRsvp.Api.Repository.Entities;
 
@@ -19,11 +19,11 @@ public static class MappingExtensions
             NumberOfBrunchGuests = entity.NumberOfBrunchGuests,
             LastUpdated = entity.LastUpdated,
             Salutation = entity.Salutation,
-            Attending =  (Abstractions.Models.Rsvps.Reply)entity.Attending,
+            Attending = (Abstractions.Models.Rsvps.Reply)entity.Attending,
             BringPartner = (Abstractions.Models.Rsvps.Reply)entity.BringPartner,
             IsPlural = entity.IsPlural,
         };
-        
+
         return dto;
     }
 
@@ -49,7 +49,7 @@ public static class MappingExtensions
             Salutation = dto.Salutation,
             IsPlural = dto.IsPlural,
         };
-        
+
         return rsvp;
     }
 
@@ -69,7 +69,7 @@ public static class MappingExtensions
             LastUpdated = DateTime.UtcNow,
             IsPlural = dto.IsPlural,
         };
-        
+
         return entity;
     }
 
@@ -77,10 +77,10 @@ public static class MappingExtensions
     {
         List<Faq> faqs = [];
         List<ItineraryItem> itinerary = [];
-        
+
         foreach (var faq in dto.Faqs)
             faqs.Add(new Faq { Question = faq.Key, Answer = faq.Value });
-        
+
         foreach (var item in dto.Itinerary)
             itinerary.Add(new ItineraryItem { Activity = item.Value, Time = item.Key });
 
@@ -91,18 +91,18 @@ public static class MappingExtensions
             Itinerary = itinerary,
             Faqs = faqs,
         };
-        
+
         return information;
     }
-    
+
     public static Information ToEntity(this PutInformationDto dto)
     {
         List<Faq> faqs = [];
         List<ItineraryItem> itinerary = [];
-        
+
         foreach (var faq in dto.Faqs)
             faqs.Add(new Faq { Question = faq.Key, Answer = faq.Value });
-        
+
         foreach (var item in dto.Itinerary)
             itinerary.Add(new ItineraryItem { Activity = item.Value, Time = item.Key });
 
@@ -113,7 +113,29 @@ public static class MappingExtensions
             Itinerary = itinerary,
             Faqs = faqs,
         };
-        
+
         return information;
+    }
+
+    public static GetSettingsDto ToDto(this Settings settings)
+    {
+        var dto = new GetSettingsDto
+        {
+            EnableEmailNotifications = settings.EnableEmailNotifications,
+            EmailRecipients = settings.EmailRecipients,
+            RespondUntil = settings.RespondUntil,
+        };
+
+        return dto;
+    }
+
+    public static Settings ToEntity(this PutSettingsDto dto)
+    {
+        return new Settings
+        {
+            EnableEmailNotifications = dto.EnableEmailNotifications,
+            EmailRecipients = dto.EmailRecipients,
+            RespondUntil = dto.RespondUntil,
+        };
     }
 }
