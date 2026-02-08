@@ -1,6 +1,7 @@
 using WeddingRsvp.Abstractions.Models.Information;
 using WeddingRsvp.Abstractions.Models.Notifications;
 using WeddingRsvp.Abstractions.Models.Rsvps;
+using WeddingRsvp.Abstractions.Models.Settings;
 
 namespace WeddingRsvp.Client.Extensions;
 
@@ -97,6 +98,26 @@ internal static class MappingExtensions
             NumberOfMeatMenus = rsvp.NumberOfMeatMenus,
             NumberOfVegetarianMenus = rsvp.NumberOfVegetarianMenus,
             AdditionalInformation = rsvp.AdditionalInformation,
+        };
+    }
+
+    internal static ApplicationSettings ToDomainObject(this GetSettingsDto dto)
+    {
+        return new ApplicationSettings()
+        {
+            EnableEmailNotifications = dto.EnableEmailNotifications,
+            EmailRecipients = dto.EmailRecipients,
+            RespondUntil = dto.RespondUntil,
+        };
+    }
+
+    internal static PutSettingsDto ToPutDto(this ApplicationSettings settings)
+    {
+        return new PutSettingsDto()
+        {
+            EnableEmailNotifications = settings.EnableEmailNotifications,
+            EmailRecipients = settings.EmailRecipients,
+            RespondUntil = settings.RespondUntil,
         };
     }
 }

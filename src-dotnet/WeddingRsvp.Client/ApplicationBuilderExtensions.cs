@@ -52,4 +52,18 @@ public static class ApplicationBuilderExtensions
         
         return builder;
     }
+    
+    public static IHostApplicationBuilder AddSettingsClient(this IHostApplicationBuilder builder)
+    {
+        var config = builder.Configuration.GetSection(WeddingRsvpClientConfiguration.Section).Get<WeddingRsvpClientConfiguration>();
+        builder.Services.AddScoped<ISettingsClient, WeddingRsvpClient>();
+        
+        builder.Services.AddHttpClient( WeddingRsvpClient.SettingsClientName, client =>
+        {
+            client.BaseAddress = new Uri("http://api/api/settings/"); 
+            client.DefaultRequestHeaders.Add("x-api-key", config?.ApiKey ?? "");
+        });
+        
+        return builder;
+    }
 }
