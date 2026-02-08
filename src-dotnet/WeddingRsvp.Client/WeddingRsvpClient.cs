@@ -3,18 +3,22 @@ using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using WeddingRsvp.Abstractions.Models.Information;
 using WeddingRsvp.Abstractions.Models.Rsvps;
+using WeddingRsvp.Abstractions.Models.Settings;
 using WeddingRsvp.Client.Extensions;
 using WeddingRsvp.Client.Generics;
 
 namespace WeddingRsvp.Client;
 
-public class WeddingRsvpClient : IRsvpClient, IInformationClient, INotificationClient
+public class WeddingRsvpClient : IRsvpClient, IInformationClient, INotificationClient, ISettingsClient
 {
     public static string RsvpClientName => "RsvpClient";
     public static string RsvpAdminClientName => "RsvpAdminClient";
     public static string InformationClientName => "InformationClient";
     public static string InformationAdminClientName => "InformationAdminClient";
     public static string NotificationClientName => "NotificationClient";
+    public static string SettingsClientName => "SettingsClient";
+
+    private Guid SettingsId => Guid.Parse("4404ffef-d848-4cfc-9ec4-3bc841db4c13");
     
     private IHttpClientFactory HttpClientFactory { get; }
     private ILogger<WeddingRsvpClient> Logger { get; }
@@ -400,5 +404,81 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient, INotificationC
         }
         
         return ClientResponse<ClientFailResponse>.CreateFail(new(HttpStatusCode.InternalServerError));
+    }
+
+    public async Task<ClientResponse<ApplicationSettings, ClientFailResponse>> GetSettingsAsync(CancellationToken cancellationToken = default)
+    {
+        using var client = HttpClientFactory.CreateClient(SettingsClientName);
+        
+        try
+        {
+            var responseMessage = await client.GetAsync($"{SettingsId}", cancellationToken).ConfigureAwait(false);
+
+            if (!responseMessage.IsSuccessStatusCode)
+                return ClientResponse<ApplicationSettings, ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
+
+            var dto = await responseMessage.Content.ReadFromJsonAsync<GetSettingsDto>(cancellationToken);
+
+            if (dto is null)
+            {
+                Logger.LogError("Cannot deserialize response from {ClientName} to {DtoType}.", SettingsClientName,
+                    typeof(ApplicationSettings));
+                return ClientResponse<ApplicationSettings, ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
+            }
+
+            return ClientResponse<ApplicationSettings, ClientFailResponse>.CreateSuccess(dto.ToDomainObject());
+        }
+        catch (HttpRequestException e)
+        {
+            Logger.LogError(e, "Network error or server is unreachable while getting settings.");
+        }
+        catch (OperationCanceledException e)
+        {
+            Logger.LogInformation(e, "The request getting settings timed out or was cancelled.");
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "An unexpected error occurred while getting settings.");
+        }
+        
+        return ClientResponse<ApplicationSettings, ClientFailResponse>.CreateFail(new(HttpStatusCode.InternalServerError));
+    }
+
+    public async Task<ClientResponse<ApplicationSettings, ClientFailResponse>> UpdateSettingsAsync(ApplicationSettings settings, CancellationToken cancellationToken = default)
+    {
+        using var client = HttpClientFactory.CreateClient(SettingsClientName);
+        
+        try
+        {
+            var responseMessage = await client.PutAsJsonAsync($"{SettingsId}", settings.ToPutDto(), cancellationToken).ConfigureAwait(false);
+
+            if (!responseMessage.IsSuccessStatusCode)
+                return ClientResponse<ApplicationSettings,ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
+
+            var dto = await responseMessage.Content.ReadFromJsonAsync<GetSettingsDto>(cancellationToken);
+
+            if (dto is null)
+            {
+                Logger.LogError("Cannot deserialize response from {ClientName} to {DtoType}.", SettingsClientName,
+                    typeof(ApplicationSettings));
+                return ClientResponse<ApplicationSettings,ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
+            }
+
+            return ClientResponse<ApplicationSettings,ClientFailResponse>.CreateSuccess(dto.ToDomainObject());
+        }
+        catch (HttpRequestException e)
+        {
+            Logger.LogError(e, "Network error or server is unreachable while updating settings.");
+        }
+        catch (OperationCanceledException e)
+        {
+            Logger.LogInformation(e, "The request updating settings timed out or was cancelled.");
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "An unexpected error occurred while updating settings.");
+        }
+        
+        return ClientResponse<ApplicationSettings,ClientFailResponse>.CreateFail(new(HttpStatusCode.InternalServerError));
     }
 }
