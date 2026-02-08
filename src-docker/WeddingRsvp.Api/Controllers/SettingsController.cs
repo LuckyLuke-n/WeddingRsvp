@@ -48,6 +48,6 @@ public class SettingsController : Controller
         if (!response.IsSuccess)
             return Results.InternalServerError();
 
-        return Results.Ok();
+        return Results.Ok(response.ValueSuccess!.ToDto());
     }
 }

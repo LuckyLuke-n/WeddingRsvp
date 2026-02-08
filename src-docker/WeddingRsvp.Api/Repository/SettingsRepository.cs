@@ -11,6 +11,29 @@ public class SettingsRepository : MongoDbRepository<Settings>, ISettingsReposito
         logger)
     {
     }
+    
+    public override async Task<RepositoryResponse<Settings, RepositoryFailResponse>> CreateAsync( Settings entity, CancellationToken cancellationToken = default )
+    {
+        if ( Collection is null )
+            return NotConnectedFailedResponse();
+
+        try
+        {
+            await Collection.InsertOneAsync( entity, null, cancellationToken ).ConfigureAwait( false );
+        }
+        catch ( Exception ex )
+        {
+            Logger.LogCritical( ex, "Error writing to mongo." );
+            RepositoryFailResponse fail = new()
+            {
+                StatusCode = HttpStatusCode.InternalServerError,
+                Message = ex.Message,
+            };
+            return RepositoryResponse<Settings,RepositoryFailResponse>.CreateFail( fail );
+        }
+
+        return RepositoryResponse<Settings, RepositoryFailResponse>.CreateSuccess( entity );
+    }
 
     public override async Task<RepositoryResponse<Settings, RepositoryFailResponse>> UpdateAsync(Settings entity,
         CancellationToken cancellationToken = default)

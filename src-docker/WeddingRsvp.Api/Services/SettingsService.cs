@@ -25,7 +25,8 @@ public class SettingsService : ISettingsService
             switch (response.ValueFail.StatusCode)
             {
                 case HttpStatusCode.NotFound:
-                    var createResponse = await Repository.CreateAsync(new Settings(), cancellationToken)
+                    Settings newSettings = new() { Id = SettingsId.ToString() };
+                    var createResponse = await Repository.CreateAsync(newSettings, cancellationToken)
                         .ConfigureAwait(false);
                     if (!createResponse.IsSuccess)
                     {
