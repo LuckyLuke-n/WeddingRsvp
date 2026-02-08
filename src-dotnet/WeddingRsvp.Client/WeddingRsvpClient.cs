@@ -18,8 +18,6 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient, INotificationC
     public static string NotificationClientName => "NotificationClient";
     public static string SettingsClientName => "SettingsClient";
 
-    private Guid SettingsId => Guid.Parse("4404ffef-d848-4cfc-9ec4-3bc841db4c13");
-    
     private IHttpClientFactory HttpClientFactory { get; }
     private ILogger<WeddingRsvpClient> Logger { get; }
 
@@ -412,7 +410,7 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient, INotificationC
         
         try
         {
-            var responseMessage = await client.GetAsync($"{SettingsId}", cancellationToken).ConfigureAwait(false);
+            var responseMessage = await client.GetAsync("", cancellationToken).ConfigureAwait(false);
 
             if (!responseMessage.IsSuccessStatusCode)
                 return ClientResponse<ApplicationSettings, ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
@@ -450,7 +448,7 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient, INotificationC
         
         try
         {
-            var responseMessage = await client.PutAsJsonAsync($"{SettingsId}", settings.ToPutDto(), cancellationToken).ConfigureAwait(false);
+            var responseMessage = await client.PutAsJsonAsync("", settings.ToPutDto(), cancellationToken).ConfigureAwait(false);
 
             if (!responseMessage.IsSuccessStatusCode)
                 return ClientResponse<ApplicationSettings,ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));

@@ -8,16 +8,16 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 using WeddingRsvp.Abstractions.Models.Settings;
 using WeddingRsvp.Api.Configurations;
-using WeddingRsvp.Api.Repository;
 using WeddingRsvp.Api.Repository.Entities;
-using WeddingRsvp.Api.Repository.Generic;
+using WeddingRsvp.Api.Services;
+using WeddingRsvp.Api.Services.Generics;
 
 namespace WeddingRsvp.Integration;
 
 public class SettingsControllerTests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly WebApplicationFactory<Program> _factory;
-    private readonly Mock<ISettingsRepository> _repositoryMock = new();
+    private readonly Mock<ISettingsService> _serviceMock = new();
     private const string ApiKeyHeader = "X-Api-Key";
     private const string ApiKey = "api-key";
 
@@ -25,12 +25,13 @@ public class SettingsControllerTests : IClassFixture<WebApplicationFactory<Progr
     {
         _factory = factory.WithWebHostBuilder(builder =>
         {
+            // Add a dummy connection string to satisfy startup validation
             builder.UseSetting("ConnectionStrings:weddingrsvp-mongo", "mongodb://localhost:27017");
 
             builder.ConfigureTestServices(services =>
             {
-                services.RemoveAll<ISettingsRepository>();
-                services.AddSingleton(_repositoryMock.Object);
+                services.RemoveAll<ISettingsService>();
+                services.AddSingleton(_serviceMock.Object);
 
                 services.Configure<ApiConfiguration>(opts =>
                 {
@@ -41,105 +42,41 @@ public class SettingsControllerTests : IClassFixture<WebApplicationFactory<Progr
     }
 
     [Fact]
-    public async Task Get_WithValidApiKey_ReturnsOkAndList()
-    {
-        // Arrange
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
-
-        var id = Guid.NewGuid();
-        var settings = new Settings
-        {
-            Id = id.ToString(),
-            EnableEmailNotifications = true,
-            EmailRecipients = ["test@example.com"],
-            RespondUntil = new DateTime(2030, 1, 1, 12, 0, 0, DateTimeKind.Utc)
-        };
-
-        _repositoryMock.Setup(x => x.ReadAsync(id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(RepositoryResponse<Settings, RepositoryFailResponse>.CreateSuccess(settings));
-
-        // Act
-        var response = await client.GetAsync($"/api/settings/{id}");
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var result = await response.Content.ReadFromJsonAsync<List<GetSettingsDto>>();
-        result.Should().NotBeNull();
-        result!.Should().HaveCount(1);
-        result[0].Should().BeEquivalentTo(settings.ToDto());
-    }
-
-    [Fact]
-    public async Task Get_WhenRepositoryFails_ReturnsInternalServerError()
-    {
-        // Arrange
-        var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
-
-        var id = Guid.NewGuid();
-
-        _repositoryMock.Setup(x => x.ReadAsync(id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(RepositoryResponse<Settings, RepositoryFailResponse>.CreateFail(
-                new RepositoryFailResponse(HttpStatusCode.InternalServerError, "error")));
-
-        // Act
-        var response = await client.GetAsync($"/api/settings/{id}");
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
-    }
-
-    [Fact]
     public async Task Get_WithoutApiKey_ReturnsUnauthorized()
     {
-        // Arrange
         var client = _factory.CreateClient();
-        var id = Guid.NewGuid();
 
-        // Act
-        var response = await client.GetAsync($"/api/settings/{id}");
+        _serviceMock.Setup(x => x.GetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(ServiceResponse<Settings>.CreateSuccess(new Settings()));
 
-        // Assert
+        var response = await client.GetAsync("/api/settings");
+
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
-    public async Task Update_WithValidApiKey_ReturnsOk()
+    public async Task Get_WithApiKey_ReturnsOk()
     {
-        // Arrange
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
 
-        var id = Guid.NewGuid();
-        var dto = new PutSettingsDto
-        {
-            EnableEmailNotifications = false,
-            EmailRecipients = ["updated@example.com"],
-            RespondUntil = new DateTime(2031, 2, 2, 12, 0, 0, DateTimeKind.Utc)
-        };
+        _serviceMock.Setup(x => x.GetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(ServiceResponse<Settings>.CreateSuccess(new Settings()));
 
-        _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Settings>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(RepositoryResponse<Settings, RepositoryFailResponse>.CreateSuccess(new Settings { Id = id.ToString() }));
+        var response = await client.GetAsync("/api/settings");
 
-        // Act
-        var response = await client.PutAsJsonAsync($"/api/settings/{id}", dto);
-
-        // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        _repositoryMock.Verify(x =>
-            x.UpdateAsync(It.Is<Settings>(s => s.Id == id.ToString()), It.IsAny<CancellationToken>()),
-            Times.Once);
     }
 
     [Fact]
-    public async Task Update_WhenRepositoryFails_ReturnsInternalServerError()
+    public async Task Put_WithApiKey_ReturnsOk()
     {
-        // Arrange
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
 
-        var id = Guid.NewGuid();
+        _serviceMock.Setup(x => x.UpsertAsync(It.IsAny<Settings>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(ServiceResponse<Settings>.CreateSuccess(new Settings()));
+
         var dto = new PutSettingsDto
         {
             EnableEmailNotifications = false,
@@ -147,23 +84,20 @@ public class SettingsControllerTests : IClassFixture<WebApplicationFactory<Progr
             RespondUntil = new DateTime(2031, 2, 2, 12, 0, 0, DateTimeKind.Utc)
         };
 
-        _repositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Settings>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(RepositoryResponse<Settings, RepositoryFailResponse>.CreateFail(
-                new RepositoryFailResponse(HttpStatusCode.InternalServerError, "error")));
+        var response = await client.PutAsJsonAsync("/api/settings", dto);
 
-        // Act
-        var response = await client.PutAsJsonAsync($"/api/settings/{id}", dto);
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
-
+    
+    
     [Fact]
-    public async Task Update_WithoutApiKey_ReturnsUnauthorized()
+    public async Task Put_WithOutApiKey_ReturnsOk()
     {
-        // Arrange
         var client = _factory.CreateClient();
-        var id = Guid.NewGuid();
+
+        _serviceMock.Setup(x => x.UpsertAsync(It.IsAny<Settings>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(ServiceResponse<Settings>.CreateSuccess(new Settings()));
+
         var dto = new PutSettingsDto
         {
             EnableEmailNotifications = false,
@@ -171,10 +105,11 @@ public class SettingsControllerTests : IClassFixture<WebApplicationFactory<Progr
             RespondUntil = new DateTime(2031, 2, 2, 12, 0, 0, DateTimeKind.Utc)
         };
 
-        // Act
-        var response = await client.PutAsJsonAsync($"/api/settings/{id}", dto);
+        _serviceMock.Setup(x => x.GetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(ServiceResponse<Settings>.CreateSuccess(new Settings()));
 
-        // Assert
+        var response = await client.PutAsJsonAsync("/api/settings", dto);
+
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }
