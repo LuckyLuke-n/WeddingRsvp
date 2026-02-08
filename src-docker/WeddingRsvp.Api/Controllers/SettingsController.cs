@@ -1,3 +1,4 @@
+using System.Net.Mail;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -42,6 +43,12 @@ public class SettingsController : Controller
     [HttpPut("")]
     public async Task<IResult> Update( PutSettingsDto dto, CancellationToken cancellationToken = default)
     {
+        foreach (var email in dto.EmailRecipients)
+        {
+            if (!IsValidEmail(email))
+                return Results.BadRequest("Invalid email address in recipients list.");
+        }
+        
         var settings = dto.ToEntity();
         var response = await Service.UpsertAsync(settings, cancellationToken).ConfigureAwait(false);
 
@@ -49,5 +56,18 @@ public class SettingsController : Controller
             return Results.InternalServerError();
 
         return Results.Ok(response.ValueSuccess!.ToDto());
+    }
+    
+    private static bool IsValidEmail(string email)
+    {
+        try
+        {
+            _ = new MailAddress(email);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }
