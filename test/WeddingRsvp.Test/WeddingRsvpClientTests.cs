@@ -496,10 +496,12 @@ public class WeddingRsvpClientTests
             EmailRecipients = ["test@example.com"],
             RespondUntil = new DateTime(2030, 1, 1, 12, 0, 0, DateTimeKind.Utc)
         };
+        
+        List<GetSettingsDto> dtos = [dto];
 
         var response = new HttpResponseMessage(HttpStatusCode.OK)
         {
-            Content = JsonContent.Create(dto)
+            Content = JsonContent.Create(dtos)
         };
 
         var httpClient = CreateMockHttpClient(response);

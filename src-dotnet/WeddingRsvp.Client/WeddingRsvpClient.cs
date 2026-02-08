@@ -415,14 +415,17 @@ public class WeddingRsvpClient : IRsvpClient, IInformationClient, INotificationC
             if (!responseMessage.IsSuccessStatusCode)
                 return ClientResponse<ApplicationSettings, ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
 
-            var dto = await responseMessage.Content.ReadFromJsonAsync<GetSettingsDto>(cancellationToken);
-
-            if (dto is null)
+            var dtos = await responseMessage.Content.ReadFromJsonAsync<IEnumerable<GetSettingsDto>>(cancellationToken);
+            if (dtos is null)
             {
                 Logger.LogError("Cannot deserialize response from {ClientName} to {DtoType}.", SettingsClientName,
                     typeof(ApplicationSettings));
                 return ClientResponse<ApplicationSettings, ClientFailResponse>.CreateFail(new(responseMessage.StatusCode));
             }
+            
+            var dto = dtos?.FirstOrDefault();
+            if (dto is null)
+                return ClientResponse<ApplicationSettings, ClientFailResponse>.CreateFail(new(HttpStatusCode.NotFound));
 
             return ClientResponse<ApplicationSettings, ClientFailResponse>.CreateSuccess(dto.ToDomainObject());
         }

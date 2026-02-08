@@ -35,8 +35,10 @@ public class SettingsRepositoryTests : IAsyncLifetime
     public async Task CreateAsync_ShouldCreateSettings()
     {
         // Arrange
+        var id = Guid.NewGuid();
         var settings = new Settings
         {
+            Id = id.ToString(),
             EnableEmailNotifications = true,
             EmailRecipients = ["create@example.com"],
             RespondUntil = new DateTime(2030, 1, 1, 12, 0, 0, DateTimeKind.Utc),
@@ -49,7 +51,7 @@ public class SettingsRepositoryTests : IAsyncLifetime
         result.IsSuccess.Should().BeTrue();
         result.ValueSuccess.Should().BeEquivalentTo(settings);
 
-        var dbResponse = await _serviceUnderTest.ReadAsync(Guid.Parse(settings.Id));
+        var dbResponse = await _serviceUnderTest.ReadAsync(id);
         dbResponse.IsSuccess.Should().BeTrue();
         dbResponse.ValueSuccess.Should().BeEquivalentTo(settings);
     }
@@ -58,8 +60,10 @@ public class SettingsRepositoryTests : IAsyncLifetime
     public async Task ReadAsync_ShouldReturnSettings_WhenExists()
     {
         // Arrange
+        var id = Guid.NewGuid();
         var settings = new Settings
         {
+            Id = id.ToString(),
             EnableEmailNotifications = false,
             EmailRecipients = ["read@example.com"],
             RespondUntil = new DateTime(2031, 2, 2, 12, 0, 0, DateTimeKind.Utc),
@@ -67,7 +71,7 @@ public class SettingsRepositoryTests : IAsyncLifetime
         await _serviceUnderTest.CreateAsync(settings);
 
         // Act
-        var result = await _serviceUnderTest.ReadAsync(Guid.Parse(settings.Id));
+        var result = await _serviceUnderTest.ReadAsync(id);
 
         // Assert
         result.IsSuccess.Should().BeTrue();

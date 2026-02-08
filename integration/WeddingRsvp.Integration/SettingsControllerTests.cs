@@ -64,8 +64,10 @@ public class SettingsControllerTests : IClassFixture<WebApplicationFactory<Progr
             .ReturnsAsync(ServiceResponse<Settings>.CreateSuccess(new Settings()));
 
         var response = await client.GetAsync("/api/settings");
+        var result = await response.Content.ReadFromJsonAsync<List<GetSettingsDto>>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Should().NotBeNull();
     }
 
     [Fact]
@@ -85,8 +87,10 @@ public class SettingsControllerTests : IClassFixture<WebApplicationFactory<Progr
         };
 
         var response = await client.PutAsJsonAsync("/api/settings", dto);
-
+        var result = await response.Content.ReadFromJsonAsync<GetSettingsDto>();
+        
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+        result.Should().NotBeNull();
     }
     
     
