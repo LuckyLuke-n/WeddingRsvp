@@ -25,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src-docker\WeddingRsvp.Api\WeddingRsvp.Api.csproj" />
       <ProjectReference Include="..\..\src-dotnet\WeddingRsvp.Client\WeddingRsvp.Client.csproj" />
     </ItemGroup>
 

@@ -12,16 +12,15 @@ public class ServiceResponse
     public static ServiceResponse CreateFail(HttpStatusCode statusCode ) => new() { IsSuccess = false, StatusCode = statusCode };
 }
 
-public class ServiceResponse<TSuccess, TFail> where TSuccess : class where TFail : new()
+public class ServiceResponse<TSuccess> where TSuccess : class
 {
     public bool IsSuccess { get; private set; }
     public HttpStatusCode StatusCode { get; set; }
     public TSuccess? ValueSuccess { get; private set; }
-    public TFail ValueFail { get; private set; } = new();
 
-    public static ServiceResponse<TSuccess, TFail> CreateSuccess( TSuccess success )
+    public static ServiceResponse<TSuccess> CreateSuccess( TSuccess success )
     {
-        ServiceResponse<TSuccess, TFail> result = new()
+        ServiceResponse<TSuccess> result = new()
         {
             IsSuccess = true,
             StatusCode = HttpStatusCode.OK,
@@ -31,13 +30,12 @@ public class ServiceResponse<TSuccess, TFail> where TSuccess : class where TFail
         return result;
     }
 
-    public static ServiceResponse<TSuccess, TFail> CreateFail( HttpStatusCode statusCode, TFail fail )
+    public static ServiceResponse<TSuccess> CreateFail( HttpStatusCode statusCode)
     {
-        ServiceResponse<TSuccess, TFail> result = new()
+        ServiceResponse<TSuccess> result = new()
         {
             IsSuccess = false,
             StatusCode = statusCode,
-            ValueFail = fail
         };
 
         return result;

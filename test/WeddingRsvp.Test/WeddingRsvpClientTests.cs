@@ -5,6 +5,7 @@ using Moq;
 using Moq.Protected;
 using WeddingRsvp.Abstractions.Models.Information;
 using WeddingRsvp.Abstractions.Models.Rsvps;
+using WeddingRsvp.Abstractions.Models.Settings;
 using WeddingRsvp.Client;
 
 namespace WeddingRsvp.Test;
@@ -481,5 +482,123 @@ public class WeddingRsvpClientTests
         Assert.Equal(HttpStatusCode.NotFound, result.ValueFail.StatusCode);
     }
     
+    #endregion
+
+    #region Settings Tests
+
+    [Fact]
+    public async Task GetSettingsAsync_WithValidData_ReturnsSuccess()
+    {
+        // Arrange
+        var dto = new GetSettingsDto
+        {
+            EnableEmailNotifications = true,
+            EmailRecipients = ["test@example.com"],
+            RespondUntil = new DateTime(2030, 1, 1, 12, 0, 0, DateTimeKind.Utc)
+        };
+        
+        List<GetSettingsDto> dtos = [dto];
+
+        var response = new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = JsonContent.Create(dtos)
+        };
+
+        var httpClient = CreateMockHttpClient(response);
+        _httpClientFactoryMock.Setup(x => x.CreateClient(WeddingRsvpClient.SettingsClientName))
+            .Returns(httpClient);
+
+        // Act
+        var result = await _client.GetSettingsAsync();
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.NotNull(result.ValueSuccess);
+        Assert.Equal(dto.EnableEmailNotifications, result.ValueSuccess.EnableEmailNotifications);
+        Assert.Equal(dto.EmailRecipients, result.ValueSuccess.EmailRecipients);
+        Assert.Equal(dto.RespondUntil, result.ValueSuccess.RespondUntil);
+    }
+
+    [Fact]
+    public async Task GetSettingsAsync_WithNotFound_ReturnsFail()
+    {
+        // Arrange
+        var response = new HttpResponseMessage(HttpStatusCode.NotFound);
+
+        var httpClient = CreateMockHttpClient(response);
+        _httpClientFactoryMock.Setup(x => x.CreateClient(WeddingRsvpClient.SettingsClientName))
+            .Returns(httpClient);
+
+        // Act
+        var result = await _client.GetSettingsAsync();
+
+        // Assert
+        Assert.False(result.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, result.ValueFail.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateSettingsAsync_WithValidData_ReturnsSuccess()
+    {
+        // Arrange
+        var settings = new ApplicationSettings
+        {
+            EnableEmailNotifications = false,
+            EmailRecipients = ["updated@example.com"],
+            RespondUntil = new DateTime(2031, 2, 2, 12, 0, 0, DateTimeKind.Utc)
+        };
+
+        var responseDto = new GetSettingsDto
+        {
+            EnableEmailNotifications = settings.EnableEmailNotifications,
+            EmailRecipients = settings.EmailRecipients,
+            RespondUntil = settings.RespondUntil
+        };
+
+        var response = new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = JsonContent.Create(responseDto)
+        };
+
+        var httpClient = CreateMockHttpClient(response);
+        _httpClientFactoryMock.Setup(x => x.CreateClient(WeddingRsvpClient.SettingsClientName))
+            .Returns(httpClient);
+
+        // Act
+        var result = await _client.UpdateSettingsAsync(settings);
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.NotNull(result.ValueSuccess);
+        Assert.Equal(settings.EnableEmailNotifications, result.ValueSuccess.EnableEmailNotifications);
+        Assert.Equal(settings.EmailRecipients, result.ValueSuccess.EmailRecipients);
+        Assert.Equal(settings.RespondUntil, result.ValueSuccess.RespondUntil);
+    }
+
+    [Fact]
+    public async Task UpdateSettingsAsync_WithServerError_ReturnsFail()
+    {
+        // Arrange
+        var settings = new ApplicationSettings
+        {
+            EnableEmailNotifications = true,
+            EmailRecipients = ["test@example.com"],
+            RespondUntil = new DateTime(2030, 1, 1, 12, 0, 0, DateTimeKind.Utc)
+        };
+
+        var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+
+        var httpClient = CreateMockHttpClient(response);
+        _httpClientFactoryMock.Setup(x => x.CreateClient(WeddingRsvpClient.SettingsClientName))
+            .Returns(httpClient);
+
+        // Act
+        var result = await _client.UpdateSettingsAsync(settings);
+
+        // Assert
+        Assert.False(result.IsSuccess);
+        Assert.Equal(HttpStatusCode.InternalServerError, result.ValueFail.StatusCode);
+    }
+
     #endregion
 }

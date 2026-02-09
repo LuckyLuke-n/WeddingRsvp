@@ -12,7 +12,7 @@ namespace WeddingRsvp.Integration;
 
 public class RsvpRepositoryTests : IAsyncLifetime
 {
-    private readonly MongoDbContainer _mongoDbContainer = new MongoDbBuilder().Build();
+    private readonly MongoDbContainer _mongoDbContainer = new MongoDbBuilder("mongo:8").Build();
     private IRsvpRepository _serviceUnderTest = null!;
     private IMongoClient _mongoClient = null!;
     private TimeProvider? TimeProvider { get; set; }

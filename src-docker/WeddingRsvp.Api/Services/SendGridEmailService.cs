@@ -9,21 +9,18 @@ namespace WeddingRsvp.Api.Services;
 
 public class SendGridEmailService : IEmailService
 {
+    private IServiceScopeFactory ScopeFactory { get; }
     private ILogger<SendGridEmailService> Logger { get; }
     private SendGridClient Client { get; }
     private string TemplateId { get; }
-    private string[] ToEmails { get; }
-    private bool Enabled { get; }
 
-    public SendGridEmailService(IOptions<EmailServiceConfiguration> options, ILogger<SendGridEmailService> logger)
+    public SendGridEmailService(IOptions<EmailServiceConfiguration> options,
+        IServiceScopeFactory scopeFactory,
+        ILogger<SendGridEmailService> logger)
     {
+        ScopeFactory = scopeFactory;
         Logger = logger;
         TemplateId = options.Value.TemplateId;
-        ToEmails = options.Value.ToEmails;
-        Enabled = options.Value.Enabled;
-
-        if (!Enabled)
-            Logger.LogWarning("Email sending is disabled.");
 
         var sendgridOptions = new SendGridClientOptions
         {
@@ -36,7 +33,19 @@ public class SendGridEmailService : IEmailService
     public async Task<ServiceResponse> SendRsvpConfirmationAsync(EmailTemplate template,
         CancellationToken cancellationToken = default)
     {
-        if (!Enabled)
+        using var scope = ScopeFactory.CreateScope();
+        var settingsService = scope.ServiceProvider.GetRequiredService<ISettingsService>();
+        var settingsResponse = await settingsService.GetAsync(cancellationToken).ConfigureAwait(false);
+
+        if (!settingsResponse.IsSuccess)
+        {
+            Logger.LogError("Failed to retrieve settings for email service.");
+            return ServiceResponse.CreateFail(HttpStatusCode.InternalServerError);
+        }
+        
+        var settings = settingsResponse.ValueSuccess!;
+        
+        if (!settings.EnableEmailNotifications)
         {
             Logger.LogInformation("Email was not sent. Email sending is disabled.");
             return ServiceResponse.CreateFail(HttpStatusCode.Forbidden);
@@ -45,7 +54,7 @@ public class SendGridEmailService : IEmailService
         var from = new EmailAddress("no-reply@lsoftware.cloud", "WeddingRsvp");
         List<EmailAddress> tos = [];
 
-        foreach (var to in ToEmails)
+        foreach (var to in settings.EmailRecipients)
             tos.Add(new EmailAddress(to, ""));
 
         var message = new SendGridMessage

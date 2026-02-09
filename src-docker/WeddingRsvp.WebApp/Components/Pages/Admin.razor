@@ -47,16 +47,16 @@
                     <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
-                        <th>Salutation</th>
-                        <th>Multiple guests</th>
-                        <th>Response</th>
-                        <th>Partner</th>
-                        <th>Overnight</th>
-                        <th>Brunch</th>
-                        <th>Meat menu</th>
-                        <th>Vegetarian menu</th>
-                        <th>Additional info</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.Name)">Name @SortIndicator(SortColumn.Name)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.Salutation)">Salutation @SortIndicator(SortColumn.Salutation)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.IsPlural)">Multiple guests @SortIndicator(SortColumn.IsPlural)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.Response)">Response @SortIndicator(SortColumn.Response)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.BringPartner)">Partner @SortIndicator(SortColumn.BringPartner)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.Overnight)">Overnight @SortIndicator(SortColumn.Overnight)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.Brunch)">Brunch @SortIndicator(SortColumn.Brunch)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.MeatMenu)">Meat menu @SortIndicator(SortColumn.MeatMenu)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.VegetarianMenu)">Vegetarian menu @SortIndicator(SortColumn.VegetarianMenu)</th>
+                        <th class="sortable" @onclick="() => ApplySort(SortColumn.AdditionalInfo)">Additional info @SortIndicator(SortColumn.AdditionalInfo)</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
@@ -286,6 +286,46 @@
             <div style="margin-top: 30px; text-align: right;">
                 <button class="btn btn-save" style="padding: 10px 30px;" @onclick="SaveInformationAsync">Save
                     information
+                </button>
+            </div>
+        </div>
+
+        <hr style="border: 1px solid rgba(255,255,255,0.1); margin: 40px 0;"/>
+
+        <div class="section-wrapper">
+            <!-- Settings here -->
+
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                <h2 style="color: var(--secondary-color); font-family: var(--font-family), cursive; margin: 0;">
+                    Settings
+                </h2>
+            </div>
+
+            <div class="info-section">
+                <label class="toggle">
+                    <input type="checkbox" @bind="_settings.EnableEmailNotifications" />
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Enable email notifications</span>
+                </label>
+            </div>
+
+            <div class="info-section" style="margin-top: 15px;">
+                <label>Email recipients (one per line)</label>
+                <textarea @bind="_emailRecipientsText" class="admin-input" rows="5"
+                          style="margin-top: 10px;"></textarea>
+            </div>
+
+            <div class="info-section" style="margin-top: 15px;">
+                <label>Respond until</label>
+                <input type="datetime-local"
+                       class="admin-input"
+                       style="margin-top: 10px; width: auto;"
+                       @bind="_respondUntilLocalTime" />
+            </div>
+
+            <div style="margin-top: 30px; text-align: right;">
+                <button class="btn btn-save" style="padding: 10px 30px;" @onclick="SaveSettingsAsync">Save
+                    settings
                 </button>
             </div>
         </div>
