@@ -7,6 +7,7 @@ using WeddingRsvp.Api.Configurations;
 using WeddingRsvp.Api.Repository;
 using WeddingRsvp.Api.Repository.Entities;
 using WeddingRsvp.Api.Repository.Seeding;
+using WeddingRsvp.Api.Services;
 
 namespace WeddingRsvp.Api.Controllers;
 
@@ -16,19 +17,25 @@ namespace WeddingRsvp.Api.Controllers;
 public class RsvpsController : Controller
 {
     private IRsvpRepository Repository { get; }
+    private ISettingsService SettingsService { get; }
     private RsvpSeeder Seeder { get; }
     private ApiConfiguration Configurations { get; }
     private ILogger<RsvpsController> Logger { get; }
+    private TimeProvider TimeProvider { get; }
 
     public RsvpsController(IRsvpRepository repository,
+        ISettingsService settingsService,
         RsvpSeeder seeder,
         IOptions<ApiConfiguration> options,
-        ILogger<RsvpsController> logger)
+        ILogger<RsvpsController> logger,
+        TimeProvider timeProvider)
     {
         Repository = repository;
+        SettingsService = settingsService;
         Seeder = seeder;
         Configurations = options.Value;
         Logger = logger;
+        TimeProvider = timeProvider;
     }
 
     [HttpGet("")]
@@ -154,6 +161,23 @@ public class RsvpsController : Controller
         {
             if (!IsAuthorized(value))
                 return Results.Forbid();
+        }
+
+        if (string.IsNullOrEmpty(value))
+        {
+            var settingsResponse = await SettingsService.GetAsync(cancellationToken).ConfigureAwait(false);
+
+            if (!settingsResponse.IsSuccess)
+            {
+                Logger.LogError("Cannot read settings to check if the rsvp is allowed to be updated or if the response period already passed.");
+                return Results.InternalServerError();
+            }
+            
+            var settings = settingsResponse.ValueSuccess!;
+            
+            // this is a call coming from the RSVP page or some non-admin changing uncritical properties
+            if ( TimeProvider.GetUtcNow().DateTime > settings.RespondUntil )
+                return Results.Conflict("The response period has already passed.");
         }
 
         var responseUpdate = await Repository.UpdateAsync(updatedRsvp, cancellationToken).ConfigureAwait(false);
