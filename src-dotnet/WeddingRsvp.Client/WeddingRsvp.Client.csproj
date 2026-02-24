@@ -17,5 +17,11 @@
       <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.2" />
       <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.2" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Reference Include="Polly.Core">
+        <HintPath>..\..\..\..\..\.nuget\packages\polly.core\8.6.4\lib\net8.0\Polly.Core.dll</HintPath>
+      </Reference>
+    </ItemGroup>
 
 </Project>

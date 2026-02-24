@@ -53,9 +53,9 @@ public partial class Rsvp : ComponentBase
             var response = await RsvpClient.GetRsvpAsync(id).ConfigureAwait(false);
             if (!response.IsSuccess)
             {
-                Navigation.NavigateTo(NavigationMaster.Home);
                 Logger.LogWarning("Cannot get rsvp {Id} with status code {StatusCode}.", id,
                     response.ValueFail.StatusCode);
+                _errorMessage = "Cannot load the rsvp.";
                 return;
             }
 

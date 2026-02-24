@@ -49,7 +49,7 @@ public partial class Invite : ComponentBase
             var response = await RsvpClient.GetRsvpAsync(id).ConfigureAwait(false);
             if (!response.IsSuccess)
             {
-                Navigation.NavigateTo(NavigationMaster.Home);
+                _errorMessage = "Cannot load the invite.";
                 Logger.LogWarning("Cannot get rsvp {Id} with status code {StatusCode}.", id, response.ValueFail.StatusCode);
                 return;
             }
@@ -70,7 +70,7 @@ public partial class Invite : ComponentBase
             var response = await InformationClient.GetInformationAsync(language).ConfigureAwait(false);
             if (!response.IsSuccess)
             {
-                Navigation.NavigateTo(NavigationMaster.Home);
+                _errorMessage = "Cannot load the invite.";
                 Logger.LogWarning("Cannot get invitation for {Language} with status code {StatusCode}.", language, response.ValueFail.StatusCode);
                 return;
             }
