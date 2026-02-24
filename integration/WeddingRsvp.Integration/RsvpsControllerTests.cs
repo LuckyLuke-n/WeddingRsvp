@@ -11,6 +11,8 @@ using WeddingRsvp.Api.Configurations;
 using WeddingRsvp.Api.Repository;
 using WeddingRsvp.Api.Repository.Entities;
 using WeddingRsvp.Api.Repository.Generic;
+using WeddingRsvp.Api.Services;
+using WeddingRsvp.Api.Services.Generics;
 using WeddingRsvp.Integration.Fixtures;
 using Reply = WeddingRsvp.Abstractions.Models.Rsvps.Reply;
 
@@ -18,18 +20,23 @@ namespace WeddingRsvp.Integration;
 
 public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>>, IClassFixture<TimeProviderFixture>
 {
-    private TimeProvider TimeProvider { get; }
+    private TimeProvider TimeProviderMock { get; }
     private readonly WebApplicationFactory<Program> _factory;
     private readonly Mock<IRsvpRepository> _repositoryMock = new();
+    private readonly Mock<ISettingsService> _settingsServiceMock = new();
     private const string AdminHeaderName = "X-Auth-Admin";
     private const string ApiKeyHeader = "X-Api-Key";
     private const string AdminSecret = "secret-key";
     private const string ApiKey = "api-key";
+    private readonly DateTimeOffset _pastDeadlineTime = new DateTimeOffset(2022, 1, 1, 11, 0, 0, TimeSpan.Zero);
+    private readonly DateTimeOffset _futureDeadlineTime = new DateTimeOffset(2022, 1, 1, 13, 0, 0, TimeSpan.Zero);
 
-    public RsvpsControllerTests(WebApplicationFactory<Program> factory, TimeProviderFixture timeFixture )
+    public RsvpsControllerTests(WebApplicationFactory<Program> factory, TimeProviderFixture timeFixture)
     {
-        timeFixture.ProviderMock.Setup(x => x.GetUtcNow()).Returns(new DateTimeOffset(2022, 1, 1, 12, 0, 0, TimeSpan.Zero));
-        TimeProvider = timeFixture.ProviderMock.Object;
+        var currentTime = new DateTimeOffset(2022, 1, 1, 12, 0, 0, TimeSpan.Zero);
+
+        timeFixture.ProviderMock.Setup(x => x.GetUtcNow()).Returns(currentTime);
+        TimeProviderMock = timeFixture.ProviderMock.Object;
 
         _factory = factory.WithWebHostBuilder(builder =>
         {
@@ -42,6 +49,14 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
                 services.RemoveAll<IRsvpRepository>();
                 services.AddSingleton(_repositoryMock.Object);
 
+                // Replace TimeProvider with fixed mock so tests don't depend on real time
+                services.RemoveAll<TimeProvider>();
+                services.AddSingleton(TimeProviderMock);
+
+                // Replace the settings service with mock
+                services.RemoveAll<ISettingsService>();
+                services.AddSingleton(_settingsServiceMock.Object);
+
                 // Ensure the configuration matches what we expect for auth tests
                 services.Configure<ApiConfiguration>(opts =>
                 {
@@ -52,9 +67,25 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         });
     }
 
+    private void MockSettingsServiceResponse(bool responseWindowIsOpen)
+    {
+        Settings defaultSettings = new Settings
+        {
+            RespondUntil = _pastDeadlineTime.DateTime,
+            EnableEmailNotifications = true,
+            EmailRecipients = new List<string> { "test@example.com" }
+        };
+        if (responseWindowIsOpen)
+            defaultSettings.RespondUntil = _futureDeadlineTime.DateTime;
+
+        _settingsServiceMock.Setup(x => x.GetAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(ServiceResponse<Settings>.CreateSuccess(defaultSettings));
+    }
+
     [Fact]
     public async Task GetAll_WithInvalidApiKey_ReturnsUnauthorized()
     {
+        MockSettingsServiceResponse(true);
         var client = _factory.CreateClient();
 
         var rsvps = new List<Rsvp>
@@ -74,11 +105,12 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
-    
+
     [Fact]
     public async Task GetAll_WithValidAdminHeader_ReturnsOkAndList()
     {
         // Arrange
+        MockSettingsServiceResponse(true);
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var rsvps = new List<Rsvp>
@@ -105,6 +137,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task GetAll_WithoutHeader_ReturnsForbidden()
     {
         // Arrange
+        MockSettingsServiceResponse(true);
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
 
@@ -119,16 +152,18 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task Get_ById_ReturnsOk_WhenFound()
     {
         // Arrange
+        MockSettingsServiceResponse(true);
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var id = Guid.NewGuid();
-        var rsvp = new Rsvp { Id = id.ToString(), Name = "Charlie", LastUpdated = TimeProvider.GetUtcNow().UtcDateTime };
-        
+        var rsvp = new Rsvp
+            { Id = id.ToString(), Name = "Charlie", LastUpdated = TimeProviderMock.GetUtcNow().UtcDateTime };
+
         var dto = new GetRsvpDto
         {
-             Id = id.ToString(),
-             Name = "Charlie",
-             LastUpdated = TimeProvider.GetUtcNow().UtcDateTime,
+            Id = id.ToString(),
+            Name = "Charlie",
+            LastUpdated = TimeProviderMock.GetUtcNow().UtcDateTime,
         };
 
         _repositoryMock.Setup(x => x.ReadAsync(id, It.IsAny<CancellationToken>()))
@@ -148,6 +183,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task Get_ById_ReturnsNotFound_WhenRepoReturnsNotFound()
     {
         // Arrange
+        MockSettingsServiceResponse(true);
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var id = Guid.NewGuid();
@@ -167,15 +203,16 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task Create_WithValidDataAndAuth_ReturnsCreatedAt()
     {
         // Arrange
+        MockSettingsServiceResponse(true);
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
-        var dto = new PostRsvpDto { Name = "Dave", Salutation = "Dear Dave"} ;
-        
+        var dto = new PostRsvpDto { Name = "Dave", Salutation = "Dear Dave" };
+
         // Ensure the return object is fully initialized
-        var createdRsvp = new Rsvp 
-        { 
+        var createdRsvp = new Rsvp
+        {
             Id = Guid.NewGuid().ToString(), // Ensure ID is set if needed by response handling
-            Name = "Dave", 
+            Name = "Dave",
             Salutation = "Dear Dave",
         };
 
@@ -197,6 +234,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task Delete_WithAuth_ReturnsNoContent()
     {
         // Arrange
+        MockSettingsServiceResponse(true);
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var id = Guid.NewGuid();
@@ -217,23 +255,24 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
     public async Task Update_NonCriticalData_DoesNotRequireAuth_ReturnsOk()
     {
         // Arrange
+        MockSettingsServiceResponse(true);
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var id = Guid.NewGuid();
-        
+
         // Existing entity
-        var existingRsvp = new Rsvp 
-        { 
-            Id = id.ToString(), 
+        var existingRsvp = new Rsvp
+        {
+            Id = id.ToString(),
             Name = "Eve",
             Salutation = "Dear Eve",
             IsPlural = false,
         };
 
         // Incoming update (changing only AdditionalInformation, which is not sensitive)
-        var updateDto = new PutRsvpDto 
+        var updateDto = new PutRsvpDto
         {
-            Name = "Eve", 
+            Name = "Eve",
             Salutation = "Dear Eve",
             IsPlural = false,
             Attending = Reply.Yes,
@@ -247,8 +286,8 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
 
         var updatedRsvp = new Rsvp
         {
-            Id = id.ToString(), 
-            Name = "Eve", 
+            Id = id.ToString(),
+            Name = "Eve",
             Salutation = "Dear Eve",
             Attending = (Api.Repository.Entities.Reply)Reply.Yes,
             BringPartner = (Api.Repository.Entities.Reply)Reply.No,
@@ -270,21 +309,24 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        _repositoryMock.Verify(x => x.UpdateAsync(It.Is<Rsvp>(r => r.AdditionalInformation == "New Info"), It.IsAny<CancellationToken>()), Times.Once);
+        _repositoryMock.Verify(
+            x => x.UpdateAsync(It.Is<Rsvp>(r => r.AdditionalInformation == "New Info"), It.IsAny<CancellationToken>()),
+            Times.Once);
     }
-    
+
     [Fact]
     public async Task Update_NonCriticalData_WithExistingData_DoesNotRequireAuth_ReturnsOk()
     {
         // Arrange
+        MockSettingsServiceResponse(true);
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var id = Guid.NewGuid();
-        
+
         // Existing entity
-        var existingRsvp = new Rsvp 
-        { 
-            Id = id.ToString(), 
+        var existingRsvp = new Rsvp
+        {
+            Id = id.ToString(),
             Name = "Eve",
             Salutation = "Dear Eve",
             IsPlural = false,
@@ -296,7 +338,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         };
 
         // Incoming update (changing only AdditionalInformation, which is not sensitive)
-        var updateDto = new PutRsvpDto 
+        var updateDto = new PutRsvpDto
         {
             Name = "Eve",
             Salutation = "Dear Eve",
@@ -310,8 +352,8 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
 
         var updatedRsvp = new Rsvp
         {
-            Id = id.ToString(), 
-            Name = "Eve", 
+            Id = id.ToString(),
+            Name = "Eve",
             Salutation = "Dear Eve",
             IsPlural = false,
             NumberOfGuestsOvernight = 2,
@@ -342,28 +384,29 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
     [InlineData("e67b9d97-8213-4463-a2ba-ae813e64e76f", 1, 0, 0, 0, "Not attending")]
     public async Task Update_NonCriticalData_WithoutAuth_ReturnsForbidden(
         string id,
-        int overnight, 
-        int meat, 
-        int vegetarian, 
-        int fish, 
+        int overnight,
+        int meat,
+        int vegetarian,
+        int fish,
         string info)
     {
         // Arrange
+        MockSettingsServiceResponse(true);
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
-        
+
         var existingRsvp = new Rsvp
-            {
-                Id = id,
-                Name = "Frank",
-                Salutation = "Dear Frank",
-                IsPlural = true,
-            };
-        
+        {
+            Id = id,
+            Name = "Frank",
+            Salutation = "Dear Frank",
+            IsPlural = true,
+        };
+
         // Trying to change Name (Critical) or Language (Critical)
-        var updateDto = new PutRsvpDto 
-        { 
-            Name = "Frank Updated", 
+        var updateDto = new PutRsvpDto
+        {
+            Name = "Frank Updated",
             Salutation = "Dear Frank",
             IsPlural = true,
             NumberOfGuestsOvernight = overnight,
@@ -383,11 +426,12 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
         _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Rsvp>(), It.IsAny<CancellationToken>()), Times.Never);
     }
-    
+
     [Fact]
     public async Task Update_CriticalData_WithValidAdminHeader_ReturnsOk()
     {
         // Arrange
+        MockSettingsServiceResponse(true);
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         client.DefaultRequestHeaders.Add(AdminHeaderName, AdminSecret);
@@ -436,16 +480,19 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         var result = await response.Content.ReadFromJsonAsync<GetRsvpDto>();
         result.Should().NotBeNull();
         result!.Name.Should().Be("Frank Updated");
-        _repositoryMock.Verify(x => x.UpdateAsync(It.Is<Rsvp>(r => r.Name == "Frank Updated"), It.IsAny<CancellationToken>()), Times.Once);
+        _repositoryMock.Verify(
+            x => x.UpdateAsync(It.Is<Rsvp>(r => r.Name == "Frank Updated"), It.IsAny<CancellationToken>()), Times.Once);
     }
-    
+
     [Theory]
     [InlineData("Changed Name", "Dear Original", false)]
     [InlineData("Original Name", "Dear Change", false)]
     [InlineData("Original Name", "Dear Original", true)]
-    public async Task Update_CriticalData_WithoutAdminHeader_ReturnsForbidden( string name, string salutation, bool isPlural)
+    public async Task Update_CriticalData_WithoutAdminHeader_ReturnsForbidden(string name, string salutation,
+        bool isPlural)
     {
         // Arrange
+        MockSettingsServiceResponse(true);
         var client = _factory.CreateClient();
         client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
         var id = Guid.NewGuid();
@@ -475,6 +522,54 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Rsvp>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Update_NonCriticalData_WithResponsePeriodExpired_ReturnsConflict()
+    {
+        // Arrange
+        MockSettingsServiceResponse(false);
+        var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Add(ApiKeyHeader, ApiKey);
+        var id = Guid.NewGuid();
+
+        // Existing entity
+        var existingRsvp = new Rsvp
+        {
+            Id = id.ToString(),
+            Name = "Grace",
+            Salutation = "Dear Grace",
+            IsPlural = false,
+            NumberOfGuestsOvernight = 1,
+            NumberOfMeatMenus = 1,
+            NumberOfVegetarianMenus = 0,
+            AdditionalInformation = "Old Info",
+        };
+
+        // Incoming update (changing non-critical data)
+        var updateDto = new PutRsvpDto
+        {
+            Name = "Grace",
+            Salutation = "Dear Grace",
+            IsPlural = false,
+            NumberOfGuestsOvernight = 2,
+            NumberOfMeatMenus = 1,
+            NumberOfVegetarianMenus = 1,
+            NumberOfBrunchGuests = 0,
+            AdditionalInformation = "Updated Info",
+        };
+
+        // Mock the repository to return the existing RSVP
+        _repositoryMock.Setup(x => x.ReadAsync(id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(RepositoryResponse<Rsvp, RepositoryFailResponse>.CreateSuccess(existingRsvp));
+
+        // Act - NO HEADER provided, so the settings deadline will be checked
+        var response = await client.PutAsJsonAsync($"/api/rsvps/{id}", updateDto);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+        // Verify the update was NOT called since the deadline has passed
         _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Rsvp>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }
