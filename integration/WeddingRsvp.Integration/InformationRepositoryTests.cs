@@ -1,5 +1,4 @@
 using System.Net;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Moq;
@@ -48,12 +47,12 @@ public class InformationRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.CreateAsync(info);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.ValueSuccess.Should().BeEquivalentTo(info);
+        Assert.True(result.IsSuccess);
+        Assert.Equivalent(info, result.ValueSuccess);
 
         var dbResponse = await _serviceUnderTest.ReadAsync(Guid.Parse(info.Id));
-        dbResponse.IsSuccess.Should().BeTrue();
-        dbResponse.ValueSuccess.Should().BeEquivalentTo(info);
+        Assert.True(dbResponse.IsSuccess);
+        Assert.Equivalent(info, dbResponse.ValueSuccess);
     }
     
     [Fact]
@@ -80,8 +79,8 @@ public class InformationRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.CreateAsync(duplicate);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.ValueFail.StatusCode.Should().Be(HttpStatusCode.Conflict);
+        Assert.False(result.IsSuccess);
+        Assert.Equal(HttpStatusCode.Conflict, result.ValueFail.StatusCode);
     }
 
     [Fact]
@@ -99,8 +98,8 @@ public class InformationRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.ReadAsync(Guid.Parse(info.Id));
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.ValueSuccess.Should().BeEquivalentTo(info);
+        Assert.True(result.IsSuccess);
+        Assert.Equivalent(info, result.ValueSuccess);
     }
 
     [Fact]
@@ -110,8 +109,8 @@ public class InformationRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.ReadAsync(Guid.NewGuid());
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.ValueFail.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        Assert.False(result.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, result.ValueFail.StatusCode);
     }
 
     [Fact]
@@ -130,8 +129,8 @@ public class InformationRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.ReadByLanguageAsync(language);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.ValueSuccess.Should().BeEquivalentTo(info);
+        Assert.True(result.IsSuccess);
+        Assert.Equivalent(info, result.ValueSuccess);
     }
 
     [Fact]
@@ -150,8 +149,8 @@ public class InformationRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.ReadByLanguageAsync("it");
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.ValueFail.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        Assert.False(result.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, result.ValueFail.StatusCode);
     }
 
     [Fact]
@@ -168,9 +167,9 @@ public class InformationRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.ReadAllAsync();
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.ValueSuccess.Should().ContainEquivalentOf(info1);
-        result.ValueSuccess.Should().ContainEquivalentOf(info2);
+        Assert.True(result.IsSuccess);
+        Assert.Contains(result.ValueSuccess!, info => info.Language == info1.Language && info.InvitationText == info1.InvitationText);
+        Assert.Contains(result.ValueSuccess!, info => info.Language == info2.Language && info.InvitationText == info2.InvitationText);
     }
 
     [Fact]
@@ -184,11 +183,11 @@ public class InformationRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.DeleteAsync(Guid.Parse(info.Id));
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
+        Assert.True(result.IsSuccess);
 
         var readResult = await _serviceUnderTest.ReadAsync(Guid.Parse(info.Id));
-        readResult.IsSuccess.Should().BeFalse();
-        readResult.ValueFail.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        Assert.False(readResult.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, readResult.ValueFail.StatusCode);
     }
     
     [Fact]
@@ -214,12 +213,12 @@ public class InformationRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.UpdateAsync(updated);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.ValueSuccess.Should().BeEquivalentTo(updated);
+        Assert.True(result.IsSuccess);
+        Assert.Equivalent(updated, result.ValueSuccess);
 
         var dbResponse = await _serviceUnderTest.ReadAsync(Guid.Parse(result.ValueSuccess.Id));
-        dbResponse.IsSuccess.Should().BeTrue();
-        dbResponse.ValueSuccess.Should().BeEquivalentTo(updated);
+        Assert.True(dbResponse.IsSuccess);
+        Assert.Equivalent(updated, dbResponse.ValueSuccess);
     }
     
     [Fact]
@@ -237,7 +236,7 @@ public class InformationRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.UpdateAsync(updated);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.ValueFail.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        Assert.False(result.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, result.ValueFail.StatusCode);
     }
 }

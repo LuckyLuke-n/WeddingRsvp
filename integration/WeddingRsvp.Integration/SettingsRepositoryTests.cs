@@ -1,5 +1,4 @@
 using System.Net;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Moq;
@@ -48,12 +47,12 @@ public class SettingsRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.CreateAsync(settings);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.ValueSuccess.Should().BeEquivalentTo(settings);
+        Assert.True(result.IsSuccess);
+        Assert.Equivalent(settings, result.ValueSuccess);
 
         var dbResponse = await _serviceUnderTest.ReadAsync(id);
-        dbResponse.IsSuccess.Should().BeTrue();
-        dbResponse.ValueSuccess.Should().BeEquivalentTo(settings);
+        Assert.True(dbResponse.IsSuccess);
+        Assert.Equivalent(settings, dbResponse.ValueSuccess);
     }
 
     [Fact]
@@ -74,8 +73,8 @@ public class SettingsRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.ReadAsync(id);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.ValueSuccess.Should().BeEquivalentTo(settings);
+        Assert.True(result.IsSuccess);
+        Assert.Equivalent(settings, result.ValueSuccess);
     }
 
     [Fact]
@@ -85,8 +84,8 @@ public class SettingsRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.ReadAsync(Guid.NewGuid());
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.ValueFail.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        Assert.False(result.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, result.ValueFail.StatusCode);
     }
 
     [Fact]
@@ -114,12 +113,12 @@ public class SettingsRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.UpdateAsync(updated);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.ValueSuccess.Should().BeEquivalentTo(updated);
+        Assert.True(result.IsSuccess);
+        Assert.Equivalent(updated, result.ValueSuccess);
 
         var dbResponse = await _serviceUnderTest.ReadAsync(Guid.Parse(updated.Id));
-        dbResponse.IsSuccess.Should().BeTrue();
-        dbResponse.ValueSuccess.Should().BeEquivalentTo(updated);
+        Assert.True(dbResponse.IsSuccess);
+        Assert.Equivalent(updated, dbResponse.ValueSuccess);
     }
 
     [Fact]
@@ -138,11 +137,11 @@ public class SettingsRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.UpdateAsync(upserted);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.ValueSuccess.Should().BeEquivalentTo(upserted);
+        Assert.True(result.IsSuccess);
+        Assert.Equivalent(upserted, result.ValueSuccess);
 
         var dbResponse = await _serviceUnderTest.ReadAsync(Guid.Parse(upserted.Id));
-        dbResponse.IsSuccess.Should().BeTrue();
-        dbResponse.ValueSuccess.Should().BeEquivalentTo(upserted);
+        Assert.True(dbResponse.IsSuccess);
+        Assert.Equivalent(upserted, dbResponse.ValueSuccess);
     }
 }

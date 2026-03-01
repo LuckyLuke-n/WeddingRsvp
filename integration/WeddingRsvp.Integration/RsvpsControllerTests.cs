@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -103,7 +102,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         var response = await client.GetAsync("/api/rsvps");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
@@ -128,9 +127,10 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         var response = await client.GetAsync("/api/rsvps");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var result = await response.Content.ReadFromJsonAsync<IEnumerable<GetRsvpDto>>();
-        result.Should().HaveCount(2);
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count());
     }
 
     [Fact]
@@ -145,7 +145,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         var response = await client.GetAsync("/api/rsvps");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
     [Fact]
@@ -173,10 +173,10 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         var response = await client.GetAsync($"/api/rsvps/{id}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var result = await response.Content.ReadFromJsonAsync<GetRsvpDto>();
-        result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(dto);
+        Assert.NotNull(result);
+        Assert.Equivalent(dto, result);
     }
 
     [Fact]
@@ -196,7 +196,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         var response = await client.GetAsync($"/api/rsvps/{id}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
@@ -225,9 +225,12 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         var response = await client.PostAsJsonAsync("/api/rsvps", dto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var result = await response.Content.ReadFromJsonAsync<GetRsvpDto>();
-        result!.Should().BeEquivalentTo(dto);
+        Assert.NotNull(result);
+        Assert.Equal(dto.Name, result.Name);
+        Assert.Equal(dto.Salutation, result.Salutation);
+        Assert.Equal(dto.IsPlural, result.IsPlural);
     }
 
     [Fact]
@@ -248,7 +251,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         var response = await client.DeleteAsync($"/api/rsvps/{id}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
 
     [Fact]
@@ -308,7 +311,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         var response = await client.PutAsJsonAsync($"/api/rsvps/{id}", updateDto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         _repositoryMock.Verify(
             x => x.UpdateAsync(It.Is<Rsvp>(r => r.AdditionalInformation == "New Info"), It.IsAny<CancellationToken>()),
             Times.Once);
@@ -373,9 +376,19 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         var response = await client.PutAsJsonAsync($"/api/rsvps/{id}", updateDto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var result = await response.Content.ReadFromJsonAsync<GetRsvpDto>();
-        result!.Should().BeEquivalentTo(updateDto);
+        Assert.NotNull(result);
+        Assert.Equal(updateDto.Name, result.Name);
+        Assert.Equal(updateDto.Salutation, result.Salutation);
+        Assert.Equal(updateDto.IsPlural, result.IsPlural);
+        Assert.Equal(updateDto.Attending, result.Attending);
+        Assert.Equal(updateDto.BringPartner, result.BringPartner);
+        Assert.Equal(updateDto.NumberOfGuestsOvernight, result.NumberOfGuestsOvernight);
+        Assert.Equal(updateDto.NumberOfMeatMenus, result.NumberOfMeatMenus);
+        Assert.Equal(updateDto.NumberOfBrunchGuests, result.NumberOfBrunchGuests);
+        Assert.Equal(updateDto.NumberOfVegetarianMenus, result.NumberOfVegetarianMenus);
+        Assert.Equal(updateDto.AdditionalInformation, result.AdditionalInformation);
     }
 
     [Theory]
@@ -423,7 +436,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         var response = await client.PutAsJsonAsync($"/api/rsvps/{id}", updateDto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Rsvp>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -476,10 +489,10 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         var response = await client.PutAsJsonAsync($"/api/rsvps/{id}", updateDto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var result = await response.Content.ReadFromJsonAsync<GetRsvpDto>();
-        result.Should().NotBeNull();
-        result!.Name.Should().Be("Frank Updated");
+        Assert.NotNull(result);
+        Assert.Equal("Frank Updated", result!.Name);
         _repositoryMock.Verify(
             x => x.UpdateAsync(It.Is<Rsvp>(r => r.Name == "Frank Updated"), It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -521,7 +534,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         var response = await client.PutAsJsonAsync($"/api/rsvps/{id}", updateDto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Rsvp>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -568,7 +581,7 @@ public class RsvpsControllerTests : IClassFixture<WebApplicationFactory<Program>
         var response = await client.PutAsJsonAsync($"/api/rsvps/{id}", updateDto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
         // Verify the update was NOT called since the deadline has passed
         _repositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Rsvp>(), It.IsAny<CancellationToken>()), Times.Never);
     }

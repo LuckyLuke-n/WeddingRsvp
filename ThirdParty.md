@@ -3,7 +3,6 @@
 | Aspire.Hosting.AppHost | 13.1.1 |
 | Aspire.Hosting.MongoDB | 13.1.1 |
 | Aspire.MongoDB.Driver | 13.1.1 |
-| FluentAssertions | 8.8.0 |
 | Microsoft.AspNetCore.Mvc.Testing | 10.0.3 |
 | Microsoft.AspNetCore.OpenApi | 10.0.3 |
 | Microsoft.Extensions.Configuration.Abstractions | 10.0.3 |

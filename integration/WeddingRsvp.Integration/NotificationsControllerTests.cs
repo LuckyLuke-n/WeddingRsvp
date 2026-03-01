@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,7 +59,7 @@ public class NotificationsControllerTests : IClassFixture<WebApplicationFactory<
         var response = await client.PostAsJsonAsync("/api/notifications", dto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         _emailServiceMock.Verify(x => x.SendRsvpConfirmationAsync(It.IsAny<EmailTemplate>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -87,7 +86,7 @@ public class NotificationsControllerTests : IClassFixture<WebApplicationFactory<
         var response = await client.PostAsJsonAsync("/api/notifications", dto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         _emailServiceMock.Verify(x => x.SendRsvpConfirmationAsync(It.IsAny<EmailTemplate>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -117,7 +116,7 @@ public class NotificationsControllerTests : IClassFixture<WebApplicationFactory<
         var response = await client.PostAsJsonAsync("/api/notifications", dto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         _emailServiceMock.Verify(x => x.SendRsvpConfirmationAsync(
             It.Is<EmailTemplate>(t => 
                 t.Name == dto.Name && 
@@ -156,7 +155,7 @@ public class NotificationsControllerTests : IClassFixture<WebApplicationFactory<
         var response = await client.PostAsJsonAsync("/api/notifications", dto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadGateway);
+        Assert.Equal(HttpStatusCode.BadGateway, response.StatusCode);
         _emailServiceMock.Verify(x => x.SendRsvpConfirmationAsync(It.IsAny<EmailTemplate>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -186,7 +185,7 @@ public class NotificationsControllerTests : IClassFixture<WebApplicationFactory<
         var response = await client.PostAsJsonAsync("/api/notifications", dto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+        Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         _emailServiceMock.Verify(x => x.SendRsvpConfirmationAsync(It.IsAny<EmailTemplate>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }
