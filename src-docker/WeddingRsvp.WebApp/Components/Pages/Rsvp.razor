@@ -7,18 +7,18 @@
 @inject IStringLocalizer<Rsvp> Localizer
 
 <div class="rsvp-wrapper">
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div
+            style="background-color: rgba(244, 67, 54, 0.2); border: 1px solid #f44336; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <span><strong>Error:</strong> @_errorMessage</span>
+            <button style="background: none; border: none; color: white; cursor: pointer; font-size: 20px;"
+                    @onclick='() => _errorMessage = ""'>&times;
+            </button>
+        </div>
+    }
+    
     <div class="rsvp-container">
-        @if (!string.IsNullOrEmpty(_errorMessage))
-        {
-            <div
-                style="background-color: rgba(244, 67, 54, 0.2); border: 1px solid #f44336; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-                <span><strong>Error:</strong> @_errorMessage</span>
-                <button style="background: none; border: none; color: white; cursor: pointer; font-size: 20px;"
-                        @onclick='() => _errorMessage = ""'>&times;
-                </button>
-            </div>
-        }
-
         <EditForm Model="@RsvpGuest" OnValidSubmit="HandleValidSubmitAsync" FormName="RsvpForm" class="rsvp-container">
             <DataAnnotationsValidator/>
             <ValidationSummary/>
@@ -61,7 +61,7 @@
                     </InputRadioGroup>
                 }
             </div>
-            
+
             @if (RsvpGuest.Response != ResponseType.No)
             {
                 <div class="form-group">
@@ -106,11 +106,11 @@
                     </div>
                 </div>
             }
-            
+
             <div class="form-group">
                 <button type="submit" class="btn">@Localizer["Submit"]</button>
             </div>
-            
+
         </EditForm>
     </div>
 </div>

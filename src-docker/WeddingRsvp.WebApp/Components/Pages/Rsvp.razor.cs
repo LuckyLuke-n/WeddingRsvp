@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Components;
 using WeddingRsvp.Abstractions.Models.Rsvps;
 using WeddingRsvp.Client;
@@ -53,9 +54,9 @@ public partial class Rsvp : ComponentBase
             var response = await RsvpClient.GetRsvpAsync(id).ConfigureAwait(false);
             if (!response.IsSuccess)
             {
-                Navigation.NavigateTo(NavigationMaster.Home);
                 Logger.LogWarning("Cannot get rsvp {Id} with status code {StatusCode}.", id,
                     response.ValueFail.StatusCode);
+                _errorMessage = "Cannot load the rsvp.";
                 return;
             }
 
@@ -91,6 +92,13 @@ public partial class Rsvp : ComponentBase
             if (!res.IsSuccess)
                 Logger.LogError("Cannot send email for {RsvpId} with status code {StatusCode}.", RsvpGuest.Id, res.ValueFail.StatusCode);
             
+            return;
+        }
+        if (response.ValueFail.StatusCode == HttpStatusCode.Conflict)
+        {
+            _errorMessage = "Cannot update the invite. The response period ended already. Please contact us directly.";
+            Logger.LogWarning("Cannot update rsvp {Id} because the response period ended already.", RsvpGuest.Id);
+            WebAppMeter.CountFailedResponse(RsvpGuest.Id);
             return;
         }
 
