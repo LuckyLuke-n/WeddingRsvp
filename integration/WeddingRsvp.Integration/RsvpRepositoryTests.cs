@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Moq;
@@ -55,12 +54,12 @@ public class RsvpRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.CreateAsync(rsvp);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.ValueSuccess.Should().BeEquivalentTo(rsvp);
+        Assert.True(result.IsSuccess);
+        Assert.Equivalent(rsvp, result.ValueSuccess);
 
         var dbRsvpResponse = await _serviceUnderTest.ReadAsync(Guid.Parse(rsvp.Id));
-        dbRsvpResponse.IsSuccess.Should().BeTrue();
-        dbRsvpResponse.ValueSuccess.Should().BeEquivalentTo(rsvp);
+        Assert.True(dbRsvpResponse.IsSuccess);
+        Assert.Equivalent(rsvp, dbRsvpResponse.ValueSuccess);
     }
 
     [Fact]
@@ -78,8 +77,8 @@ public class RsvpRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.ReadAsync(Guid.Parse(rsvp.Id));
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.ValueSuccess.Should().BeEquivalentTo(rsvp);
+        Assert.True(result.IsSuccess);
+        Assert.Equivalent(rsvp, result.ValueSuccess);
     }
 
     [Fact]
@@ -89,8 +88,8 @@ public class RsvpRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.ReadAsync(Guid.NewGuid());
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.ValueFail.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        Assert.False(result.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, result.ValueFail.StatusCode);
     }
 
     [Fact]
@@ -107,9 +106,9 @@ public class RsvpRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.ReadAllAsync();
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.ValueSuccess.Should().ContainEquivalentOf(rsvp1);
-        result.ValueSuccess.Should().ContainEquivalentOf(rsvp2);
+        Assert.True(result.IsSuccess);
+        Assert.Contains(result.ValueSuccess!, rsvp => rsvp.Name == rsvp1.Name);
+        Assert.Contains(result.ValueSuccess!, rsvp => rsvp.Name == rsvp2.Name);
     }
 
     [Fact]
@@ -123,11 +122,11 @@ public class RsvpRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.DeleteAsync(Guid.Parse(rsvp.Id));
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
+        Assert.True(result.IsSuccess);
 
         var readResult = await _serviceUnderTest.ReadAsync(Guid.Parse(rsvp.Id));
-        readResult.IsSuccess.Should().BeFalse();
-        readResult.ValueFail.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        Assert.False(readResult.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, readResult.ValueFail.StatusCode);
     }
     
     [Fact]
@@ -157,12 +156,12 @@ public class RsvpRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.UpdateAsync(updatedRsvp);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.ValueSuccess.Should().BeEquivalentTo(updatedRsvp);
+        Assert.True(result.IsSuccess);
+        Assert.Equivalent(updatedRsvp, result.ValueSuccess);
 
         var dbRsvpResponse = await _serviceUnderTest.ReadAsync(Guid.Parse(result.ValueSuccess.Id));
-        dbRsvpResponse.IsSuccess.Should().BeTrue();
-        dbRsvpResponse.ValueSuccess.Should().BeEquivalentTo(updatedRsvp);
+        Assert.True(dbRsvpResponse.IsSuccess);
+        Assert.Equivalent(updatedRsvp, dbRsvpResponse.ValueSuccess);
     }
     
     [Fact]
@@ -188,12 +187,12 @@ public class RsvpRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.UpdateAsync(updatedRsvp);
 
         // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.ValueSuccess.Should().BeEquivalentTo(updatedRsvp);
+        Assert.True(result.IsSuccess);
+        Assert.Equivalent(updatedRsvp, result.ValueSuccess);
 
-        var dbRsvpResponse = await _serviceUnderTest.ReadAsync(Guid.Parse(result.ValueSuccess.Id));
-        dbRsvpResponse.IsSuccess.Should().BeTrue();
-        dbRsvpResponse.ValueSuccess.Should().BeEquivalentTo(updatedRsvp);
+        var dbRsvpResponse = await _serviceUnderTest.ReadAsync(Guid.Parse(result.ValueSuccess!.Id));
+        Assert.True(dbRsvpResponse.IsSuccess);
+        Assert.Equivalent(updatedRsvp, dbRsvpResponse.ValueSuccess);
     }
     
     [Fact]
@@ -223,7 +222,7 @@ public class RsvpRepositoryTests : IAsyncLifetime
         var result = await _serviceUnderTest.UpdateAsync(updatedRsvp);
 
         // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.ValueFail.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        Assert.False(result.IsSuccess);
+        Assert.Equal(HttpStatusCode.NotFound, result.ValueFail.StatusCode);
     }
 }

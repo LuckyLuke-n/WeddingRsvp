@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,7 +50,7 @@ public class SettingsControllerTests : IClassFixture<WebApplicationFactory<Progr
 
         var response = await client.GetAsync("/api/settings");
 
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
@@ -66,8 +65,8 @@ public class SettingsControllerTests : IClassFixture<WebApplicationFactory<Progr
         var response = await client.GetAsync("/api/settings");
         var result = await response.Content.ReadFromJsonAsync<List<GetSettingsDto>>();
 
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Should().NotBeNull();
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(result);
     }
 
     [Fact]
@@ -89,8 +88,8 @@ public class SettingsControllerTests : IClassFixture<WebApplicationFactory<Progr
         var response = await client.PutAsJsonAsync("/api/settings", dto);
         var result = await response.Content.ReadFromJsonAsync<GetSettingsDto>();
         
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Should().NotBeNull();
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(result);
     }
     
     
@@ -114,7 +113,7 @@ public class SettingsControllerTests : IClassFixture<WebApplicationFactory<Progr
 
         var response = await client.PutAsJsonAsync("/api/settings", dto);
 
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
@@ -132,6 +131,6 @@ public class SettingsControllerTests : IClassFixture<WebApplicationFactory<Progr
 
         var response = await client.PutAsJsonAsync("/api/settings", dto);
 
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 }

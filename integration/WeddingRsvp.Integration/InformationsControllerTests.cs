@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -59,7 +58,7 @@ public class InformationsControllerTests : IClassFixture<WebApplicationFactory<P
         var response = await client.GetAsync("/api/informations");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
     
     [Fact]
@@ -77,7 +76,7 @@ public class InformationsControllerTests : IClassFixture<WebApplicationFactory<P
         var response = await client.GetAsync("/api/informations");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
     [Fact]
@@ -102,10 +101,10 @@ public class InformationsControllerTests : IClassFixture<WebApplicationFactory<P
         var response = await client.GetAsync($"/api/informations/language/{language}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var resultDto = await response.Content.ReadFromJsonAsync<GetInformationDto>();
-        resultDto.Should().NotBeNull();
-        resultDto!.Language.Should().Be(language);
+        Assert.NotNull(resultDto);
+        Assert.Equal(language, resultDto!.Language);
     }
 
     [Fact]
@@ -126,7 +125,7 @@ public class InformationsControllerTests : IClassFixture<WebApplicationFactory<P
         var response = await client.GetAsync($"/api/informations/language/{language}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
@@ -139,7 +138,7 @@ public class InformationsControllerTests : IClassFixture<WebApplicationFactory<P
         var response = await client.GetAsync("/api/informations");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
@@ -167,9 +166,9 @@ public class InformationsControllerTests : IClassFixture<WebApplicationFactory<P
 
         // Assert
         var result = await response.Content.ReadFromJsonAsync<GetInformationDto>();
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
-        result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(createdInfo.ToDto());
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        Assert.NotNull(result);
+        Assert.Equivalent(createdInfo.ToDto(), result);
     }
 
     [Fact]
@@ -188,7 +187,7 @@ public class InformationsControllerTests : IClassFixture<WebApplicationFactory<P
         var response = await client.DeleteAsync($"/api/informations/{id}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
 
     [Fact]
@@ -206,7 +205,7 @@ public class InformationsControllerTests : IClassFixture<WebApplicationFactory<P
         var response = await client.DeleteAsync($"/api/informations/{id}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
     [Fact]
@@ -236,10 +235,10 @@ public class InformationsControllerTests : IClassFixture<WebApplicationFactory<P
         var response = await client.PutAsJsonAsync($"/api/informations/{id}", dto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var result = await response.Content.ReadFromJsonAsync<GetInformationDto>();
-        result.Should().BeEquivalentTo(updatedInfo.ToDto());
-        result.Should().NotBeNull();
+        Assert.NotNull(result);
+        Assert.Equivalent(updatedInfo.ToDto(), result);
     }
 
     [Fact]
@@ -263,6 +262,6 @@ public class InformationsControllerTests : IClassFixture<WebApplicationFactory<P
         var response = await client.PutAsJsonAsync($"/api/informations/{id}", dto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 }
